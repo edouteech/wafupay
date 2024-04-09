@@ -3,7 +3,9 @@
 namespace App\Http\Middleware;
 
 use Illuminate\Auth\Middleware\Authenticate as Middleware;
+use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class Authenticate extends Middleware
 {
@@ -12,6 +14,9 @@ class Authenticate extends Middleware
      */
     protected function redirectTo(Request $request): ?string
     {
-        return $request->expectsJson() ? null : route('login');
+        return $request->expectsJson() ? null : throw new HttpResponseException(response()->json([
+            'message' => 'Protected route: Please authenticate first with bearer token.',
+            'error' => 'Unauthenticated user'
+        ], Response::HTTP_UNAUTHORIZED));
     }
 }
