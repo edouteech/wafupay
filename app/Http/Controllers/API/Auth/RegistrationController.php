@@ -51,6 +51,10 @@ class RegistrationController extends BaseController
     public function revoke(Request $request): JsonResponse
     {
         $request->user()->token()->revoke();
+        $request->user()->logs()->create([
+            'action' => 'logout',
+            'ip_address' => $request->ip()
+        ]);
         return $this->handleResponse([], 'User logged out!');
     }
 }

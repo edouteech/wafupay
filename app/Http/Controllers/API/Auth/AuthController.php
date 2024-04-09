@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API\Auth;
 
 use App\Http\Controllers\API\BaseController;
+use App\Models\Log;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -27,6 +28,11 @@ class AuthController extends BaseController
 
         if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
             $token = $request->user()->createToken($request->email);
+
+            $request->user()->logs()->create([
+                'action' => 'login',
+                'ip_address' => $request->ip()
+            ]);
 
             return $this->handleResponse(['token' => $token->plainTextToken], 'User logged-in!');
         }

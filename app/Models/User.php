@@ -53,4 +53,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(OtpCode::class);
     }
+
+    public function logs(): HasMany
+    {
+        return $this->hasMany(Log::class);
+    }
 }
