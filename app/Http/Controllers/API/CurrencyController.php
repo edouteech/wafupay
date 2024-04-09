@@ -7,6 +7,12 @@ use Illuminate\Http\Request;
 
 class CurrencyController extends BaseController
 {
+    private array $rules = [
+        'slug' => 'required|string',
+        'code' => 'required|string|min:3|uppercase|unique:currencies',
+        'symbol' => 'required',
+    ];
+
     /**
      * Display a listing of the resource.
      */
@@ -20,7 +26,11 @@ class CurrencyController extends BaseController
      */
     public function store(Request $request)
     {
-        //
+        $this->handleValidate($request->post(), $this->rules);
+
+        $currency = Currency::create([...$request->post(), ...['user_id' => $request->user()->id]]);
+
+        return $this->handleResponse($currency, 'Currency created successfully.');
     }
 
     /**
@@ -28,7 +38,7 @@ class CurrencyController extends BaseController
      */
     public function show(Currency $currency)
     {
-        //
+        return $this->handleResponse($currency);
     }
 
     /**
@@ -36,7 +46,15 @@ class CurrencyController extends BaseController
      */
     public function update(Request $request, Currency $currency)
     {
-        //
+        $this->handleValidate($request->post(), [
+            'slug' => 'required|string',
+            'code' => 'required|string|min:3|uppercase',
+            'symbol' => 'required',
+        ]);
+
+        $currency->update($request->post());
+
+        return $this->handleResponse($currency, 'Currency updated successfully.');
     }
 
     /**
@@ -44,6 +62,8 @@ class CurrencyController extends BaseController
      */
     public function destroy(Currency $currency)
     {
-        //
+        $currency->delete();
+
+        return $this->handleResponse($currency, 'Currency deleted successfully.');
     }
 }

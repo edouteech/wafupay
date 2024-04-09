@@ -18,6 +18,10 @@ class Currency extends Model
         'user_id'
     ];
 
+    protected $hidden = [
+        'deleted_at'
+    ];
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
