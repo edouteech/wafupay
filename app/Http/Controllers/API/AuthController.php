@@ -8,8 +8,6 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Validator;
-
 
 class AuthController extends BaseController
 {
@@ -23,6 +21,12 @@ class AuthController extends BaseController
         'confirm_password' => 'required|same:password',
     ];
 
+    /**
+     * Login user and create a jwt token
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
     public function login(Request $request): JsonResponse
     {
         $this->handleValidate($request->post(), [
@@ -41,6 +45,8 @@ class AuthController extends BaseController
     }
 
     /**
+     * Register a new user.
+     *
      * @param Request $request
      * @return JsonResponse
      */
@@ -48,14 +54,19 @@ class AuthController extends BaseController
     {
         $this->handleValidate($request->post(), $this->rules);
 
-        $input = $request->all();
-        $input['password'] = Hash::make($input['password']);
+        $input['password'] = Hash::make($request->post('password'));
         $user = User::create($input);
         $user['user'] = $user->createToken('LaravelSanctumAuth')->plainTextToken;
 
         return $this->handleResponse($user, 'User successfully registered!');
     }
 
+    /**
+     * Verifies the user's authentication and returns a response.
+     *
+     * @param Request $request The incoming request.
+     * @return JsonResponse A JSON response containing the user's data and a token.
+     */
     public function verify(Request $request): JsonResponse
     {
         if ($user = Auth::user()) {
@@ -65,6 +76,12 @@ class AuthController extends BaseController
         return $this->handleError('Unauthorised.', ['error' => 'Unauthorised'], 202);
     }
 
+    /**
+     * Revoke the user's authentication token.
+     *
+     * @param Request $request The incoming request.
+     * @return JsonResponse A JSON response containing an empty array and a message.
+     */
     public function revoke(Request $request): JsonResponse
     {
         $request->user()->token()->revoke();
