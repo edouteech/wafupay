@@ -18,15 +18,15 @@ use Illuminate\Support\Facades\Route;
 Route::prefix('/v1')->group((function () {
     Route::middleware('guest')->group(function () {
         Route::prefix('/token')->group(function () {
-            Route::post('obtain', [AuthController::class, 'login'])->name('token.obtain');
-            Route::post('verify', [AuthController::class, 'verify'])->name('token.verify');
-            Route::post('create', [AuthController::class, 'register'])->name('token.register');
+            Route::post('/', [AuthController::class, 'login'])->name('token.obtain');
+            Route::post('/verify', [AuthController::class, 'verify'])->name('token.verify');
+            Route::post('/obtain', [AuthController::class, 'register'])->name('token.register');
         });
     });
 
     Route::middleware('auth:sanctum')->group(function () {
         Route::prefix('/token')->group(function () {
-            Route::post('revoke', [AuthController::class, 'revoke'])->name('revoke');
+            Route::post('/revoke', [AuthController::class, 'revoke'])->name('revoke');
         });
     });
 }));

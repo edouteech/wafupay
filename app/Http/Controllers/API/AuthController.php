@@ -25,6 +25,15 @@ class AuthController extends BaseController
 
     public function login(Request $request): JsonResponse
     {
+        $validator = Validator::make($request->post(), [
+            'email' => 'required|accepted|email',
+            'password' => 'required'
+        ]);
+
+        if ($validator->fails()) {
+            return $this->handleError($validator->errors(), [], 202);
+        }
+
         if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
             $auth = Auth::user();
             $success['token'] = $auth->createToken('LaravelSanctumAuth')->plainTextToken;
@@ -42,7 +51,7 @@ class AuthController extends BaseController
      */
     public function register(Request $request): JsonResponse
     {
-        $validator = Validator::make($request->all(), $this->rules);
+        $validator = Validator::make($request->post(), $this->rules);
 
         if ($validator->fails()) {
             return $this->handleError($validator->errors(), [], 202);
@@ -63,7 +72,6 @@ class AuthController extends BaseController
             return $this->handleResponse($user, 'Welcome' . $user->first_name);
         }
         return $this->handleError('Unauthorised.', ['error' => 'Unauthorised'], 202);
-
     }
 
     public function revoke(Request $request): JsonResponse
