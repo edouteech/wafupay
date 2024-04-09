@@ -158,7 +158,7 @@ return [
     'ulid' => 'The :attribute field must be a valid ULID.',
     'uuid' => 'The :attribute field must be a valid UUID.',
     // custom rules
-    'phone_valid_number' => 'The :attribute must be in the format "+CountryCodePhoneNumber" and contain 8 or 10 digits after the country code.',
+    'phone_valid_number' => 'The phone number must be in the format +CountryCodePhoneNumber and contain 8 or 10 digits after the country code(UEMOA zone Country).',
 
     /*
     |--------------------------------------------------------------------------

@@ -14,7 +14,9 @@ class ValidPhoneNumber implements ValidationRule
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        if (preg_match("/^\+\d{11}$|^\+\d{13}$/", $value)) {
+         // Expression régulière pour valider le numéro de téléphone dans la zone UEMOA
+         $isValidNumber = preg_match("/^\+(229|225|223|228|226|241|232|233|240|224)(\d{8}|\d{10})$/", $value);
+        if (!$isValidNumber) {
             $fail('validation.phone_valid_number')->translate(['attribute' => $attribute]);
         }
     }

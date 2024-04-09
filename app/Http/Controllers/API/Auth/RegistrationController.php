@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API\Auth;
 
 use App\Http\Controllers\API\BaseController;
 use App\Models\User;
+use App\Rules\ValidPhoneNumber;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -15,7 +16,6 @@ class RegistrationController extends BaseController
         'first_name' => 'required|string',
         'last_name' => 'required|string',
         'email' => 'required|email|unique:users',
-        'phone_num' => 'required|unique:users',
         'password' => 'required|min:8',
         'confirm_password' => 'required|same:password',
     ];
@@ -28,7 +28,13 @@ class RegistrationController extends BaseController
      */
     public function register(Request $request): JsonResponse
     {
-        $this->handleValidate($request->post(), $this->rules);
+        $this->handleValidate(
+            $request->post(),
+            [
+                ...$this->rules,
+                ...['phone_num' => ['required', 'unique:users', new ValidPhoneNumber],]
+            ]
+        );
 
         $input['password'] = Hash::make($request->post('password'));
         $user = User::create($input);
