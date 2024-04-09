@@ -48,6 +48,6 @@ class AuthController extends BaseController
      */
     public function verify(Request $request): JsonResponse
     {
-        return $this->handleResponse($request->user());
+        return $this->handleResponse($request->user()->with('country')->get());
     }
 }

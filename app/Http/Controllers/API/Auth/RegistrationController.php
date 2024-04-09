@@ -18,6 +18,7 @@ class RegistrationController extends BaseController
         'email' => 'required|email|unique:users',
         'password' => 'required|min:8',
         'confirm_password' => 'required|same:password',
+        'country_id' => 'required|exists:countries,id'
     ];
 
     /**
