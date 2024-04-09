@@ -25,14 +25,10 @@ class AuthController extends BaseController
 
     public function login(Request $request): JsonResponse
     {
-        $validator = Validator::make($request->post(), [
-            'email' => 'required|accepted|email',
+        $this->handleValidate($request->post(), [
+            'email' => 'required|email',
             'password' => 'required'
         ]);
-
-        if ($validator->fails()) {
-            return $this->handleError($validator->errors(), [], 202);
-        }
 
         if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
             $auth = Auth::user();
@@ -40,9 +36,8 @@ class AuthController extends BaseController
             $success['email'] = $auth->email;
 
             return $this->handleResponse($success, 'User logged-in!');
-        } else {
-            return $this->handleError('Unauthorised.', ['error' => 'Unauthorised'], 202);
         }
+        return $this->handleError('Unauthorised.', ['error' => 'Invalid credentials'], 202);
     }
 
     /**
