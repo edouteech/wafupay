@@ -52,16 +52,16 @@ class BaseController extends Controller
      *
      * @param array $data The data to be validated.
      * @param array $rules The validation rules.
-     * @return JsonResponse|null Returns null on successful validation or throws ValidationException on failure.
+     * @return array Returns validation data on successful validation or throws ValidationException on failure.
      * @throws ValidationException If validation fails.
      */
-    public function handleValidate(array $data, array $rules): JsonResponse | null
+    public function handleValidate(array $data, array $rules): array
     {
         $validator = Validator::make($data, $rules);
 
         if ($validator->fails()) {
             throw new ValidationException($validator->errors());
         }
-        return null;
+        return array_intersect_key($data, $rules);
     }
 }

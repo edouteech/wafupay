@@ -48,11 +48,16 @@ class TransactionFeesController extends BaseController
      */
     public function update(Request $request, TransactionFees $transactionFees)
     {
-        $this->handleValidate($request->post(), $this->rules);
+        $payloads = $this->handleValidate($request->post(), $this->rules);
 
-        $transactionFees->update($request->post());
+        $transactionFees = $transactionFees->with(['currency', 'user']);
 
-        return $this->handleResponse($transactionFees, 'TransactionsFees updated successfully.');
+        $transactionFees->update($payloads);
+
+        return $this->handleResponse(
+            $transactionFees->get(),
+            'TransactionsFees updated successfully.'
+        );
     }
 
     /**
