@@ -36,9 +36,8 @@ class RegistrationController extends BaseController
             ]
         );
 
-        $input['password'] = Hash::make($request->post('password'));
-        $user = User::create($input);
-        $user['token'] = $user->createToken($request->token_name)->plainTextToken;
+        $user = User::create($request->post());
+        $user['token'] = $user->createToken($request->email)->plainTextToken;
 
         return $this->handleResponse($user, 'User successfully registered!');
     }

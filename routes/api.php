@@ -26,7 +26,7 @@ Route::prefix('/v1')->group((function () {
 
     Route::middleware('auth:sanctum')->group(function () {
         Route::prefix('/token')->group(function () {
-            Route::post('/verify', [AuthController::class, 'verify'])->name('token.verify');
+            Route::get('/verify', [AuthController::class, 'verify'])->name('token.verify');
             Route::post('/revoke', [RegistrationController::class, 'revoke'])->name('token.revoke');
         });
     });

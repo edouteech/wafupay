@@ -26,7 +26,7 @@ class AuthController extends BaseController
         $this->handleValidate($request->post(), $this->rules);
 
         if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
-            $token = $request->user()->createToken($request->token_name);
+            $token = $request->user()->createToken($request->email);
 
             return $this->handleResponse(['token' => $token->plainTextToken], 'User logged-in!');
         }
