@@ -18,6 +18,7 @@ class AuthController extends BaseController
         'first_name' => 'required|string',
         'last_name' => 'required|string',
         'email' => 'required|email|unique:users',
+        'phone_num' => 'required|unique:users',
         'password' => 'required|min:8',
         'confirm_password' => 'required|same:password',
     ];
@@ -27,7 +28,7 @@ class AuthController extends BaseController
         if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
             $auth = Auth::user();
             $success['token'] = $auth->createToken('LaravelSanctumAuth')->plainTextToken;
-            $success['role'] = $auth->role;
+            $success['email'] = $auth->email;
 
             return $this->handleResponse($success, 'User logged-in!');
         } else {
@@ -50,10 +51,9 @@ class AuthController extends BaseController
         $input = $request->all();
         $input['password'] = Hash::make($input['password']);
         $user = User::create($input);
-        $success['token'] = $user->createToken('LaravelSanctumAuth')->plainTextToken;
-        $success['role'] = $user->role;
+        $user['user'] = $user->createToken('LaravelSanctumAuth')->plainTextToken;
 
-        return $this->handleResponse($success, 'User successfully registered!');
+        return $this->handleResponse($user, 'User successfully registered!');
     }
 
     public function verify(Request $request): JsonResponse
