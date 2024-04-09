@@ -3,6 +3,7 @@
 use App\Http\Controllers\API\Auth\AuthController;
 use App\Http\Controllers\API\Auth\RegistrationController;
 use App\Http\Controllers\API\CurrencyController;
+use App\Http\Controllers\API\TransactionFeesController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -33,6 +34,7 @@ Route::prefix('/v1')->group((function () {
 
         Route::middleware('admin')->group(function () {
             Route::apiResource('currencies', CurrencyController::class);
+            Route::apiResource('transactions-fees', TransactionFeesController::class);
         });
     });
 }));
