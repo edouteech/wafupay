@@ -12,7 +12,7 @@ class CurrencyController extends BaseController
      */
     public function index()
     {
-        return Currency::all();
+        return $this->handleResponse(Currency::all());
     }
 
     /**

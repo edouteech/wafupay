@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\API\Auth\AuthController;
 use App\Http\Controllers\API\Auth\RegistrationController;
+use App\Http\Controllers\API\CurrencyController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -28,6 +29,10 @@ Route::prefix('/v1')->group((function () {
         Route::prefix('/token')->group(function () {
             Route::get('/verify', [AuthController::class, 'verify'])->name('token.verify');
             Route::post('/revoke', [RegistrationController::class, 'revoke'])->name('token.revoke');
+        });
+
+        Route::middleware('admin')->group(function () {
+            Route::apiResource('currencies', CurrencyController::class);
         });
     });
 }));
