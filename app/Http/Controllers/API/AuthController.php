@@ -46,11 +46,7 @@ class AuthController extends BaseController
      */
     public function register(Request $request): JsonResponse
     {
-        $validator = Validator::make($request->post(), $this->rules);
-
-        if ($validator->fails()) {
-            return $this->handleError($validator->errors(), [], 202);
-        }
+        $this->handleValidate($request->post(), $this->rules);
 
         $input = $request->all();
         $input['password'] = Hash::make($input['password']);
