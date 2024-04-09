@@ -5,7 +5,6 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class TransactionFees extends Model
@@ -24,8 +23,8 @@ class TransactionFees extends Model
     {
         return $this->belongsTo(User::class);
     }
-    public function currencies(): BelongsToMany
+    public function currency(): BelongsTo
     {
-        return $this->belongsToMany(Currency::class);
+        return $this->belongsTo(Currency::class);
     }
 }

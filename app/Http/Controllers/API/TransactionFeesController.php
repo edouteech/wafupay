@@ -19,7 +19,8 @@ class TransactionFeesController extends BaseController
      */
     public function index()
     {
-        return $this->handleResponse(TransactionFees::all());
+        $transactionFees = TransactionFees::with(['currency', 'user'])->get();
+        return $this->handleResponse($transactionFees);
     }
 
     /**
@@ -39,7 +40,7 @@ class TransactionFeesController extends BaseController
      */
     public function show(TransactionFees $transactionFees)
     {
-        return $this->handleResponse($transactionFees);
+        return $this->handleResponse($transactionFees->with(['currency', 'user'])->get());
     }
 
     /**
