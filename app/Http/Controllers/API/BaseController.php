@@ -16,7 +16,7 @@ class BaseController extends Controller
      * @param string $msg The message.
      * @return JsonResponse The JSON response.
      */
-    public function handleResponse($result, $msg): JsonResponse
+    public function handleResponse($result, $msg = null): JsonResponse
     {
         $res = [
             'success' => true,

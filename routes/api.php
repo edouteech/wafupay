@@ -1,6 +1,7 @@
 <?php
 
-use App\Http\Controllers\API\AuthController;
+use App\Http\Controllers\API\Auth\AuthController;
+use App\Http\Controllers\API\Auth\RegistrationController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -19,14 +20,14 @@ Route::prefix('/v1')->group((function () {
     Route::middleware('guest')->group(function () {
         Route::prefix('/token')->group(function () {
             Route::post('/', [AuthController::class, 'login'])->name('token.obtain');
-            Route::post('/create', [AuthController::class, 'register'])->name('token.register');
+            Route::post('/register', [RegistrationController::class, 'register'])->name('token.register');
         });
     });
 
     Route::middleware('auth:sanctum')->group(function () {
         Route::prefix('/token')->group(function () {
             Route::post('/verify', [AuthController::class, 'verify'])->name('token.verify');
-            Route::post('/revoke', [AuthController::class, 'revoke'])->name('revoke');
+            Route::post('/revoke', [RegistrationController::class, 'revoke'])->name('token.revoke');
         });
     });
 }));
