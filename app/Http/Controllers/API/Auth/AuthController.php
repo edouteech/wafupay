@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API\Auth;
 
 use App\Http\Controllers\API\BaseController;
+use App\Http\Resources\User as UserResource;
 use App\Models\Log;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -48,6 +49,6 @@ class AuthController extends BaseController
      */
     public function verify(Request $request): JsonResponse
     {
-        return $this->handleResponse($request->user()->with('country')->get());
+        return $this->handleResponse(new UserResource($request->user()));
     }
 }

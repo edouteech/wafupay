@@ -5,6 +5,7 @@ use App\Http\Controllers\API\Auth\RegistrationController;
 use App\Http\Controllers\API\CountryController;
 use App\Http\Controllers\API\CurrencyController;
 use App\Http\Controllers\API\TransactionFeesController;
+use App\Http\Controllers\API\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -37,6 +38,7 @@ Route::prefix('/v1')->group((function () {
             Route::apiResource('currencies', CurrencyController::class);
             Route::apiResource('transactions-fees', TransactionFeesController::class);
             Route::apiResource('countries', CountryController::class);
+            Route::apiResource('users', UserController::class);
         });
     });
 }));

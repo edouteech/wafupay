@@ -3,6 +3,8 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+
+use App\Http\Resources\User as ResourcesUser;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -51,6 +53,7 @@ class User extends Authenticatable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'created_at' => 'datetime',
         'password' => 'hashed',
     ];
 
@@ -72,5 +75,19 @@ class User extends Authenticatable
     public function account(): HasOne
     {
         return $this->hasOne(Account::class);
+    }
+
+    static public function create(array $attributes): self | ResourcesUser
+    {
+        $model = new self;
+        $model->fill($attributes);
+        if ($model->save()) {
+            $model->account()->create([
+                'account_num' => 'wurapay-' . $attributes['phone_num'] . '-' . $model->id,
+                'currency_id' => $attributes['currency_id']
+            ]);
+            return new ResourcesUser($model);
+        }
+        return new static();
     }
 }

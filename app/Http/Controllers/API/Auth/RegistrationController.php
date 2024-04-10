@@ -7,7 +7,6 @@ use App\Models\User;
 use App\Rules\ValidPhoneNumber;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
 
 class RegistrationController extends BaseController
 {
@@ -18,7 +17,8 @@ class RegistrationController extends BaseController
         'email' => 'required|email|unique:users',
         'password' => 'required|min:8',
         'confirm_password' => 'required|same:password',
-        'country_id' => 'required|exists:countries,id'
+        'country_id' => 'required|exists:countries,id',
+        'currency_id' => 'required|exists:currencies,id',
     ];
 
     /**

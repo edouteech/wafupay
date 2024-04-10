@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Http\Resources\TransactionFeesResource;
 use App\Models\TransactionFees;
 use Illuminate\Http\Request;
 
@@ -19,7 +20,7 @@ class TransactionFeesController extends BaseController
      */
     public function index()
     {
-        $transactionFees = TransactionFees::with(['currency', 'user'])->get();
+        $transactionFees = TransactionFeesResource::collection(TransactionFees::all());
         return $this->handleResponse($transactionFees);
     }
 
@@ -32,7 +33,7 @@ class TransactionFeesController extends BaseController
 
         $transactionFees = TransactionFees::create([...$request->post(), ...['user_id' => $request->user()->id]]);
 
-        return $this->handleResponse($transactionFees, 'TransactionFees created successfully.');
+        return $this->handleResponse(new TransactionFeesResource($transactionFees), 'TransactionFees created successfully.');
     }
 
     /**
