@@ -34,7 +34,7 @@ class TransactionController extends BaseController
         }
 
         $this->handleValidate($request->post(), [
-            'to_id' => ['required', 'exists:accounts,id', new ValidAccount],
+            'receiver_phone_number' => ['required', 'exists:users,phone_num', new ValidAccount],
             'currency_id' => 'exists:currencies,id',
             'amount' => 'required|numeric|min:100',
             'type' => 'in:school_help,family_help,rent,others'
