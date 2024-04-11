@@ -5,7 +5,7 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class User extends JsonResource
+class TransactionResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -16,10 +16,9 @@ class User extends JsonResource
     {
         return [
             ...parent::toArray($request),
-            'country' => $this->country,
-            'account' => new AccountResource($this->account),
-            'otp_codes' => $this->otp_codes,
-            'logs' => $this->logs,
+            'sender' => $this->sender,
+            'receiver' => $this->receiver,
+            'currency' => $this->currency
         ];
     }
 }
