@@ -12,7 +12,6 @@ class PayDunya
 
     private static const CREATE_INVOICE_URL = "https://app.paydunya.com/api/v1/checkout-invoice/create";
 
-
     private static const PAYEMENT_MAPPING = [
         'moov-benin' => 'moov_benin',
         'mtn-benin' => 'mtn_benin',
