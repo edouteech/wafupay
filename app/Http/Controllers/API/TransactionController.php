@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Resources\TransactionResource;
+use App\Http\Utils\PayDunya;
 use App\Models\Transaction;
 use App\Rules\ValidAccount;
 use Illuminate\Http\Request;
@@ -40,7 +41,13 @@ class TransactionController extends BaseController
             'type' => 'in:school_help,family_help,rent,others'
         ]);
 
-        return $this->handleResponse([], 'Transaction saved successfully');
+        $sender = [
+            'first_name' => $user->first_name,
+            'last_name' => $user->last_name,
+            'country' => $user->country,
+        ];
+
+        return PayDunya::receive($request->amount, $request->providerName, $sender);
     }
 
     /**
