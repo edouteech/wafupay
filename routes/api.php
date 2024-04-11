@@ -40,6 +40,7 @@ Route::prefix('/v1')->group((function () {
             Route::apiResource('transactions-fees', TransactionFeesController::class);
             Route::apiResource('countries', CountryController::class);
             Route::apiResource('users', UserController::class);
+            Route::post('activate-account/{user}', [UserController::class, 'activate']);
             Route::apiResource('transactions', TransactionController::class)->except('store', 'show');
         });
 

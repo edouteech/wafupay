@@ -45,12 +45,26 @@ class UserController extends BaseController
         return $this->handleResponse(new ResourcesUser($user), "User created successfully");
     }
 
+    public function activate(Request $request, User $user)
+    {
+
+        $this->handleValidate($request->post(), [
+            'activate' => 'required',
+        ]);
+        $activate = filter_var($request->post('activate'), FILTER_VALIDATE_BOOLEAN);
+
+        $user->account()->update(['is_verified' => $activate]);
+
+        $state = "The user account have been " . ($activate ? 'activated' : 'deactivated');
+        return $this->handleResponse(new ResourcesUser($user), $state);
+    }
+
     /**
      * Display the specified resource.
      */
     public function show(User $user)
     {
-        return $this->handleResponse(new ResourcesUser($user),"User retrieved successfully");
+        return $this->handleResponse(new ResourcesUser($user), "User retrieved successfully");
     }
 
     /**
