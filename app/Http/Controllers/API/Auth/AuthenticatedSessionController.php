@@ -5,8 +5,7 @@ namespace App\Http\Controllers\API\Auth;
 use App\Http\Controllers\API\BaseController;
 use App\Http\Resources\User as UserResource;
 use App\Mail\TwoFactor;
-use App\Models\OtpCode;
-use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -48,9 +47,13 @@ class AuthenticatedSessionController extends BaseController
 
                 $app = new TwoFactorAuth();
                 $secret =  $app->createSecret(32);
+
+                $expirationTime = Carbon::now()->addMinutes(15);
+
                 $user->otp_codes()->create([
                     'code' => $secret,
                     'type' => '2fa',
+                    'expired_at' => $expirationTime,
                 ]);
 
                 Mail::to($user->email)->send(new TwoFactor($secret, [
@@ -98,8 +101,13 @@ class AuthenticatedSessionController extends BaseController
     {
         $user = $request->user();
 
-        if ($otp = $user->otp_codes()->where(['code' => $user->otp_code, 'is_verified' => false])->get()) {
-            if ($otp->isExpired()) {
+        if ($otp = $user->otp_codes()
+            ->where(['code' => $request->two_factor, 'is_verified' => false])
+            ->latest()
+            ->first()
+        ) {
+
+            if ($otp !== null && ($otp->expired_at !== null && Carbon::parse($otp->expired_at)->lte(Carbon::now()))) {
                 return $this->handleError('Two Factor Code is expired');
             }
             return $this->auth($request);

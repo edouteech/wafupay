@@ -26,6 +26,6 @@ class OtpCode extends Model
 
     public function isExpired(): bool
     {
-        return $this->expires_at !== null && $this->expires_at->lte(Carbon::now());
+        return $this->expired_at !== null && $this->expired_at->lte(Carbon::now());
     }
 }

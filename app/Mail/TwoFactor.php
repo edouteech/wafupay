@@ -42,7 +42,7 @@ class TwoFactor extends Mailable
             view: 'emails.two-factor-code',
             with: [
                 'code' => $this->code,
-                'fullname' => $this->names['first_name'] . ' ' . $this->$this->names['last_name']
+                'fullname' => $this->names['first_name'] . ' ' . $this->names['last_name']
             ],
         );
     }
