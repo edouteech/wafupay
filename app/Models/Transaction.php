@@ -16,8 +16,7 @@ class Transaction extends Model
         'from_id',
         'amount',
         'currency_id',
-        'type',
-        'status'
+        'type'
     ];
 
     public function currency(): BelongsTo

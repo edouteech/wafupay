@@ -4,6 +4,7 @@ use App\Http\Controllers\API\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\API\Auth\RegistrationController;
 use App\Http\Controllers\API\CountryController;
 use App\Http\Controllers\API\CurrencyController;
+use App\Http\Controllers\API\TransactionController;
 use App\Http\Controllers\API\TransactionFeesController;
 use App\Http\Controllers\API\UserController;
 use Illuminate\Http\Request;
@@ -39,6 +40,9 @@ Route::prefix('/v1')->group((function () {
             Route::apiResource('transactions-fees', TransactionFeesController::class);
             Route::apiResource('countries', CountryController::class);
             Route::apiResource('users', UserController::class);
+            Route::apiResource('transactions', TransactionController::class)->except('store', 'show');
         });
+
+        Route::apiResource('transactions', TransactionController::class)->only('store', 'show');
     });
 }));
