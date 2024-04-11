@@ -10,7 +10,6 @@ class TransactionController extends BaseController
 {
     private array $rules = [
         'to_id' => 'required|exists:accounts,id',
-        'from_id' => 'required|exists:accounts,id',
         'currency_id' => 'exists:currencies,id',
         'amount' => 'required|numeric|min:100',
         'type' => 'in:school_help,family_help,rent,others'
