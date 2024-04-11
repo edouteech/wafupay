@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\API\Auth\AuthController;
+use App\Http\Controllers\API\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\API\Auth\RegistrationController;
 use App\Http\Controllers\API\CountryController;
 use App\Http\Controllers\API\CurrencyController;
@@ -23,14 +23,14 @@ use Illuminate\Support\Facades\Route;
 Route::prefix('/v1')->group((function () {
     Route::middleware('guest')->group(function () {
         Route::prefix('/token')->group(function () {
-            Route::post('/', [AuthController::class, 'login'])->name('token.obtain');
+            Route::post('/', [AuthenticatedSessionController::class, 'login'])->name('token.obtain');
             Route::post('/register', [RegistrationController::class, 'register'])->name('token.register');
         });
     });
 
     Route::middleware('auth:sanctum')->group(function () {
         Route::prefix('/token')->group(function () {
-            Route::get('/verify', [AuthController::class, 'verify'])->name('token.verify');
+            Route::get('/verify', [AuthenticatedSessionController::class, 'verify'])->name('token.verify');
             Route::post('/revoke', [RegistrationController::class, 'revoke'])->name('token.revoke');
         });
 
