@@ -83,7 +83,7 @@ class User extends Authenticatable
         $model->fill($attributes);
         if ($model->save()) {
             $model->account()->create([
-                'account_num' => 'wurapay-' . $attributes['phone_num'] . '-' . $model->id,
+                'account_num' => 'wafupay-' . $attributes['phone_num'] . '-' . $model->id,
                 'currency_id' => $attributes['currency_id']
             ]);
             return new ResourcesUser($model);
