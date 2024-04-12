@@ -16,6 +16,12 @@ class PayDunya
 
     private const DISBURSE_URL = self::BASE_API_URL . "v2/disburse/get-invoice";
 
+    public const RESPONSE_TEXT_KEY = 'Transaction Found';
+
+    public const STATUS_COMPLETED_KEY = 'completed';
+
+    public const STATUS_OK = 200;
+
     public const PAYEMENT_MAPPING = [
         'moov-benin' => 'moov_benin',
         'mtn-benin' => 'mtn_benin',
@@ -99,7 +105,7 @@ class PayDunya
             $response = Http::post($traitedData['url'], $traitedData['data']);
 
             if ($response->successful()) {
-                return self::handleResponse($response);
+                return self::handleResponse($response, $token);
             }
 
             return "Erreur lors de la requête : " . $response->status();
@@ -134,7 +140,7 @@ class PayDunya
             $url = self::BASE_API_URL . "v2/disburse/submit-invoice";
 
             $response = Http::withHeaders(self::getHeaders())->post($url, $data);
-            return self::handleResponse($response);
+            return self::handleResponse($response, $token);
         }
         return [
             'status' => 403,
@@ -146,7 +152,19 @@ class PayDunya
     {
         $url = self::BASE_API_URL . "v1/checkout-invoice/confirm/$token";
         $res = Http::withHeaders(self::getHeaders())->get($url);
-        return $res->successful();
+        return $res->json();
+    }
+
+    public static function is_sent(string $disburse_invoice)
+    {
+        $data = [
+            "disburse_invoice" => $disburse_invoice
+        ];
+
+        $url = self::BASE_API_URL . "v2/disburse/check-status";
+
+        $res = Http::withHeaders(self::getHeaders())->post($url, $data);
+        return $res->json();
     }
 
     private static function convertToUpperCaseWithoutDash($text)
@@ -156,11 +174,12 @@ class PayDunya
         return $textInUpperCase;
     }
 
-    private static function handleResponse($response, $error = false): array
+    private static function handleResponse($response, $token = ''): array
     {
         return [
             'status' => $response->status(),
             'message' => $response->json(),
+            'token' => $token
         ];
     }
 }

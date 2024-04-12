@@ -51,14 +51,53 @@ class TransactionController extends BaseController
             'phone_num' => $request->sender_phone_number,
         ];
 
-        $requestSender = PayDunya::receive($request->amount, $request->provider_name, $sender);
+        $receiveStatus = PayDunya::receive(
+            $request->amount,
+            $request->sender_provider_name,
+            $sender
+        );
 
         if (
-            $requestSender['statut'] == 200 &&
-            $requestSender['message']['success'] === 'success'
+            $receiveStatus['status'] == PayDunya::STATUS_OK &&
+            $receiveStatus['message']['success'] === 'success' &&
+            $receiveStatus['token']
         ) {
-            
+
+            $transaction = Transaction::create([
+                'sender_phone_number' => $request->sender_phone_number,
+                'sender_provider_name' => $request->sender_provider_name,
+                'receiver_phone_number' => $request->receiver_phone_number,
+                'receiver_provider_name' => $request->receiver_provider_name,
+                'amount' => $request->amount,
+                'type' => $request->type,
+                'status' => 'completed',
+            ]);
+
+            $check = PayDunya::is_received($receiveStatus['token']);
+
+            if ($check['response_text'] == PayDunya::STATUS_COMPLETED_KEY) {
+
+                $sendStatus = PayDunya::send(
+                    $request->receiver_provider_name,
+                    $request->receiver_phone_num,
+                    $request->amount
+                );
+
+                if ($sendStatus['status'] == PayDunya::STATUS_OK) {
+                    $check = PayDunya::is_sent($sendStatus['token']);
+
+                    if ($check['response_code'] == PayDunya::STATUS_OK) {
+
+
+
+                        return $this->handleResponse($transaction);
+                    }
+                }
+                return $this->handleError($sendStatus['description'], $sendStatus);
+            }
+            return $this->handleResponse($receiveStatus, 'Sender: ' . $receiveStatus['fail_reason']);
         }
+        return $this->handleError($receiveStatus['message']['message'], $receiveStatus);
     }
 
     /**
