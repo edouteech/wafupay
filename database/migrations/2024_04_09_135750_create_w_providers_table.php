@@ -11,13 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('accounts', function (Blueprint $table) {
+        Schema::create('w_providers', function (Blueprint $table) {
             $table->id();
-            $table->string('account_num')->unique();
-            $table->float('balance')->default(0.00);
-            $table->foreignId('user_id')->constrained();
-            $table->foreignId('currency_id')->constrained();
-            $table->boolean('is_verified')->default(false);
+            $table->string('name');
+            $table->string('withdraw_mode')
+                ->comment("The name of the means of payment point when sending");
+            $table->string('sending_mode');
+            $table->string('logo')->nullable();
+            $table->foreignId('country_id')->constrained();
             $table->softDeletes();
             $table->timestamps();
         });
@@ -28,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('accounts');
+        Schema::dropIfExists('w_providers');
     }
 };

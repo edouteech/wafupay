@@ -15,8 +15,9 @@ return new class extends Migration
             $table->id();
             $table->float('min_amount');
             $table->float('max_amount');
-            $table->float('fee_amount');
-            $table->foreignId('currency_id')->constrained();
+            $table->integer('payin_fee');
+            $table->integer('payout_fee');
+            $table->foreignId('wprovider_id')->constrained('w_providers', 'id');
             $table->foreignId('user_id')->constrained();
             $table->softDeletes();
             $table->timestamps();

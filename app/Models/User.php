@@ -32,6 +32,7 @@ class User extends Authenticatable
         'is_active',
         'avatar',
         'country_id',
+        'id_card',
         'password',
     ];
 
@@ -70,24 +71,5 @@ class User extends Authenticatable
     public function country(): BelongsTo
     {
         return $this->belongsTo(Country::class);
-    }
-
-    public function account(): HasOne
-    {
-        return $this->hasOne(Account::class);
-    }
-
-    static public function create(array $attributes): self | ResourcesUser
-    {
-        $model = new self;
-        $model->fill($attributes);
-        if ($model->save()) {
-            $model->account()->create([
-                'account_num' => 'wafupay-' . $attributes['phone_num'] . '-' . $model->id,
-                'currency_id' => $attributes['currency_id']
-            ]);
-            return new ResourcesUser($model);
-        }
-        return new static();
     }
 }

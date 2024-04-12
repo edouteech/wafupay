@@ -14,13 +14,19 @@ class TransactionFees extends Model
     protected $fillable = [
         'min_amount',
         'max_amount',
-        'fee_amount',
-        'currency_id',
-        'user_id',
+        'payin_fee',
+        'payout_fee',
+        'wprovider_id',
+        'user_id'
     ];
 
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function wprovider(): BelongsTo
+    {
+        return $this->belongsTo(WProvider::class);
     }
 }

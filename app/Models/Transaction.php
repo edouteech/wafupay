@@ -12,25 +12,29 @@ class Transaction extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'to_id',
-        'from_id',
+        'user_id',
+        'payin_phone_number',
+        'payin_wprovider_id',
+        'payin_status',
+        'payout_phone_number',
+        'payout_wprovider_id',
+        'payout_status',
         'amount',
-        'currency_id',
         'type'
     ];
 
-    public function currency(): BelongsTo
+    public function payin_wprovider(): BelongsTo
     {
-        return $this->belongsTo(Currency::class);
+        return $this->belongsTo(WProvider::class);
     }
 
-    public function sender(): BelongsTo
+    public function payout_wprovider(): BelongsTo
     {
-        return $this->belongsTo(Account::class);
+        return $this->belongsTo(WProvider::class);
     }
 
-    public function receiver(): BelongsTo
+    public function user(): BelongsTo
     {
-        return $this->belongsTo(Account::class);
+        return $this->belongsTo(User::class);
     }
 }

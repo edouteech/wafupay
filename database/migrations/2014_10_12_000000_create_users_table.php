@@ -19,9 +19,11 @@ return new class extends Migration
             $table->string('phone_num')->unique();
             $table->boolean('is_admin')->default(false);
             $table->boolean('is_active')->default(true);
+            $table->boolean('is_verified')->default(false);
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->string('avatar')->nullable();
+            $table->string('id_card');
             $table->rememberToken();
             $table->timestamps();
         });

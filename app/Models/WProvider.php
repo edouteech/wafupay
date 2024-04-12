@@ -8,28 +8,24 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Currency extends Model
+class WProvider extends Model
 {
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'slug',
-        'code',
-        'symbol',
-        'user_id'
+        'name',
+        'withdraw_mode',
+        'sending_mode',
+        'logo',
     ];
-
-    protected $hidden = [
-        'deleted_at'
-    ];
-
-    public function user(): BelongsTo
-    {
-        return $this->belongsTo(User::class);
-    }
 
     public function transaction_fees(): HasMany
     {
         return $this->hasMany(TransactionFees::class);
+    }
+
+    public function country(): BelongsTo
+    {
+        return $this->belongsTo(Country::class);
     }
 }

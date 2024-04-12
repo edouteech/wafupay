@@ -13,12 +13,15 @@ return new class extends Migration
     {
         Schema::create('transactions', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->constrained();
+            $table->string('payin_phone_number');
+            $table->foreignId('payin_wprovider_id')->constrained('w_providers', 'id');
+            $table->enum('payin_status', ['pending', 'success', 'failed'])->default('pending');
+            $table->string('payout_phone_number');
+            $table->foreignId('payout_wprovider_id')->constrained('w_providers', 'id');
+            $table->enum('payout_status', ['pending', 'success', 'failed'])->default('pending');
             $table->float('amount');
-            $table->foreignId('sender_id')->constrained('accounts', 'id');
-            $table->foreignId('receiver_id')->constrained('accounts', 'id');
-            $table->foreignId('currency_id')->constrained();
             $table->enum('type', ['school_help', 'family_help', 'rent', 'others'])->default('others');
-            $table->enum('status', ['pending', 'success', 'failed'])->default('pending');
             $table->softDeletes();
             $table->timestamps();
         });
