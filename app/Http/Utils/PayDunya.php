@@ -6,13 +6,13 @@ use Illuminate\Support\Facades\Http;
 
 class PayDunya
 {
-    private static const TRANSFER = "TRANSFER";
+    private const TRANSFER = "TRANSFER";
 
-    private static const WITHDRAWAL = "WITHDRAWAL";
+    private const WITHDRAWAL = "WITHDRAWAL";
 
-    private static const CREATE_INVOICE_URL = "https://app.paydunya.com/api/v1/checkout-invoice/create";
+    private const CREATE_INVOICE_URL = "https://app.paydunya.com/api/v1/checkout-invoice/create";
 
-    public static const PAYEMENT_MAPPING = [
+    public const PAYEMENT_MAPPING = [
         'moov-benin' => 'moov_benin',
         'mtn-benin' => 'mtn_benin',
     ];

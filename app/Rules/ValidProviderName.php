@@ -17,7 +17,7 @@ class ValidProviderName implements ValidationRule
     {
         if (!array_key_exists($value, PayDunya::PAYEMENT_MAPPING)) {
             $fail('validation.valid_provider_name')
-                ->translate(['providers' => implode(', ', PayDunya::PAYEMENT_MAPPING)]);
+                ->translate(['providers' => implode(', ', array_keys(PayDunya::PAYEMENT_MAPPING))]);
         }
     }
 }
