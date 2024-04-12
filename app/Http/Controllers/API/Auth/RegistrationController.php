@@ -15,10 +15,12 @@ class RegistrationController extends BaseController
         'first_name' => 'required|string',
         'last_name' => 'required|string',
         'email' => 'required|email|unique:users',
-        'password' => 'required|min:8',
-        'confirm_password' => 'required|same:password',
+        'phone_num' => 'required|unique:users',
         'country_id' => 'required|exists:countries,id',
         'currency_id' => 'required|exists:currencies,id',
+        'id_card' => 'required|extensions:jpg,jpeg,png,bmp,gif,svg,webp|file',
+        'password' => 'required|min:8',
+        'confirm_password' => 'required|same:password',
     ];
 
     /**
@@ -29,18 +31,22 @@ class RegistrationController extends BaseController
      */
     public function register(Request $request): JsonResponse
     {
-        $this->handleValidate(
-            $request->post(),
-            [
-                ...$this->rules,
-                ...['phone_num' => ['required', 'unique:users', new ValidPhoneNumber],]
-            ]
-        );
+        $this->handleValidate($request->post(), $this->rules);
 
-        $user = User::create($request->post());
-        $user['token'] = $user->createToken($request->email)->plainTextToken;
+        try {
+            $userData = $request->except('id_card');
 
-        return $this->handleResponse($user, 'User successfully registered!');
+            if ($request->hasFile('id_card')) {
+                $logoPath = $request->file('users')->store('ID', 'public');
+                $userData['id_card'] = $logoPath;
+            }
+            $user = User::create($userData);
+            $user['token'] = $user->createToken($request->email)->plainTextToken;
+
+            return $this->handleResponse($user, 'User successfully registered!');
+        } catch (\Throwable $th) {
+            return $this->handleError($th);
+        }
     }
 
     /**
