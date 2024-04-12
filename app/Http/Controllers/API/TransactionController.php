@@ -36,22 +36,29 @@ class TransactionController extends BaseController
         }
 
         $this->handleValidate($request->post(), [
-            'receiver_phone_number' => ['required'],
-            'currency_id' => 'exists:currencies,id',
+            'sender_phone_number' => 'required|min:8|numeric',
+            'sender_provider_name' => ['required', new ValidProviderName],
+            'receiver_phone_number' => 'required|min:8|numeric',
+            'receiver_provider_name' => ['required', new ValidProviderName],
             'amount' => 'required|numeric|min:100',
             'type' => 'in:school_help,family_help,rent,others',
-            'provider_name' => ['required', new ValidProviderName],
         ]);
 
         $sender = [
             'first_name' => $user->first_name,
             'last_name' => $user->last_name,
             'email' => $user->email,
-            'phone_num' => $request->receiver_phone_number,
-            'country' => $user->country,
+            'phone_num' => $request->sender_phone_number,
         ];
 
-        return PayDunya::receive($request->amount, $request->provider_name, $sender);
+        $requestSender = PayDunya::receive($request->amount, $request->provider_name, $sender);
+
+        if (
+            $requestSender['statut'] == 200 &&
+            $requestSender['message']['success'] === 'success'
+        ) {
+            
+        }
     }
 
     /**
