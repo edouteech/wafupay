@@ -18,8 +18,10 @@ class PayDunya
     ];
 
 
-    private static function getToken(float $amount, string $desc): array
-    {
+    private static function getToken(
+        float $amount = 500,
+        string $desc = self::TRANSFER
+    ): array {
         $data = [
             'invoice' => [
                 'total_amount' => $amount,
@@ -53,7 +55,7 @@ class PayDunya
 
     private static function resolve_wallet_provider_name(
         string $token,
-        string $providerName = 'mtn-benin',
+        string $providerName,
         array $user
     ): array {
 
@@ -62,7 +64,7 @@ class PayDunya
         $data = [
             $castProviderName . "_customer_fullname" => $user['first_name'] . ' ' . $user['last_name'],
             $castProviderName . "_email" => $user['email'],
-            $castProviderName . "_phone_number" => $user['phone_num'],
+            $castProviderName . "_phone_number" => preg_replace('/^\+\d{3}/', '', $user['phone_num']),
             "payment_token" => $token
         ];
 
@@ -81,12 +83,12 @@ class PayDunya
         ];
     }
 
-    public static function receive(float $amount, string $providerName, array $user)
+    public static function receive(float $amount, string $providerName = 'mtn-benin', array $user)
     {
 
         if ($token = self::getToken($amount, self::TRANSFER)['token']) {
 
-            $traitedData = self::resolve_wallet_provider_name($token, user: $user);
+            $traitedData = self::resolve_wallet_provider_name($token, $providerName, user: $user);
 
             $response = Http::post($traitedData['url'], $traitedData['data']);
 

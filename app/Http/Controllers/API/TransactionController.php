@@ -36,7 +36,7 @@ class TransactionController extends BaseController
         }
 
         $this->handleValidate($request->post(), [
-            'receiver_phone_number' => ['required', 'exists:users,phone_num', new ValidAccount],
+            'receiver_phone_number' => ['required'],
             'currency_id' => 'exists:currencies,id',
             'amount' => 'required|numeric|min:100',
             'type' => 'in:school_help,family_help,rent,others',
@@ -46,10 +46,12 @@ class TransactionController extends BaseController
         $sender = [
             'first_name' => $user->first_name,
             'last_name' => $user->last_name,
+            'email' => $user->email,
+            'phone_num' => $request->receiver_phone_number,
             'country' => $user->country,
         ];
 
-        return PayDunya::receive($request->amount, $request->providerName, $sender);
+        return PayDunya::receive($request->amount, $request->provider_name, $sender);
     }
 
     /**
