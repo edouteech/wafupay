@@ -6,6 +6,7 @@ use App\Http\Resources\TransactionResource;
 use App\Http\Utils\PayDunya;
 use App\Models\Transaction;
 use App\Rules\ValidAccount;
+use App\Rules\ValidProviderName;
 use Illuminate\Http\Request;
 
 class TransactionController extends BaseController
@@ -38,7 +39,8 @@ class TransactionController extends BaseController
             'receiver_phone_number' => ['required', 'exists:users,phone_num', new ValidAccount],
             'currency_id' => 'exists:currencies,id',
             'amount' => 'required|numeric|min:100',
-            'type' => 'in:school_help,family_help,rent,others'
+            'type' => 'in:school_help,family_help,rent,others',
+            'provider_name' => ['required', new ValidProviderName],
         ]);
 
         $sender = [
