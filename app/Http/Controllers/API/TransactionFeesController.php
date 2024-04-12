@@ -11,8 +11,9 @@ class TransactionFeesController extends BaseController
     private array $rules = [
         'min_amount' => 'required|numeric',
         'max_amount' => 'required|numeric',
-        'fee_amount' => 'required|numeric',
-        'currency_id' => 'required',
+        'payin_fee' => 'required|numeric|max:100|min:0',
+        'payout_fee' => 'required|numeric|max:100|min:0',
+        'wprovider_id' => 'required|exists:wproviders,id'
     ];
 
     /**
@@ -41,7 +42,13 @@ class TransactionFeesController extends BaseController
      */
     public function show(TransactionFees $transactionFees)
     {
-        return $this->handleResponse($transactionFees->with(['currency', 'user'])->get());
+        if ($transactionFees) {
+            return $this->handleResponse(
+                new TransactionFeesResource($transactionFees),
+                'wallet provider retrieved successfully'
+            );
+        }
+        return $this->handleError('transaction fees provider not found');
     }
 
     /**
@@ -51,13 +58,12 @@ class TransactionFeesController extends BaseController
     {
         $payloads = $this->handleValidate($request->post(), $this->rules);
 
-        $transactionFees = $transactionFees->with(['currency', 'user']);
 
         $transactionFees->update($payloads);
 
         return $this->handleResponse(
-            $transactionFees->get(),
-            'TransactionsFees updated successfully.'
+            new TransactionFeesResource($transactionFees),
+            'TransactionFees updated successfully.'
         );
     }
 
@@ -67,6 +73,6 @@ class TransactionFeesController extends BaseController
     public function destroy(TransactionFees $transactionFees)
     {
         $transactionFees->delete();
-        return $this->handleResponse($transactionFees, 'Currency deleted successfully.');
+        return $this->handleResponse($transactionFees, 'transaction fees deleted successfully.');
     }
 }
