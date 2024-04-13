@@ -45,7 +45,7 @@ Route::prefix('/v1')->group((function () {
             Route::apiResource('wallet-providers', WProviderController::class);
             Route::apiResource('users', UserController::class);
             Route::post('activate-account/{user}', [UserController::class, 'activate']);
-            Route::post('check-transaction-status/{token}', [TransactionController::class, 'checkTransactionStatus']);
+            Route::get('check-transaction-status/{token}', [TransactionController::class, 'checkTransactionStatus']);
             Route::apiResource('transactions', TransactionController::class)
                 ->except('store', 'show');
         });
