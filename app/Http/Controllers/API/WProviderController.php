@@ -78,10 +78,10 @@ class WProviderController extends BaseController
      */
     public function show(WProvider $wProvider)
     {
-        if ($wProvider = $wProvider->with(['transaction_fees', 'country'])->get()) {
+        if ($wProvider) {
             return $this->handleResponse(
-                $wProvider,
-                'wallet provider retrieved successfully'
+                new WProviderResource($wProvider),
+                'Wallet provider retrieved successfully'
             );
         }
         return $this->handleError('wallet provider not found');
