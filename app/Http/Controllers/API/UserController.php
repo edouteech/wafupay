@@ -53,7 +53,7 @@ class UserController extends BaseController
         ]);
         $activate = filter_var($request->post('activate'), FILTER_VALIDATE_BOOLEAN);
 
-        $user->account()->update(['is_verified' => $activate]);
+        $user->update(['is_verified' => $activate]);
 
         $state = "The user account have been " . ($activate ? 'activated' : 'deactivated');
         return $this->handleResponse(new ResourcesUser($user), $state);

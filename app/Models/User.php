@@ -30,6 +30,7 @@ class User extends Authenticatable
         'phone_num',
         'is_admin',
         'is_active',
+        'is_verified',
         'avatar',
         'country_id',
         'id_card',
@@ -71,5 +72,10 @@ class User extends Authenticatable
     public function country(): BelongsTo
     {
         return $this->belongsTo(Country::class);
+    }
+
+    public function transactions(): HasMany
+    {
+        return $this->hasMany(Transaction::class);
     }
 }

@@ -29,4 +29,14 @@ class WProvider extends Model
     {
         return $this->belongsTo(Country::class);
     }
+
+    public function getFee(float | string $amount)
+    {
+        return array_filter(
+            array(...$this->transaction_fees),
+            function ($fee) use ($amount) {
+                return ($fee['min_amount'] <= $amount) &&  ($amount <= $fee['max_amount']);
+            }
+        )[0];
+    }
 }

@@ -17,9 +17,9 @@ class User extends JsonResource
         return [
             ...parent::toArray($request),
             'country' => $this->country,
-            'account' => new AccountResource($this->account),
             'otp_codes' => $this->otp_codes,
             'logs' => $this->logs,
+            'transactions' => TransactionResource::collection($this->transactions),
         ];
     }
 }

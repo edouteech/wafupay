@@ -5,11 +5,9 @@ namespace App\Http\Controllers\API;
 use App\Http\Resources\TransactionResource;
 use App\Http\Utils\PayDunya;
 use App\Models\Transaction;
-use App\Rules\ValidAccount;
-use App\Rules\ValidProviderName;
 use Illuminate\Http\Request;
 
-class TransactionController extends BaseController
+class TransactionController extends TransactionBaseController
 {
     /**
      * Display a listing of the resource.
@@ -27,7 +25,7 @@ class TransactionController extends BaseController
     {
         $user = $request->user();
 
-        if (!$user->is_active || (!$user->account || !$user->account->is_verified)) {
+        if (!$user->is_active || !$user->is_verified) {
             return $this->handleError(
                 __('validation.valid_sender_account'),
                 ['error' => 'Your account is not verified.'],
@@ -35,14 +33,9 @@ class TransactionController extends BaseController
             );
         }
 
-        $payloads = $this->handleValidate($request->post(), [
-            'payin_phone_number' => 'required|min:8|numeric',
-            'payin_wprovider_id' => ['required', new ValidProviderName],
-            'payout_phone_number' => 'required|min:8|numeric',
-            'payout_wprovider_id' => ['required', new ValidProviderName],
-            'amount' => 'required|numeric|min:100',
-            'type' => 'in:school_help,family_help,rent,others',
-        ]);
+        $payloads = $this->handleValidate($request->post(), $this->rules);
+
+        $additionalData = $this->calculate_fees($request);
 
         $sender = [
             'first_name' => $user->first_name,
@@ -52,26 +45,22 @@ class TransactionController extends BaseController
         ];
 
         $receiveStatus = PayDunya::receive(
-            $request->amount,
-            $request->sender_provider_name,
+            $additionalData['amountWithFees'],
+            $additionalData['payinProvider'],
             $sender
         );
 
         if (
             $receiveStatus['status'] == PayDunya::STATUS_OK &&
-            $receiveStatus['message']['success'] === 'success' &&
+            $receiveStatus['message']['success'] === Transaction::APPROVED_STATUS &&
             $receiveStatus['token']
         ) {
 
             $transaction = Transaction::create([
-                'payin_phone_number' => $request->sender_phone_number,
-                'payin_wprovider_id' => $request->sender_provider_name,
-                'payin_status' => $request->receiver_phone_number,
-                'payout_phone_number' => $request->receiver_provider_name,
-                'payout_wprovider_id' => $request->amount,
-                'payout_status' => $request->type,
-                'amount' => $request->type,
-                'type' => $request->type,
+                ...$payloads,
+                'payin_status' => Transaction::PENDING_STATUS,
+                'payout_status' => Transaction::PENDING_STATUS,
+                'type' => $request->type ?? 'others',
                 'token' => $receiveStatus['token'],
             ]);
 
@@ -79,18 +68,23 @@ class TransactionController extends BaseController
 
             if ($check['response_text'] == PayDunya::STATUS_COMPLETED_KEY) {
 
+                $transaction->update(['payin_status' => Transaction::APPROVED_STATUS]);
+
                 $sendStatus = PayDunya::send(
-                    $request->receiver_provider_name,
-                    $request->receiver_phone_num,
-                    $request->amount
+                    $additionalData['payoutProvider']->withdraw_mode,
+                    $request->payout_phone_num,
+                    $additionalData['amountWithoutFees']
                 );
 
                 if ($sendStatus['status'] == PayDunya::STATUS_OK) {
+
+                    $transaction->update(['disburse_token' => $sendStatus['token']]);
+
                     $check = PayDunya::is_sent($sendStatus['token']);
 
                     if ($check['response_code'] == PayDunya::STATUS_OK) {
 
-
+                        $transaction->update(['payout_status' => Transaction::APPROVED_STATUS]);
 
                         return $this->handleResponse($transaction);
                     }

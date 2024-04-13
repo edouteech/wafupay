@@ -18,7 +18,6 @@ class TransactionResource extends JsonResource
             ...parent::toArray($request),
             'sender' => $this->sender,
             'receiver' => $this->receiver,
-            'currency' => $this->currency
         ];
     }
 }

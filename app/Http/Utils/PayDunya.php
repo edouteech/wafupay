@@ -67,40 +67,40 @@ class PayDunya
 
     private static function resolve_wallet_provider_name(
         string $token,
-        string $providerName,
+        mixed $providerName,
         array $user
     ): array {
 
-        $castProviderName = self::PAYEMENT_MAPPING[$providerName];
+        $castProviderName = $providerName->sending_mode;
 
         $data = [
             $castProviderName . "_customer_fullname" => $user['first_name'] . ' ' . $user['last_name'],
             $castProviderName . "_email" => $user['email'],
-            $castProviderName . "_phone_number" => preg_replace('/^\+\d{3}/', '', $user['phone_num']),
+            $castProviderName . "_phone_number" => $user['phone_num'],
             "payment_token" => $token
         ];
 
-        if ($providerName == 'mtn-benin' || $providerName == 'mtn-ci') {
+        if ($castProviderName == 'mtn_benin' || $castProviderName == 'mtn_ci') {
             $data = [
                 ...$data,
                 ...[
-                    $castProviderName . "_wallet_provider" => self::convertToUpperCaseWithoutDash($providerName)
+                    $castProviderName . "_wallet_provider" => self::convertToUpperCaseWithoutDash($castProviderName)
                 ]
             ];
         }
 
         return [
-            'url' => self::BASE_API_URL . "v1/softpay/$providerName",
+            'url' => self::BASE_API_URL . "v1/softpay/" . $providerName->withdraw_mode,
             'data' => $data
         ];
     }
 
-    public static function receive(float $amount, string $providerName = 'mtn-benin', array $user)
+    public static function receive(float $amount, mixed $payinProvider, array $user)
     {
 
         if ($token = self::getToken($amount, self::TRANSFER)['token']) {
 
-            $traitedData = self::resolve_wallet_provider_name($token, $providerName, user: $user);
+            $traitedData = self::resolve_wallet_provider_name($token, $payinProvider, user: $user);
 
             $response = Http::post($traitedData['url'], $traitedData['data']);
 
@@ -169,7 +169,7 @@ class PayDunya
 
     private static function convertToUpperCaseWithoutDash($text)
     {
-        $textWithoutDash = str_replace('-', '', $text);
+        $textWithoutDash = str_replace('_', '', $text);
         $textInUpperCase = strtoupper($textWithoutDash);
         return $textInUpperCase;
     }
