@@ -52,7 +52,7 @@ class TransactionController extends TransactionBaseController
 
         if (
             $receiveStatus['status'] == PayDunya::STATUS_OK &&
-            $receiveStatus['message']['success'] === Transaction::APPROVED_STATUS &&
+            $receiveStatus['message']['success'] === true &&
             $receiveStatus['token']
         ) {
 
@@ -62,6 +62,7 @@ class TransactionController extends TransactionBaseController
                 'payout_status' => Transaction::PENDING_STATUS,
                 'type' => $request->type ?? 'others',
                 'token' => $receiveStatus['token'],
+                'user_id' => $user->id,
             ]);
 
             $check = PayDunya::is_received($receiveStatus['token']);
@@ -91,9 +92,19 @@ class TransactionController extends TransactionBaseController
                 }
                 return $this->handleError($sendStatus['description'], $sendStatus);
             }
-            return $this->handleResponse($receiveStatus, 'Sender: ' . $receiveStatus['fail_reason']);
+            return $this->handleResponse($receiveStatus, 'Error from Sender');
         }
         return $this->handleError($receiveStatus['message']['message'], $receiveStatus);
+    }
+
+    public function checkTransactionStatus(Request $request, $token)
+    {
+        $this->handleValidate($request->input(), ['payin' => 'required']);
+
+        if ($request->payin == true) {
+            return $this->handleResponse(PayDunya::is_received($token));
+        }
+        return $this->handleResponse(PayDunya::is_sent($token));
     }
 
     /**

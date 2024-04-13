@@ -2,6 +2,7 @@
 
 namespace App\Http\Utils;
 
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Http;
 
 class PayDunya
@@ -129,7 +130,7 @@ class PayDunya
         return $response->json();
     }
 
-    public static function send(string $withdraw_mode, string $phone_num, float $amount)
+    public static function send(string $withdraw_mode, string $phone_num, float $amount): array
     {
         if ($token = self::disburse_token($withdraw_mode, $phone_num, $amount)['disburse_token']) {
             $data = [
@@ -148,14 +149,14 @@ class PayDunya
         ];
     }
 
-    public static function is_received(string $token)
+    public static function is_received(string $token): array
     {
         $url = self::BASE_API_URL . "v1/checkout-invoice/confirm/$token";
         $res = Http::withHeaders(self::getHeaders())->get($url);
         return $res->json();
     }
 
-    public static function is_sent(string $disburse_invoice)
+    public static function is_sent(string $disburse_invoice): array
     {
         $data = [
             "disburse_invoice" => $disburse_invoice
@@ -167,7 +168,7 @@ class PayDunya
         return $res->json();
     }
 
-    private static function convertToUpperCaseWithoutDash($text)
+    private static function convertToUpperCaseWithoutDash($text): string
     {
         $textWithoutDash = str_replace('_', '', $text);
         $textInUpperCase = strtoupper($textWithoutDash);

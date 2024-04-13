@@ -24,15 +24,19 @@ use Illuminate\Support\Facades\Route;
 Route::prefix('/v1')->group((function () {
     Route::middleware('guest')->group(function () {
         Route::prefix('/token')->group(function () {
-            Route::post('/', [AuthenticatedSessionController::class, 'login'])->name('token.obtain');
-            Route::post('/register', [RegistrationController::class, 'register'])->name('token.register');
+            Route::post('/', [AuthenticatedSessionController::class, 'login'])
+                ->name('token.obtain');
+            Route::post('/register', [RegistrationController::class, 'register'])
+                ->name('token.register');
         });
     });
 
     Route::middleware('auth:sanctum')->group(function () {
         Route::prefix('/token')->group(function () {
-            Route::get('/verify', [AuthenticatedSessionController::class, 'verify'])->name('token.verify');
-            Route::post('/revoke', [RegistrationController::class, 'revoke'])->name('token.revoke');
+            Route::get('/verify', [AuthenticatedSessionController::class, 'verify'])
+                ->name('token.verify');
+            Route::post('/revoke', [RegistrationController::class, 'revoke'])
+                ->name('token.revoke');
         });
 
         Route::middleware('admin')->group(function () {
@@ -41,7 +45,9 @@ Route::prefix('/v1')->group((function () {
             Route::apiResource('wallet-providers', WProviderController::class);
             Route::apiResource('users', UserController::class);
             Route::post('activate-account/{user}', [UserController::class, 'activate']);
-            Route::apiResource('transactions', TransactionController::class)->except('store', 'show');
+            Route::post('check-transaction-status/{token}', [TransactionController::class, 'checkTransactionStatus']);
+            Route::apiResource('transactions', TransactionController::class)
+                ->except('store', 'show');
         });
 
         Route::apiResource('transactions', TransactionController::class)->only('store', 'show');
