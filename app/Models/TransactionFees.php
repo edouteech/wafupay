@@ -16,7 +16,7 @@ class TransactionFees extends Model
         'max_amount',
         'payin_fee',
         'payout_fee',
-        'wprovider_id',
+        'w_provider_id',
         'user_id'
     ];
 

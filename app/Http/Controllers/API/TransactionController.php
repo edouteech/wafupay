@@ -35,11 +35,11 @@ class TransactionController extends BaseController
             );
         }
 
-        $this->handleValidate($request->post(), [
-            'sender_phone_number' => 'required|min:8|numeric',
-            'sender_provider_name' => ['required', new ValidProviderName],
-            'receiver_phone_number' => 'required|min:8|numeric',
-            'receiver_provider_name' => ['required', new ValidProviderName],
+        $payloads = $this->handleValidate($request->post(), [
+            'payin_phone_number' => 'required|min:8|numeric',
+            'payin_wprovider_id' => ['required', new ValidProviderName],
+            'payout_phone_number' => 'required|min:8|numeric',
+            'payout_wprovider_id' => ['required', new ValidProviderName],
             'amount' => 'required|numeric|min:100',
             'type' => 'in:school_help,family_help,rent,others',
         ]);
@@ -48,7 +48,7 @@ class TransactionController extends BaseController
             'first_name' => $user->first_name,
             'last_name' => $user->last_name,
             'email' => $user->email,
-            'phone_num' => $request->sender_phone_number,
+            'phone_num' => $request->payin_phone_number,
         ];
 
         $receiveStatus = PayDunya::receive(
@@ -64,13 +64,15 @@ class TransactionController extends BaseController
         ) {
 
             $transaction = Transaction::create([
-                'sender_phone_number' => $request->sender_phone_number,
-                'sender_provider_name' => $request->sender_provider_name,
-                'receiver_phone_number' => $request->receiver_phone_number,
-                'receiver_provider_name' => $request->receiver_provider_name,
-                'amount' => $request->amount,
+                'payin_phone_number' => $request->sender_phone_number,
+                'payin_wprovider_id' => $request->sender_provider_name,
+                'payin_status' => $request->receiver_phone_number,
+                'payout_phone_number' => $request->receiver_provider_name,
+                'payout_wprovider_id' => $request->amount,
+                'payout_status' => $request->type,
+                'amount' => $request->type,
                 'type' => $request->type,
-                'status' => 'completed',
+                'token' => $receiveStatus['token'],
             ]);
 
             $check = PayDunya::is_received($receiveStatus['token']);

@@ -17,7 +17,7 @@ return new class extends Migration
             $table->float('max_amount');
             $table->integer('payin_fee');
             $table->integer('payout_fee');
-            $table->foreignId('wprovider_id')->constrained('w_providers', 'id');
+            $table->foreignId('w_provider_id')->constrained()->onDelete('cascade');
             $table->foreignId('user_id')->constrained();
             $table->softDeletes();
             $table->timestamps();

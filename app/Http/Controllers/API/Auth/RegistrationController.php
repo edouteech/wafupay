@@ -15,10 +15,9 @@ class RegistrationController extends BaseController
         'first_name' => 'required|string',
         'last_name' => 'required|string',
         'email' => 'required|email|unique:users',
-        'phone_num' => 'required|unique:users',
+        'phone_num' => 'required|unique:users|min:8|max:10',
         'country_id' => 'required|exists:countries,id',
-        'currency_id' => 'required|exists:currencies,id',
-        'id_card' => 'required|extensions:jpg,jpeg,png,bmp,gif,svg,webp|file',
+        'id_card' => 'extensions:jpg,jpeg,png,bmp,gif,svg,pdf|file',
         'password' => 'required|min:8',
         'confirm_password' => 'required|same:password',
     ];
@@ -37,7 +36,7 @@ class RegistrationController extends BaseController
             $userData = $request->except('id_card');
 
             if ($request->hasFile('id_card')) {
-                $logoPath = $request->file('users')->store('ID', 'public');
+                $logoPath = $request->file('id_card')->store('ID', 'public');
                 $userData['id_card'] = $logoPath;
             }
             $user = User::create($userData);

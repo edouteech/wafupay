@@ -7,7 +7,7 @@ use App\Http\Controllers\API\CurrencyController;
 use App\Http\Controllers\API\TransactionController;
 use App\Http\Controllers\API\TransactionFeesController;
 use App\Http\Controllers\API\UserController;
-use Illuminate\Http\Request;
+use App\Http\Controllers\API\WProviderController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -36,9 +36,9 @@ Route::prefix('/v1')->group((function () {
         });
 
         Route::middleware('admin')->group(function () {
-            Route::apiResource('currencies', CurrencyController::class);
             Route::apiResource('transactions-fees', TransactionFeesController::class);
             Route::apiResource('countries', CountryController::class);
+            Route::apiResource('wallet-providers', WProviderController::class);
             Route::apiResource('users', UserController::class);
             Route::post('activate-account/{user}', [UserController::class, 'activate']);
             Route::apiResource('transactions', TransactionController::class)->except('store', 'show');

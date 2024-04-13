@@ -10,9 +10,9 @@ use Illuminate\Http\Request;
 class WProviderController extends BaseController
 {
     private array $rules = [
-        'name' => 'required|string',
-        'withdraw_mode' => 'required|string|unique:wproviders',
-        'sending_mode' => 'required|string|unique:wproviders',
+        'name' => 'required|string|unique:w_providers',
+        'withdraw_mode' => 'required|string|unique:w_providers',
+        'sending_mode' => 'required|string|unique:w_providers',
         'country_id' => 'required|exists:countries,id',
         'logo' => 'extensions:jpg,jpeg,png,bmp,gif,svg,webp|file',
         'fees' => 'required|array',
@@ -29,7 +29,7 @@ class WProviderController extends BaseController
     {
         return $this->handleResponse(
             WProviderResource::collection(
-                WProvider::orderByDesc('id')
+                WProvider::orderByDesc('id')->get()
             ),
             'wallet providers and their associated transaction fees retrieved successfully'
         );
@@ -78,9 +78,9 @@ class WProviderController extends BaseController
      */
     public function show(WProvider $wProvider)
     {
-        if ($wProvider) {
+        if ($wProvider = $wProvider->with(['transaction_fees', 'country'])->get()) {
             return $this->handleResponse(
-                new WProviderResource($wProvider),
+                $wProvider,
                 'wallet provider retrieved successfully'
             );
         }
@@ -92,16 +92,24 @@ class WProviderController extends BaseController
      */
     public function update(Request $request, WProvider $wProvider)
     {
-        $this->handleValidate($request->post(), $this->rules);
+        $this->handleValidate($request->post(), [
+            'name' => 'required|string',
+            'withdraw_mode' => 'required|string',
+            'sending_mode' => 'required|string',
+            'country_id' => 'required|exists:countries,id',
+            'logo' => 'extensions:jpg,jpeg,png,bmp,gif,svg,webp|file',
+        ]);
 
         try {
+            $wProvider = $wProvider->with(['transaction_fees', 'country'])->get();
+
             $wProviderData = $request->except('logo');
 
             if ($request->hasFile('logo')) {
                 $logoPath = $request->file('logo')->store('wprovider-logos', 'public');
                 $wProviderData['logo'] = $logoPath;
             }
-            
+
             $wProvider->update($wProviderData);
 
             $feesData = $request->input('fees');

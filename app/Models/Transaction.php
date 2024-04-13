@@ -20,8 +20,16 @@ class Transaction extends Model
         'payout_wprovider_id',
         'payout_status',
         'amount',
+        'token',
+        'disburse_token',
         'type'
     ];
+
+    public const PENDING_STATUS = 'pending';
+
+    public const APPROVED_STATUS = 'success';
+
+    public const REJECTED_STATUS = 'failed';
 
     public function payin_wprovider(): BelongsTo
     {

@@ -22,6 +22,8 @@ return new class extends Migration
             $table->enum('payout_status', ['pending', 'success', 'failed'])->default('pending');
             $table->float('amount');
             $table->enum('type', ['school_help', 'family_help', 'rent', 'others'])->default('others');
+            $table->string('token')->nullable();
+            $table->string('disburse_token')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

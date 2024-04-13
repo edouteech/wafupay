@@ -13,7 +13,7 @@ class TransactionFeesController extends BaseController
         'max_amount' => 'required|numeric',
         'payin_fee' => 'required|numeric|max:100|min:0',
         'payout_fee' => 'required|numeric|max:100|min:0',
-        'wprovider_id' => 'required|exists:wproviders,id'
+        'wprovider_id' => 'required|exists:w_providers,id'
     ];
 
     /**
