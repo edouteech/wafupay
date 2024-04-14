@@ -32,7 +32,7 @@ class CountryController extends BaseController
         $country = Country::create($request->all());
 
         return $this->handleResponse(
-            $country->with(['users'])->get(),
+            $country,
             'Country successfully created.'
         );
     }
@@ -40,25 +40,28 @@ class CountryController extends BaseController
     /**
      * Display the specified resource.
      */
-    public function show(Country $country)
+    public function show($country)
     {
-        return $this->handleResponse($country->with(['users'])->get());
+        $country = Country::with('users')->findOrFail($country);
+        return $this->handleResponse($country);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Country $country)
+    public function update(Request $request, $country)
     {
         $this->handleValidate($request->post(), [
             'slug' => 'required|string',
             'code' => 'required|string|uppercase',
         ]);
 
+        $country = Country::findOrFail($country);
+
         $country->update($request->all());
 
         return $this->handleResponse(
-            $country->with(['users'])->get(),
+            $country,
             'Country updated successfully'
         );
     }
@@ -66,8 +69,9 @@ class CountryController extends BaseController
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Country $country)
+    public function destroy($country)
     {
+        $country = Country::findOrFail($country);
         $country->delete();
         return $this->handleResponse($country, 'Currency deleted successfully.');
     }
