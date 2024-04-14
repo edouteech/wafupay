@@ -14,7 +14,7 @@ class WProviderController extends BaseController
         'withdraw_mode' => 'required|string|unique:w_providers',
         'sending_mode' => 'required|string|unique:w_providers',
         'country_id' => 'required|exists:countries,id',
-        'logo' => 'extensions:jpg,jpeg,png,bmp,gif,svg,webp|file',
+        'logo' => 'extensions:jpg,jpeg,png,bmp,gif,svg,webp|file|max:2048',
         'fees' => 'required|array',
         'fees.*.payin_fee' => 'required|numeric|max:100|min:0',
         'fees.*.payout_fee' => 'required|numeric|max:100|min:0',
@@ -76,8 +76,9 @@ class WProviderController extends BaseController
     /**
      * Display the specified resource.
      */
-    public function show(WProvider $wProvider)
+    public function show($wProvider)
     {
+        $wProvider = WProvider::findOrFail($wProvider);
         if ($wProvider->id) {
             return $this->handleResponse(
                 new WProviderResource($wProvider),
@@ -90,48 +91,45 @@ class WProviderController extends BaseController
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, WProvider $wProvider)
+    public function update(Request $request, $wProvider)
     {
+
         $this->handleValidate($request->post(), [
             'name' => 'required|string',
             'withdraw_mode' => 'required|string',
             'sending_mode' => 'required|string',
             'country_id' => 'required|exists:countries,id',
             'logo' => 'extensions:jpg,jpeg,png,bmp,gif,svg,webp|file',
+            'fees.*.id' => 'required',
         ]);
 
-        try {
-            $wProvider = $wProvider->with(['transaction_fees', 'country'])->get();
+        $wProvider = WProvider::findOrFail($wProvider);
+        $wProviderData = $request->except('logo');
 
-            $wProviderData = $request->except('logo');
-
-            if ($request->hasFile('logo')) {
-                $logoPath = $request->file('logo')->store('wprovider-logos', 'public');
-                $wProviderData['logo'] = $logoPath;
-            }
-
-            $wProvider->update($wProviderData);
-
-            $feesData = $request->input('fees');
-
-            foreach ($feesData as $fee) {
-                $transactionFee = $wProvider->transaction_fees()->findOrFail($fee['id']);
-
-                $transactionFee->update([
-                    'payin_fee' => $fee['payin_fee'],
-                    'payout_fee' => $fee['payout_fee'],
-                    'min_amount' => $fee['min_amount'],
-                    'max_amount' => $fee['max_amount'],
-                ]);
-            }
-
-            return $this->handleResponse(
-                new WProviderResource($wProvider),
-                'wallet provider updated successfully'
-            );
-        } catch (\Throwable $th) {
-            return $this->handleError($th);
+        if ($request->hasFile('logo')) {
+            $logoPath = $request->file('logo')->store('wprovider-logos', 'public');
+            $wProviderData['logo'] = $logoPath;
         }
+
+        $wProvider->update($wProviderData);
+
+        $feesData = $request->input('fees', []);
+
+        foreach ($feesData as $fee) {
+            $transactionFee = $wProvider->transaction_fees()->findOrFail($fee['id']);
+
+            $transactionFee->update([
+                'payin_fee' => $fee['payin_fee'],
+                'payout_fee' => $fee['payout_fee'],
+                'min_amount' => $fee['min_amount'],
+                'max_amount' => $fee['max_amount'],
+            ]);
+        }
+
+        return $this->handleResponse(
+            new WProviderResource($wProvider),
+            'wallet provider updated successfully'
+        );
     }
 
     /**
@@ -139,6 +137,7 @@ class WProviderController extends BaseController
      */
     public function destroy(WProvider $wProvider)
     {
+        $wProvider = WProvider::findOrFail($wProvider);
         $wProvider->delete();
         return $this->handleResponse(new WProviderResource($wProvider), 'wallet provider deleted successfully');
     }

@@ -7,6 +7,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class WProviderResource extends JsonResource
 {
+    public $preserveKeys = true;
     /**
      * Transform the resource into an array.
      *

@@ -2,7 +2,6 @@
 
 namespace App\Http\Utils;
 
-use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Http;
 
 class PayDunya
