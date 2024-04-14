@@ -18,8 +18,8 @@ class WProviderController extends BaseController
         'fees' => 'required|array',
         'fees.*.payin_fee' => 'required|numeric|max:100|min:0',
         'fees.*.payout_fee' => 'required|numeric|max:100|min:0',
-        'fees.*.min_amount' => 'required|numeric|min_digits:500',
-        'fees.*.max_amount' => 'required|numeric|max_digits:500000',
+        'fees.*.min_amount' => 'required|numeric|min:500',
+        'fees.*.max_amount' => 'required|numeric|max:500000',
     ];
 
     /**
@@ -100,7 +100,6 @@ class WProviderController extends BaseController
             'sending_mode' => 'required|string',
             'country_id' => 'required|exists:countries,id',
             'logo' => 'extensions:jpg,jpeg,png,bmp,gif,svg,webp|file',
-            'fees.*.id' => 'required',
         ]);
 
         $wProvider = WProvider::findOrFail($wProvider);
@@ -116,7 +115,7 @@ class WProviderController extends BaseController
         $feesData = $request->input('fees', []);
 
         foreach ($feesData as $fee) {
-            $transactionFee = $wProvider->transaction_fees()->findOrFail($fee['id']);
+            $transactionFee = $wProvider->transaction_fees()->first();
 
             $transactionFee->update([
                 'payin_fee' => $fee['payin_fee'],
@@ -135,10 +134,10 @@ class WProviderController extends BaseController
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(WProvider $wProvider)
+    public function destroy($wProvider)
     {
         $wProvider = WProvider::findOrFail($wProvider);
         $wProvider->delete();
-        return $this->handleResponse(new WProviderResource($wProvider), 'wallet provider deleted successfully');
+        return $this->handleResponse($wProvider->sending_mode . ' wallet provider deleted successfully');
     }
 }

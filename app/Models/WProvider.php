@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Http\Utils\ValidationException;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -10,7 +11,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class WProvider extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory;
 
     protected $fillable = [
         'name',
@@ -37,6 +38,10 @@ class WProvider extends Model
             function ($fee) use ($amount) {
                 return ($fee['min_amount'] <= $amount) &&  ($amount <= $fee['max_amount']);
             }
-        )[0];
+        )[0] ??
+            throw new ValidationException(json_encode([
+                'status' => 403,
+                'message' => "Le solde que vous essayez d'envoyer est trop inferieur ou trop grande, nous supportons de 500 à 500 000 FCFA pour ce operateur"
+            ]));
     }
 }

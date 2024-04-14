@@ -13,10 +13,10 @@ return new class extends Migration
     {
         Schema::create('transaction_fees', function (Blueprint $table) {
             $table->id();
-            $table->float('min_amount');
-            $table->float('max_amount');
-            $table->integer('payin_fee');
-            $table->integer('payout_fee');
+            $table->string('min_amount');
+            $table->string('max_amount');
+            $table->float('payin_fee');
+            $table->float('payout_fee');
             $table->foreignId('w_provider_id')->constrained()->onDelete('cascade');
             $table->foreignId('user_id')->constrained();
             $table->softDeletes();

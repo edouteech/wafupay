@@ -110,9 +110,11 @@ class TransactionController extends TransactionBaseController
     /**
      * Display the specified resource.
      */
-    public function show(Transaction $transaction)
+    public function show($transaction)
     {
-        //
+        $transaction = Transaction::findOrFail($transaction);
+
+        return $this->handleResponse(new TransactionResource($transaction));
     }
 
     /**
