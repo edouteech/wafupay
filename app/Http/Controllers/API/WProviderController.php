@@ -18,8 +18,8 @@ class WProviderController extends BaseController
         'fees' => 'required|array',
         'fees.*.payin_fee' => 'required|numeric|max:100|min:0',
         'fees.*.payout_fee' => 'required|numeric|max:100|min:0',
-        'fees.*.min_amount' => 'required|numeric',
-        'fees.*.max_amount' => 'required|numeric',
+        'fees.*.min_amount' => 'required|numeric|min_digits:500',
+        'fees.*.max_amount' => 'required|numeric|max_digits:500000',
     ];
 
     /**
@@ -30,7 +30,7 @@ class WProviderController extends BaseController
         return $this->handleResponse(
             WProviderResource::collection(
                 WProvider::orderByDesc('id')->get()
-            ),
+            )->resource,
             'wallet providers and their associated transaction fees retrieved successfully'
         );
     }
@@ -78,7 +78,7 @@ class WProviderController extends BaseController
      */
     public function show(WProvider $wProvider)
     {
-        if ($wProvider) {
+        if ($wProvider->id) {
             return $this->handleResponse(
                 new WProviderResource($wProvider),
                 'Wallet provider retrieved successfully'

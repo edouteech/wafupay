@@ -17,7 +17,6 @@ class TransactionFeesResource extends JsonResource
         return [
             ...parent::toArray($request),
             'user' => $this->user,
-            'currency' => $this->currency,
         ];
     }
 }

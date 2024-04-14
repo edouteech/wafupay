@@ -16,8 +16,8 @@ class WProviderResource extends JsonResource
     {
         return [
             ...parent::toArray($request),
-            'fees' => $this->transaction_fees ?? $request->transaction_fees,
-            'country' => $this->country ?? $request->country
+            'fees' => TransactionFeesResource::collection($this->transaction_fees)->resource,
+            'country' => $this->country
         ];
     }
 }
