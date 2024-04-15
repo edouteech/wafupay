@@ -21,7 +21,9 @@ class TransactionFeesController extends BaseController
      */
     public function index()
     {
-        $transactionFees = TransactionFeesResource::collection(TransactionFees::all());
+        $transactionFees = TransactionFeesResource::collection(
+            TransactionFees::orderByDesc('id')->get()
+        );
         return $this->handleResponse($transactionFees);
     }
 

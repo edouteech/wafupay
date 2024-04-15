@@ -22,24 +22,19 @@ class UserController extends BaseController
      */
     public function store(Request $request)
     {
-        $rules = [
+        $this->handleValidate($request->post(), [
             'first_name' => 'required|string',
             'last_name' => 'required|string',
             'email' => 'required|email|unique:users',
+            'phone_num' => 'required|unique:users',
             'password' => 'required|min:8',
             'confirm_password' => 'required|same:password',
-            'currency_id' => 'required|exists:currencies,id',
-        ];
-
-        $this->handleValidate(
-            $request->post(),
-            $rules
-        );
+        ]);
 
         $user = User::create($request->post());
 
         if ($request->is_admin) {
-            $user->update(['is_admin' => true]);
+            $user->update(['is_admin' => true, 'is_verified' => true]);
         }
 
         return $this->handleResponse(new ResourcesUser($user), "User created successfully");

@@ -13,11 +13,14 @@ class TransactionBaseController extends BaseController
         'payout_phone_number' => 'required|min_digits:8|numeric|max_digits:10',
         'payout_wprovider_id' => ['required', 'exists:w_providers,id'],
         'amount' => 'required|numeric|min:200',
+        'sender_support_fee' => 'required',
         'type' => 'in:school_help,family_help,rent,others',
     ];
 
     protected function calculate_fees(Request $request): array
     {
+        $isSupportedFee = filter_var($request->post('sender_support_fee'), FILTER_VALIDATE_BOOLEAN);
+
         $amountWithoutFees = $request->amount;
 
         $payinProvider = WProvider::where('id', $request->payin_wprovider_id)->first();
@@ -27,6 +30,11 @@ class TransactionBaseController extends BaseController
             $payoutProvider->getFee($amountWithoutFees)->payout_fee;
 
         $amountWithFees = (($amountWithoutFees * $totalFees) / 100) + $amountWithoutFees;
+
+        if (!$isSupportedFee) {
+            $amountWithoutFees -= ($amountWithFees - $amountWithoutFees);
+            $amountWithFees = $request->amount;
+        }
 
         return [
             'payinProvider' => $payinProvider,
