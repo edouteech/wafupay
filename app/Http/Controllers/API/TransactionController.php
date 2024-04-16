@@ -41,6 +41,7 @@ class TransactionController extends TransactionBaseController
             'first_name' => $user->first_name,
             'last_name' => $user->last_name,
             'email' => $user->email,
+            'country' => $user->country->slug,
             'phone_num' => $request->payin_phone_number,
         ];
 
@@ -94,7 +95,7 @@ class TransactionController extends TransactionBaseController
             }
             return $this->handleResponse($receiveStatus, 'Error from Sender');
         }
-        return $this->handleError($receiveStatus['message']['message'], $receiveStatus);
+        return $this->handleResponse($receiveStatus);
     }
 
     public function checkTransactionStatus(Request $request, $token)

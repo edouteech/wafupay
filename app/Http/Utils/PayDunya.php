@@ -89,6 +89,12 @@ class PayDunya
             ];
         }
 
+        if ($castProviderName == 'moov_togo') {
+            $data = [
+                ...$data, ...[$castProviderName . "_customer_address" => $user['country']]
+            ];
+        }
+
         return [
             'url' => self::BASE_API_URL . "v1/softpay/" . $providerName->withdraw_mode,
             'data' => $data
