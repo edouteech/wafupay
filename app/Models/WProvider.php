@@ -41,7 +41,7 @@ class WProvider extends Model
         )[0] ??
             throw new ValidationException(json_encode([
                 'status' => 403,
-                'message' => "Le solde que vous essayez d'envoyer est trop inferieur ou trop grande, nous supportons de 500 à 500 000 FCFA pour ce operateur"
+                'message' => "Le solde que vous essayez d'envoyer est trop inferieur ou trop grande, nous supportons de 500 à 500 000 FCFA pour ce gestionnaire de portefeuil"
             ]));
     }
 }

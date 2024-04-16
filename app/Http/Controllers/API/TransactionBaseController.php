@@ -23,8 +23,8 @@ class TransactionBaseController extends BaseController
 
         $amountWithoutFees = $request->amount;
 
-        $payinProvider = WProvider::where('id', $request->payin_wprovider_id)->first();
-        $payoutProvider = WProvider::where('id', $request->payout_wprovider_id)->first();
+        $payinProvider = WProvider::find($request->payin_wprovider_id);
+        $payoutProvider = WProvider::find($request->payout_wprovider_id);
 
         $totalFees = $payinProvider->getFee($amountWithoutFees)->payin_fee +
             $payoutProvider->getFee($amountWithoutFees)->payout_fee;
@@ -40,8 +40,8 @@ class TransactionBaseController extends BaseController
             'payinProvider' => $payinProvider,
             'payoutProvider' => $payoutProvider,
             'totalFees' => $totalFees,
-            'amountWithoutFees' => $amountWithoutFees,
-            'amountWithFees' => $amountWithFees,
+            'amountWithoutFees' => (float) $amountWithoutFees,
+            'amountWithFees' => (float) $amountWithFees,
         ];
     }
 }
