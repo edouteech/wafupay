@@ -80,18 +80,23 @@ class PayDunya
             "payment_token" => $token
         ];
 
+        if ($providerName->with_otp) {
+            $data = [
+                ...$data,
+                $castProviderName . "_otp" => $user['otp']
+            ];
+        }
+
         if ($castProviderName == 'mtn_benin' || $castProviderName == 'mtn_ci') {
             $data = [
                 ...$data,
-                ...[
-                    $castProviderName . "_wallet_provider" => self::convertToUpperCaseWithoutDash($castProviderName)
-                ]
+                $castProviderName . "_wallet_provider" => self::convertToUpperCaseWithoutDash($castProviderName)
             ];
         }
 
         if ($castProviderName == 'moov_togo') {
             $data = [
-                ...$data, ...[$castProviderName . "_customer_address" => $user['country']]
+                ...$data, $castProviderName . "_customer_address" => $user['country']
             ];
         }
 

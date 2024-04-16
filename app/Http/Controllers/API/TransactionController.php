@@ -43,6 +43,7 @@ class TransactionController extends TransactionBaseController
             'email' => $user->email,
             'country' => $user->country->slug,
             'phone_num' => $request->payin_phone_number,
+            'otp' => $request->opt,
         ];
 
         $receiveStatus = PayDunya::receive(

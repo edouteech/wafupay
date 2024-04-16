@@ -18,7 +18,8 @@ class WProvider extends Model
         'withdraw_mode',
         'sending_mode',
         'logo',
-        'country_id'
+        'country_id',
+        'with_otp',
     ];
 
     public function transaction_fees(): HasMany
