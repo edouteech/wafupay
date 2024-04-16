@@ -104,11 +104,11 @@ class PayDunya
 
             $response = Http::post($traitedData['url'], $traitedData['data']);
 
-            if ($response->successful()) {
-                return self::handleResponse($response, $token);
-            }
-
-            return "Erreur lors de la requête : " . $response->status();
+            // if ($response->successful()) {
+            //     return self::handleResponse($response, $token);
+            // }
+            return self::handleResponse($response, $token);
+            //return "Erreur lors de la requête : " . $response->status();
         }
     }
 
