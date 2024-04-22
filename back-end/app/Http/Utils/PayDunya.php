@@ -48,8 +48,14 @@ class PayDunya
             ],
             'store' => [
                 'name' => env('PAYDUNYA_STORE_NAME')
-            ]
+            ],
         ];
+
+        if (env('APP_ENV') == 'production') {
+            $data['actions']  = [
+                'callback_url' => route('transaction.updateStatus')
+            ];
+        }
 
         $response = Http::withHeaders(self::getHeaders())->post(self::CREATE_INVOICE_URL, $data);
 
@@ -62,6 +68,7 @@ class PayDunya
         }
         return [
             'status' => 403,
+            'message' => $response->json()
         ];
     }
 

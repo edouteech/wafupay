@@ -53,3 +53,5 @@ Route::prefix('/v1')->group((function () {
         Route::apiResource('transactions', TransactionController::class)->only('store', 'show');
     });
 }));
+
+Route::any('update-transaction-status', [TransactionController::class, 'updateTransactionStatus'])->name('transaction.updateStatus');

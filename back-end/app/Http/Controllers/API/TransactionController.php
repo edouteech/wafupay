@@ -109,6 +109,21 @@ class TransactionController extends TransactionBaseController
         return $this->handleResponse(PayDunya::is_sent($token));
     }
 
+    public function updateTransactionStatus(Request $request)
+    {
+        $calculate_hash = hash('sha512', env('PAYDUNYA_MASTER_KEY'));
+
+        if ($calculate_hash !== $request->hash) {
+            return;
+        }
+
+        $transaction = Transaction::where('token', $request->invoice['token']);
+        $serverStatus = $request->status;
+
+        $status = $serverStatus === 'completed' ? 'success' : ($serverStatus === 'canceled' ? 'failed' : ($serverStatus === 'failed' ? 'failed' : null));
+        $transaction->update(['payin_status' => $status]);
+    }
+
     /**
      * Display the specified resource.
      */
