@@ -67,9 +67,9 @@ class TransactionController extends TransactionBaseController
                 'user_id' => $user->id,
             ]);
 
-            $check = PayDunya::is_received($receiveStatus['token']);
+            //$check = PayDunya::is_received($receiveStatus['token']);
 
-            if ($check['response_text'] == PayDunya::STATUS_COMPLETED_KEY) {
+            if ($this->confirm_received_status_in_async_mode($receiveStatus['token'])) {
 
                 $transaction->update(['payin_status' => Transaction::APPROVED_STATUS]);
 
@@ -94,7 +94,7 @@ class TransactionController extends TransactionBaseController
                 }
                 return $this->handleError($sendStatus['description'], $sendStatus);
             }
-            return $this->handleResponse($receiveStatus, 'Error from Sender');
+            return $this->handleError('Delai d\'attente depassé, transaction échoué', $receiveStatus);
         }
         return $this->handleResponse($receiveStatus);
     }

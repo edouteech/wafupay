@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Http\Utils\PayDunya;
 use App\Models\WProvider;
 use Illuminate\Http\Request;
 
@@ -12,7 +13,7 @@ class TransactionBaseController extends BaseController
         'payin_wprovider_id' => ['required', 'exists:w_providers,id'],
         'payout_phone_number' => 'required|min_digits:8|numeric|max_digits:10',
         'payout_wprovider_id' => ['required', 'exists:w_providers,id'],
-        'amount' => 'required|numeric|min:200',
+        'amount' => 'required|numeric|min:1',
         'sender_support_fee' => 'required',
         'type' => 'in:school_help,family_help,rent,others',
     ];
@@ -43,5 +44,29 @@ class TransactionBaseController extends BaseController
             'amountWithoutFees' => (float) $amountWithoutFees,
             'amountWithFees' => (float) $amountWithFees,
         ];
+    }
+
+    protected function confirm_received_status_in_async_mode(string $token)
+    {
+        $maxAttempts = 10;
+        $attempt = 0;
+
+        while ($attempt < $maxAttempts) {
+            $check = PayDunya::is_received($token);
+
+            if ($check['response_text'] == PayDunya::STATUS_COMPLETED_KEY) {
+                return true;
+            } elseif ($check['response_text'] == 'cancelled' || $check['response_text'] == 'failed') {
+                break;
+            } else {
+                sleep(3);
+                $attempt++;
+            }
+        }
+
+        if ($attempt >= $maxAttempts) {
+            return false;
+        }
+        return false;
     }
 }
