@@ -67,15 +67,13 @@ class TransactionController extends TransactionBaseController
                 'user_id' => $user->id,
             ]);
 
-            //$check = PayDunya::is_received($receiveStatus['token']);
-
-            if ($this->confirm_received_status_in_async_mode($receiveStatus['token'])) {
+            if ( true || $this->confirm_received_status_in_async_mode($receiveStatus['token'])) {
 
                 $transaction->update(['payin_status' => Transaction::APPROVED_STATUS]);
 
                 $sendStatus = PayDunya::send(
                     $additionalData['payoutProvider']->withdraw_mode,
-                    $request->payout_phone_num,
+                    $request->payout_phone_number,
                     $additionalData['amountWithoutFees']
                 );
 

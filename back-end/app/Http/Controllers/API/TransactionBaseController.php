@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Utils\PayDunya;
+use App\Http\Utils\ValidationException;
+use App\Models\Transaction;
 use App\Models\WProvider;
 use Illuminate\Http\Request;
 
@@ -48,17 +50,21 @@ class TransactionBaseController extends BaseController
 
     protected function confirm_received_status_in_async_mode(string $token)
     {
-        $maxAttempts = 10;
+        $maxAttempts = 5;
         $attempt = 0;
 
         while ($attempt < $maxAttempts) {
             $check = PayDunya::is_received($token);
-            $responseStatus = $check['response_text'];
+            $responseStatus = $check['status'];
 
             if ($responseStatus == PayDunya::STATUS_COMPLETED_KEY) {
                 return true;
             } elseif ($responseStatus == 'cancelled' || $responseStatus == 'failed') {
-                break;
+                $transaction = Transaction::where('token', $token);
+
+                $status = ($responseStatus === 'canceled' ? 'failed' : ($responseStatus === 'failed' ? 'failed' : null));
+                $transaction->update(['payin_status' => $status]);
+                return false;
             } else {
                 sleep(3);
                 $attempt++;
@@ -68,6 +74,5 @@ class TransactionBaseController extends BaseController
         if ($attempt >= $maxAttempts) {
             return false;
         }
-        return false;
     }
 }
