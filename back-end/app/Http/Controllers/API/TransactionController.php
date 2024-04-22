@@ -67,7 +67,7 @@ class TransactionController extends TransactionBaseController
                 'user_id' => $user->id,
             ]);
 
-            if ( true || $this->confirm_received_status_in_async_mode($receiveStatus['token'])) {
+            if ($this->confirm_received_status_in_async_mode($receiveStatus['token'])) {
 
                 $transaction->update(['payin_status' => Transaction::APPROVED_STATUS]);
 
