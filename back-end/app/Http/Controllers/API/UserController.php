@@ -58,11 +58,11 @@ class UserController extends BaseController
     {
 
         $this->handleValidate($request->post(), [
-            'idendity_card' => 'extensions:jpg,jpeg,png,bmp,gif,svg,pdf|file',
+            'identity_card' => 'extensions:jpg,jpeg,png,bmp,gif,svg,pdf|file',
         ]);
 
-        if ($request->hasFile('idendity_card')) {
-            $idPath = $request->file('idendity_card')->store('ID', 'public');
+        if ($request->hasFile('identity_card')) {
+            $idPath = $request->file('identity_card')->store('ID', 'public');
 
             $request->user()->update(['id_card' => $idPath]);
 
