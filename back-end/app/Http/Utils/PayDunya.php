@@ -60,7 +60,7 @@ class PayDunya
         $response = Http::withHeaders(self::getHeaders())->post(self::CREATE_INVOICE_URL, $data);
 
         $responseData = $response->json();
-        
+
         if (isset($responseData['token'])) {
 
             return [
@@ -144,9 +144,12 @@ class PayDunya
 
         $response = Http::withHeaders(self::getHeaders())->post(self::DISBURSE_URL, $data);
 
-        if ($response->successful()) {
+        $responseData = $response->json();
+
+        if (isset($responseData['disburse_token'])) {
             return $response->json();
         }
+        
         throw new ValidationException(json_encode($response->json()));
     }
 
