@@ -59,8 +59,10 @@ class PayDunya
 
         $response = Http::withHeaders(self::getHeaders())->post(self::CREATE_INVOICE_URL, $data);
 
-        if ($response->successful()) {
-            $responseData = $response->json();
+        $responseData = $response->json();
+        
+        if (isset($responseData['token'])) {
+
             return [
                 'status' => 200,
                 'token' => $responseData['token']
