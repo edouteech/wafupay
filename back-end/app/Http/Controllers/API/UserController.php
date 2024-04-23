@@ -61,13 +61,15 @@ class UserController extends BaseController
             'idendity_card' => 'extensions:jpg,jpeg,png,bmp,gif,svg,pdf|file',
         ]);
 
-        if ($request->hasFile('id_card')) {
+        if ($request->hasFile('idendity_card')) {
             $idPath = $request->file('idendity_card')->store('ID', 'public');
 
             $request->user()->update(['id_card' => $idPath]);
+
+            return $this->handleResponse("Your identity card has been received, please wait while it is processed");
         }
 
-        return $this->handleResponse("Your identity card has been received, please wait while it is processed");
+        return $this->handleError("please send your ID card");
     }
 
     /**
