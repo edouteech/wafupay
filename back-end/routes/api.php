@@ -39,6 +39,8 @@ Route::prefix('/v1')->group((function () {
                 ->name('token.revoke');
         });
 
+        Route::post('submit-identity-card', [UserController::class, 'submit_card']);
+
         Route::middleware('admin')->group(function () {
             Route::apiResource('transactions-fees', TransactionFeesController::class);
             Route::apiResource('countries', CountryController::class);
