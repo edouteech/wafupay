@@ -15,20 +15,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Set environment variables - Production
-        run: |
-          echo "APP_NAME=WafuPay" >> .env
-          echo "APP_ENV=production" >> .env
-          echo "APP_KEY=base64:+1hgX+SrJHhhUyGgJb0h2QAJoNX6JwmoQLJX68LKuYY=" >> .env
-          echo "APP_URL=https://test-wafu.ad-ong.org" >> .env
-          echo "APP_DEBUG=false" >> .env
-          echo "DB_CONNECTION=mysql" >> .env
-          echo "DB_HOST=${{ secrets.DB_HOST}}" >> .env
-          echo "DB_PORT=3306" >> .env
-          echo "DB_DATABASE=${{ secrets.DB_NAME }}" >> .env
-          echo "DB_USERNAME=${{ secrets.DB_USERNAME }}" >> .env
-          echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
-
       - name: 📂 Sync files - Production
         uses: SamKirkland/FTP-Deploy-Action@v4.1.0
         with:
