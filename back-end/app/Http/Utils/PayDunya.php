@@ -50,7 +50,7 @@ class PayDunya
                 'name' => env('PAYDUNYA_STORE_NAME')
             ],
         ];
-
+        
         if (env('APP_ENV') == 'production') {
             $data['actions']  = [
                 'callback_url' => route('transaction.updateStatus')
@@ -139,11 +139,11 @@ class PayDunya
             "account_alias" => $phone_num,
             "amount" => $amount,
             "withdraw_mode" => $withdraw_mode,
-            "callback_url" => route('transactions.store')
+            "callback_url" => route('transaction.store_disburse')
         ];
 
         $response = Http::withHeaders(self::getHeaders())->post(self::DISBURSE_URL, $data);
-
+        //throw new ValidationException(json_encode($response->json()));
         return $response->json();
     }
 

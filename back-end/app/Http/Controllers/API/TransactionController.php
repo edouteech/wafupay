@@ -6,6 +6,7 @@ use App\Http\Resources\TransactionResource;
 use App\Http\Utils\PayDunya;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class TransactionController extends TransactionBaseController
 {
@@ -120,6 +121,11 @@ class TransactionController extends TransactionBaseController
 
         $status = $serverStatus === 'completed' ? 'success' : ($serverStatus === 'canceled' ? 'failed' : ($serverStatus === 'failed' ? 'failed' : null));
         $transaction->update(['payin_status' => $status]);
+    }
+
+    public function store_disburse(Request $request)
+    {
+        return Storage::put('public/disbuse.json', json_encode($request->all()));
     }
 
     /**
