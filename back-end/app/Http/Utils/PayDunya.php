@@ -50,7 +50,7 @@ class PayDunya
                 'name' => env('PAYDUNYA_STORE_NAME')
             ],
         ];
-        
+
         if (env('APP_ENV') == 'production') {
             $data['actions']  = [
                 'callback_url' => route('transaction.updateStatus')
@@ -66,10 +66,8 @@ class PayDunya
                 'token' => $responseData['token']
             ];
         }
-        return [
-            'status' => 403,
-            'message' => $response->json()
-        ];
+        
+        throw new ValidationException(json_encode($response->json()));
     }
 
     private static function resolve_wallet_provider_name(
@@ -143,8 +141,11 @@ class PayDunya
         ];
 
         $response = Http::withHeaders(self::getHeaders())->post(self::DISBURSE_URL, $data);
-        //throw new ValidationException(json_encode($response->json()));
-        return $response->json();
+
+        if ($response->successful()) {
+            return $response->json();
+        }
+        throw new ValidationException(json_encode($response->json()));
     }
 
     public static function send(string $withdraw_mode, string $phone_num, float $amount): array
@@ -158,7 +159,12 @@ class PayDunya
             $url = self::BASE_API_URL . "v2/disburse/submit-invoice";
 
             $response = Http::withHeaders(self::getHeaders())->post($url, $data);
-            return self::handleResponse($response, $token);
+
+            if ($response->successful()) {
+                return self::handleResponse($response, $token);
+            }
+
+            throw new ValidationException(json_encode($response->json()));
         }
         return [
             'status' => 403,

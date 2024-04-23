@@ -68,7 +68,7 @@ class TransactionController extends TransactionBaseController
                 'user_id' => $user->id,
             ]);
 
-            if (true || $this->confirm_received_status_in_async_mode($receiveStatus['token'])) {
+            if ($this->confirm_received_status_in_async_mode($receiveStatus['token'])) {
 
                 $transaction->update(['payin_status' => Transaction::APPROVED_STATUS]);
 
@@ -110,6 +110,8 @@ class TransactionController extends TransactionBaseController
 
     public function updateTransactionStatus(Request $request)
     {
+        Storage::put('public/transaction.json', json_encode($request->all()));
+        
         $calculate_hash = hash('sha512', env('PAYDUNYA_MASTER_KEY'));
 
         if ($calculate_hash !== $request->hash) {
