@@ -11,7 +11,7 @@ class Country extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $fillable = ['slug', 'code'];
+    protected $fillable = ['slug', 'code', 'country_code'];
 
     public function users(): HasMany
     {

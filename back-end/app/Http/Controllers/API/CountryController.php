@@ -10,6 +10,7 @@ class CountryController extends BaseController
     private array $rules = [
         'slug' => 'required|string',
         'code' => 'required|string|uppercase|unique:countries',
+        'country_code' => 'required|string|min:4|unique:countries',
     ];
 
     /**
@@ -54,6 +55,7 @@ class CountryController extends BaseController
         $this->handleValidate($request->post(), [
             'slug' => 'required|string',
             'code' => 'required|string|uppercase',
+            'country_code' => 'required|string|min:4',
         ]);
 
         $country = Country::findOrFail($country);

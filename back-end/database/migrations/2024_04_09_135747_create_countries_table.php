@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('slug');
             $table->string('code')->unique();
+            $table->string('country_code')->unique();
             $table->softDeletes();
             $table->timestamps();
         });
