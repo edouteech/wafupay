@@ -33,6 +33,12 @@ class AuthenticatedSessionController extends BaseController
     {
         $this->handleValidate($request->post(), $this->rules);
 
+        $credentials = $request->only('phone_num', 'password');
+
+        if (Auth::attempt($credentials)) {
+            return $this->auth($request);
+        }
+
         $credentials = $request->only('email', 'password');
 
         if (Auth::attempt($credentials)) {
