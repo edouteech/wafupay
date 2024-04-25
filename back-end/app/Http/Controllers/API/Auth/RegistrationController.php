@@ -15,7 +15,6 @@ class RegistrationController extends BaseController
         'first_name' => 'required|string',
         'last_name' => 'required|string',
         'email' => 'required|email|unique:users',
-        'phone_num' => 'required|unique:users|min:8|max:10',
         'country_id' => 'required|exists:countries,id',
         'id_card' => 'extensions:jpg,jpeg,png,bmp,gif,svg,pdf|file',
         'password' => 'required|min:8',
@@ -30,7 +29,10 @@ class RegistrationController extends BaseController
      */
     public function register(Request $request): JsonResponse
     {
-        $this->handleValidate($request->post(), $this->rules);
+        $this->handleValidate($request->post(), [
+            ...$this->rules,
+            'phone_num' => ['required', 'unique:users', new ValidPhoneNumber],
+        ]);
 
         try {
             $userData = $request->except('id_card');

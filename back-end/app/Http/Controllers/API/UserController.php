@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Resources\User as ResourcesUser;
 use App\Models\User;
+use App\Rules\ValidPhoneNumber;
 use Illuminate\Http\Request;
 
 class UserController extends BaseController
@@ -26,7 +27,7 @@ class UserController extends BaseController
             'first_name' => 'required|string',
             'last_name' => 'required|string',
             'email' => 'required|email|unique:users',
-            'phone_num' => 'required|unique:users',
+            'phone_num' => ['required', 'unique:users', new ValidPhoneNumber],
             'password' => 'required|min:8',
             'confirm_password' => 'required|same:password',
         ]);

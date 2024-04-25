@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API\Auth;
 use App\Http\Controllers\API\BaseController;
 use App\Http\Resources\User as UserResource;
 use App\Mail\TwoFactor;
+use App\Rules\ValidPhoneNumber;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -17,7 +18,7 @@ class AuthenticatedSessionController extends BaseController
 {
 
     private array $rules = [
-        'email' => 'required|email',
+        'email' => 'required_without:phone_num|email',
         'password' => 'required',
         'two_factor' => 'string|min:7'
     ];
@@ -31,7 +32,10 @@ class AuthenticatedSessionController extends BaseController
      */
     public function login(Request $request): JsonResponse
     {
-        $this->handleValidate($request->post(), $this->rules);
+        $this->handleValidate($request->post(), [
+            ...$this->rules,
+            'phone_num' => ['required_without:email', 'unique:users', new ValidPhoneNumber],
+        ]);
 
         $credentials = $request->only('phone_num', 'password');
 
