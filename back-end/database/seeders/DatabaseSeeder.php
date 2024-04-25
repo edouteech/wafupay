@@ -16,11 +16,6 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        Country::create([
-            'slug' => 'Bénin',
-            'code' => "BJ"
-        ]);
-
         User::create(
             [
                 'first_name' => 'Kabirou',
