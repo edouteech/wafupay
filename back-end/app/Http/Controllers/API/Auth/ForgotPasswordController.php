@@ -11,11 +11,8 @@ use Carbon\Carbon;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Validation\Rules;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Password;
 use RobThree\Auth\TwoFactorAuth;
-use Illuminate\Http\JsonResponse;
 
 class ForgotPasswordController extends BaseController
 {
