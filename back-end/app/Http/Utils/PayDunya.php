@@ -240,7 +240,7 @@ class PayDunya
             $responseData = $response->json();
 
             if ($response->successful()) {
-                return self::handleResponse($responseData, $token);
+                return self::handleResponse($response, $token);
             }
 
             throw new ValidationException(json_encode($responseData));
