@@ -12,6 +12,6 @@ class ValidationException extends \Exception
 
     public function render(): JsonResponse
     {
-        return response()->json(json_decode($this->errors), 202);
+        return response()->json(json_decode($this->errors), 402);
     }
 }

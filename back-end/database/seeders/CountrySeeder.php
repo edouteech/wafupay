@@ -14,14 +14,14 @@ class CountrySeeder extends Seeder
     public function run(): void
     {
         $countries = [
-            ['slug' => 'benin', 'code' => 'BJ', 'country_code' => '+229'],
-            ['slug' => 'burkina-faso', 'code' => 'BF', 'country_code' => '+226'],
-            ['slug' => 'cote-d\'Ivoire', 'code' => 'CI', 'country_code' => '+225'],
-            ['slug' => 'guinee-bissau', 'code' => 'GW', 'country_code' => '+245'],
-            ['slug' => 'mali', 'code' => 'ML', 'country_code' => '+223'],
-            ['slug' => 'niger', 'code' => 'NE', 'country_code' => '+227'],
-            ['slug' => 'senegal', 'code' => 'SN', 'country_code' => '+221'],
-            ['slug' => 'togo', 'code' => 'TG', 'country_code' => '+228'],
+            ['slug' => 'Benin', 'code' => 'BJ', 'country_code' => '+229'],
+            ['slug' => 'Burkina-faso', 'code' => 'BF', 'country_code' => '+226'],
+            ['slug' => 'Cote-d\'Ivoire', 'code' => 'CI', 'country_code' => '+225'],
+            ['slug' => 'Guinee-bissau', 'code' => 'GW', 'country_code' => '+245'],
+            ['slug' => 'Mali', 'code' => 'ML', 'country_code' => '+223'],
+            ['slug' => 'Niger', 'code' => 'NE', 'country_code' => '+227'],
+            ['slug' => 'Senegal', 'code' => 'SN', 'country_code' => '+221'],
+            ['slug' => 'Togo', 'code' => 'TG', 'country_code' => '+228'],
         ];
 
         foreach ($countries as $country) {
