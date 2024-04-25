@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\API\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\API\Auth\ForgotPasswordController;
 use App\Http\Controllers\API\Auth\RegistrationController;
 use App\Http\Controllers\API\CountryController;
 use App\Http\Controllers\API\CurrencyController;
@@ -20,6 +21,7 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
+
 Route::get('/check-api', function () {
     return response()->json(['message' => 'API is working']);
 });
@@ -31,6 +33,13 @@ Route::prefix('/v1')->group((function () {
                 ->name('token.obtain');
             Route::post('/register', [RegistrationController::class, 'register'])
                 ->name('token.register');
+        });
+
+        Route::prefix('/password')->group(function () {
+            Route::post('/forgot', [ForgotPasswordController::class, 'send_otp'])
+                ->name('password.forgot');
+            Route::post('/reset', [ForgotPasswordController::class, 'reset_password'])
+                ->name('password.reset');
         });
     });
 
