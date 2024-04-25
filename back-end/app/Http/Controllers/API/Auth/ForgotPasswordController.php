@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API\Auth;
 
 use App\Http\Controllers\API\BaseController;
+use App\Http\Utils\ValidationException;
 use App\Mail\ResetPasswordEmail;
 use App\Models\User;
 use App\Rules\ValidPhoneNumber;
@@ -55,44 +56,38 @@ class ForgotPasswordController extends BaseController
         $this->handleValidate($request->post(), [
             'otp' => ['required'],
             'email' => ['required', 'email'],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'password' => ['required', Rules\Password::defaults()],
+            'confirm_password' => 'required|same:password',
         ]);
 
         $this->check2fa($request->email, $request->otp);
 
-        $status = Password::reset(
-            $request->only('email', 'password', 'password_confirmation'),
-            function ($user, $password) {
-                $user->forceFill([
-                    'password' => Hash::make($password),
-                ])->save();
+        $user = User::where('email', $request->email)->first();
 
-                event(new PasswordReset($user));
-            }
-        );
-
-        if ($status === Password::PASSWORD_RESET) {
+        if ($user->update(['password' => $request->password])) {
+            event(new PasswordReset($user));
             return $this->handleResponse('Votre mot de passe a été réinitialisé avec succès.');
         }
-
-        return $this->handleError(trans($status));
     }
 
-    private function check2fa($email, $otp)
+    private function check2fa($email, $user_otp)
     {
         $user = User::where('email', $email)->first();
 
         if ($otp = $user->otp_codes()
-            ->where(['code' => $otp, 'is_verified' => false])
+            ->where(['code' => $user_otp, 'is_verified' => false])
             ->latest()
             ->first()
         ) {
 
             if ($otp !== null && ($otp->expired_at !== null && Carbon::parse($otp->expired_at)->lte(Carbon::now()))) {
-                return $this->handleError('Two Factor Code is expired');
+                throw new ValidationException(json_encode('Two Factor Code is expired'));
             }
-            return;
+
+            if ($user_otp == $otp->code) {
+                return;
+            }
         }
-        return $this->handleError('Invalid Two Factor Code');
+        throw new ValidationException(json_encode('Invalid Two Factor Code'));
     }
 }
