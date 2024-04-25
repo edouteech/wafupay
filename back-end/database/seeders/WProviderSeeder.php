@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\WProvider;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -250,8 +251,20 @@ class WProviderSeeder extends Seeder
             ],
         ];
 
-        foreach ($wproviders as $wprovider) {
+        foreach ($wproviders as $wProviderData) {
+            $wProviderData['user_id'] = 1;
+            $wProvider = WProvider::create($wProviderData);
+            $feesData = $wProviderData['fees'];
 
+            foreach ($feesData as $fee) {
+                $wProvider->transaction_fees()->create([
+                    'payin_fee' => $fee['payin_fee'],
+                    'payout_fee' => $fee['payout_fee'],
+                    'min_amount' => $fee['min_amount'],
+                    'max_amount' => $fee['max_amount'],
+                    'user_id' => 1,
+                ]);
+            }
         }
     }
 }
