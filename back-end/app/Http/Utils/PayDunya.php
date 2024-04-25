@@ -68,24 +68,44 @@ class PayDunya
                 'token' => $responseData['token']
             ];
         }
-        
+
         throw new ValidationException(json_encode($response->json()));
     }
 
     private static function resolve_wallet_provider_name(
         string $token,
         mixed $providerName,
-        array $user
+        array $user,
+        $otp_code
     ): array {
 
         $castProviderName = $providerName->sending_mode;
+        $_providerName = $providerName->withdraw_mode;
 
         $data = [
-            $castProviderName . "_customer_fullname" => $user['first_name'] . ' ' . $user['last_name'],
+            $castProviderName . "_customer_fullname" => $user['fullname'],
             $castProviderName . "_email" => $user['email'],
             $castProviderName . "_phone_number" => $user['phone_num'],
             "payment_token" => $token
         ];
+
+        if (
+            $_providerName == 'orange-money-burkina'
+        ) {
+            $data = [
+                "name_bf" => $user['fullname'],
+                "email_bf" => $user['email'],
+                "phone_bf" => $user['phone_num'],
+                "payment_token" => $token
+            ];
+        }
+
+        if (
+            $_providerName == 'moov-burkina'
+        ) {
+            unset($data['payment_token']);
+            $data['moov_burkina_faso_payment_token'] = $token;
+        }
 
         if ($providerName->with_otp) {
             $data = [
@@ -107,8 +127,60 @@ class PayDunya
             ];
         }
 
+        if ($_providerName == 'orange-money-mali') {
+            unset($data['orange_money_mali_otp']);
+            $data['orange_money_mali_wallet_otp'] = $token;
+        }
+
+        if (
+            $_providerName == 'orange-money-senegal' ||
+            $_providerName == 'wizall-money-senegal'
+        ) {
+            $data = [
+                "customer_name" => $user['fullname'],
+                "customer_email" => $user['email'],
+                "phone_number" => $user['phone_num'],
+                "authorization_code" => $otp_code,
+                "invoice_token" => $token
+            ];
+        }
+
+        if (
+            $_providerName == 't-money-togo'
+        ) {
+            $data = [
+                "name_t_money" => $user['fullname'],
+                "email_t_money" => $user['email'],
+                "phone_t_money" => $user['phone_num'],
+                "payment_token" => $token,
+            ];
+        }
+
+        if (
+            $_providerName == 'wave-ci' ||
+            $_providerName == 'wave-senegal'
+        ) {
+            $data = [
+                $castProviderName . "_fullName" => $user['fullname'],
+                $castProviderName . "_email" => $user['email'],
+                $castProviderName . "_phone" => $user['phone_num'],
+                $castProviderName . "_payment_token" => $token
+            ];
+        }
+
+        if ($_providerName == 'wizall-money-senegal') unset($data['authorization_code']);
+
+        if ($_providerName == 'free-money-senegal') {
+            $data = [
+                "customer_name" => $user['fullname'],
+                "customer_email" => $user['email'],
+                "phone_number" => $user['phone_num'],
+                "payment_token" => $token
+            ];
+        }
+
         return [
-            'url' => self::BASE_API_URL . "v1/softpay/" . $providerName->withdraw_mode,
+            'url' => self::BASE_API_URL . "v1/softpay/" . $_providerName,
             'data' => $data
         ];
     }
@@ -118,7 +190,7 @@ class PayDunya
 
         if ($token = self::getToken($amount, self::TRANSFER)['token']) {
 
-            $traitedData = self::resolve_wallet_provider_name($token, $payinProvider, user: $user);
+            $traitedData = self::resolve_wallet_provider_name($token, $payinProvider, $user, $user['otp_code']);
 
             $response = Http::post($traitedData['url'], $traitedData['data']);
 
@@ -149,7 +221,7 @@ class PayDunya
         if (isset($responseData['disburse_token'])) {
             return $response->json();
         }
-        
+
         throw new ValidationException(json_encode($response->json()));
     }
 
