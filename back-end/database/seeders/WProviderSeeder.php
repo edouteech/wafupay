@@ -252,9 +252,9 @@ class WProviderSeeder extends Seeder
         ];
 
         foreach ($wproviders as $wProviderData) {
-            $wProviderData['user_id'] = 1;
-            $wProvider = WProvider::create($wProviderData);
             $feesData = $wProviderData['fees'];
+            unset($wProviderData['fees']);
+            $wProvider = WProvider::create($wProviderData);
 
             foreach ($feesData as $fee) {
                 $wProvider->transaction_fees()->create([
