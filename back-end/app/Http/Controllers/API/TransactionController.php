@@ -126,7 +126,15 @@ class TransactionController extends TransactionBaseController
 
     public function store_disburse(Request $request)
     {
-        return Storage::put('public/disbuse.json', json_encode($request->all()));
+        if ($request->status == Transaction::APPROVED_STATUS) {
+            $transaction = Transaction::where('token', $request->token);
+            $serverStatus = $request->status;
+
+            $status = $serverStatus === 'completed' ? 'success' : ($serverStatus === 'canceled' ? 'failed' : ($serverStatus === 'failed' ? 'failed' : null));
+            $transaction->update(['payout_status' => $status]);
+        }
+        $invoice = json_encode($request->all()) .  Storage::get('public/disbuse.json');
+        return Storage::put('public/disbuse.json', $invoice);
     }
 
     /**
