@@ -4,7 +4,6 @@ use App\Http\Controllers\API\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\API\Auth\ForgotPasswordController;
 use App\Http\Controllers\API\Auth\RegistrationController;
 use App\Http\Controllers\API\CountryController;
-use App\Http\Controllers\API\CurrencyController;
 use App\Http\Controllers\API\TransactionController;
 use App\Http\Controllers\API\TransactionFeesController;
 use App\Http\Controllers\API\UserController;
@@ -55,7 +54,7 @@ Route::prefix('/v1')->group((function () {
 
         Route::middleware('admin')->group(function () {
             Route::apiResource('transactions-fees', TransactionFeesController::class);
-            Route::apiResource('countries', CountryController::class);
+            Route::apiResource('countries', CountryController::class)->except('index');
             Route::apiResource('wallet-providers', WProviderController::class);
             Route::apiResource('users', UserController::class);
             Route::post('activate-account/{user}', [UserController::class, 'activate']);
@@ -67,7 +66,7 @@ Route::prefix('/v1')->group((function () {
         Route::apiResource('transactions', TransactionController::class)->only('store', 'show');
     });
 
-
+    Route::apiResource('countries', CountryController::class)->only('index');
     Route::any('update-transaction-status', [TransactionController::class, 'updateTransactionStatus'])->name('transaction.updateStatus');
     Route::any('disburse', [TransactionController::class, 'store_disburse'])->name('transaction.store_disburse');
 }));
