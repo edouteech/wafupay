@@ -20,6 +20,7 @@ class UserSeeder extends Seeder
                 'email' => 'exemple@exemple.com',
                 'phone_num' => '+22996431150',
                 'password' => 'Limit123#',
+                'country_id' => 1,
                 'is_verified' => true,
                 'is_admin' => true,
                 'is_active' => true,
