@@ -34,18 +34,14 @@ class AuthenticatedSessionController extends BaseController
     {
         $this->handleValidate($request->post(), [
             ...$this->rules,
-            'phone_num' => ['required_without:email', 'unique:users', new ValidPhoneNumber],
+            'phone_num' => ['required_without:email', new ValidPhoneNumber],
         ]);
 
-        $credentials = $request->only('phone_num', 'password');
+        $credentialsWithPhone = $request->only('phone_num', 'password');
 
-        if (Auth::attempt($credentials)) {
-            return $this->auth($request);
-        }
+        $credentialsWithEmail = $request->only('email', 'password');
 
-        $credentials = $request->only('email', 'password');
-
-        if (Auth::attempt($credentials)) {
+        if (Auth::attempt($credentialsWithPhone) || Auth::attempt($credentialsWithEmail)) {
 
             if ($request->two_factor) {
                 return $this->check2fa($request);
@@ -95,7 +91,7 @@ class AuthenticatedSessionController extends BaseController
     {
         $user = $request->user();
 
-        $token = $user->createToken($request->email);
+        $token = $user->createToken(isset($request->email) ? $request->email : $request->phone_num);
 
         $user->otp_codes()->where(['code' => $user->otp_code, 'type' => '2fa'])->update(['is_verified' => true]);
 
