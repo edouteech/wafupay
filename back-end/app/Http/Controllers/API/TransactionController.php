@@ -39,12 +39,11 @@ class TransactionController extends TransactionBaseController
         $additionalData = $this->calculate_fees($request);
 
         $sender = [
-            'first_name' => $user->first_name,
-            'last_name' => $user->last_name,
+            'fullname' => $user->first_name . ' ' . $user->last_name,
             'email' => $user->email,
             'country' => $user->country->slug,
             'phone_num' => $request->payin_phone_number,
-            'otp' => $request->opt,
+            'otp_code' => $request->input('otp_code', 1),
         ];
 
         $receiveStatus = PayDunya::receive(
@@ -111,7 +110,7 @@ class TransactionController extends TransactionBaseController
     public function updateTransactionStatus(Request $request)
     {
         Storage::put('public/transaction.json', json_encode($request->all()));
-        
+
         $calculate_hash = hash('sha512', env('PAYDUNYA_MASTER_KEY'));
 
         if ($calculate_hash !== $request->hash) {

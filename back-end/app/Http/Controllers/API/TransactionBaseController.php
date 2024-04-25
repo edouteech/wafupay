@@ -18,6 +18,7 @@ class TransactionBaseController extends BaseController
         'amount' => 'required|numeric|min:200',
         'sender_support_fee' => 'required',
         'type' => 'in:school_help,family_help,rent,others',
+        'otp_code' => 'string|min:4',
     ];
 
     protected function calculate_fees(Request $request): array

@@ -219,10 +219,10 @@ class PayDunya
         $responseData = $response->json();
 
         if (isset($responseData['disburse_token'])) {
-            return $response->json();
+            return $responseData;
         }
 
-        throw new ValidationException(json_encode($response->json()));
+        throw new ValidationException(json_encode($responseData));
     }
 
     public static function send(string $withdraw_mode, string $phone_num, float $amount): array
@@ -237,11 +237,13 @@ class PayDunya
 
             $response = Http::withHeaders(self::getHeaders())->post($url, $data);
 
+            $responseData = $response->json();
+
             if ($response->successful()) {
-                return self::handleResponse($response, $token);
+                return self::handleResponse($responseData, $token);
             }
 
-            throw new ValidationException(json_encode($response->json()));
+            throw new ValidationException(json_encode($responseData));
         }
         return [
             'status' => 403,
