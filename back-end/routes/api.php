@@ -60,10 +60,11 @@ Route::prefix('/v1')->group((function () {
             Route::post('activate-account/{user}', [UserController::class, 'activate']);
             Route::get('check-transaction-status/{token}', [TransactionController::class, 'checkTransactionStatus']);
             Route::apiResource('transactions', TransactionController::class)
-                ->except('store', 'show');
+                ->except('store', 'show', 'delete');
         });
 
         Route::apiResource('transactions', TransactionController::class)->only('store', 'show');
+        Route::post('refresh-transaction/{payin_token}', [TransactionController::class, 'refresh_transaction'])->name('transaction.refresh');
     });
 
     Route::apiResource('countries', CountryController::class)->only('index');
