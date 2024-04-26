@@ -109,7 +109,8 @@ class TransactionController extends TransactionBaseController
 
     public function updateTransactionStatus(Request $request)
     {
-        Storage::put('public/transaction.json', json_encode($request->all()));
+        $invoice = json_encode($request->all()) . ',' . Storage::get('public/transaction.json');
+        Storage::put('public/transaction.json', $invoice);
 
         $calculate_hash = hash('sha512', env('PAYDUNYA_MASTER_KEY'));
 
@@ -117,7 +118,7 @@ class TransactionController extends TransactionBaseController
             return;
         }
 
-        $transaction = Transaction::where('token', $request->invoice['token']);
+        $transaction = Transaction::where('token', $request->invoice['token'])->firstOrFail();
         $serverStatus = $request->status;
 
         $status = $serverStatus === 'completed' ? 'success' : ($serverStatus === 'canceled' ? 'failed' : ($serverStatus === 'failed' ? 'failed' : null));
@@ -126,15 +127,13 @@ class TransactionController extends TransactionBaseController
 
     public function store_disburse(Request $request)
     {
-        if ($request->status == Transaction::APPROVED_STATUS) {
-            $transaction = Transaction::where('token', $request->token);
-            $serverStatus = $request->status;
+        if ($request->data['status'] == Transaction::APPROVED_STATUS) {
+            $transaction = Transaction::where('disburse_token', $request->data['token'])->firstOrFail();
 
-            $status = $serverStatus === 'completed' ? 'success' : ($serverStatus === 'canceled' ? 'failed' : ($serverStatus === 'failed' ? 'failed' : null));
-            $transaction->update(['payout_status' => $status]);
+            $transaction->update(['payout_status' => $request->data['status']]);
         }
-        $invoice = json_encode($request->all()) .  Storage::get('public/disbuse.json');
-        return Storage::put('public/disbuse.json', $invoice);
+        $invoice = json_encode($request->all()) . ',' .  Storage::get('public/disburse.json');
+        return Storage::put('public/disburse.json', $invoice);
     }
 
     /**
