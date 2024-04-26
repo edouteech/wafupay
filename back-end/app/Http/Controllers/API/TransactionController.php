@@ -187,4 +187,18 @@ class TransactionController extends TransactionBaseController
         $transaction->delete();
         return $this->handleResponse($transaction, 'Transaction deleted successfully.');
     }
+
+    public function destroyByUser(Request $request, Transaction $transaction)
+    {
+        if ($request->user()->id != $transaction->user_id) {
+            return $this->handleError(
+                "Unauthorized action",
+                ['error' => 'Action non autorisée'],
+                403
+            );
+        }
+
+        $transaction->delete();
+        return $this->handleResponse($transaction, 'Your transaction deleted successfully.');
+    }
 }
