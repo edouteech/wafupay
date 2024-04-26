@@ -90,8 +90,7 @@ class TransactionController extends TransactionBaseController
 
     public function updatePayinStatus(Request $request)
     {
-        $invoice = json_encode($request->all()) . ',' . Storage::get('public/transaction.json');
-        Storage::put('public/transaction.json', $invoice);
+        Storage::put('public/transaction.json', json_encode($request->all()));
 
         $calculate_hash = hash('sha512', env('PAYDUNYA_MASTER_KEY'));
 
@@ -102,7 +101,7 @@ class TransactionController extends TransactionBaseController
         $transaction = Transaction::where('token', $request->invoice['token'])->firstOrFail();
         $serverStatus = $request->status;
 
-        $status = $serverStatus === 'completed' ? 'success' : ($serverStatus === 'canceled' ? 'failed' : ($serverStatus === 'failed' ? 'failed' : null));
+        $status = $serverStatus === 'completed' ? 'success' : ($serverStatus == 'canceled' ? 'failed' : ($serverStatus == 'failed' ? 'failed' : 'failed'));
         $transaction->update(['payin_status' => $status]);
 
         if ($status == Transaction::APPROVED_STATUS) {
@@ -122,8 +121,8 @@ class TransactionController extends TransactionBaseController
 
             $transaction->update(['payout_status' => $request->data['status']]);
         }
-        $invoice = json_encode($request->all()) . ',' .  Storage::get('public/disburse.json');
-        return Storage::put('public/disburse.json', $invoice);
+
+        return Storage::put('public/disburse.json', json_encode($request->all()));
     }
 
     public function refresh_transaction(Request $request, $payin_token)
