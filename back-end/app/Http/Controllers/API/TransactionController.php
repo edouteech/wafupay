@@ -58,9 +58,9 @@ class TransactionController extends TransactionBaseController
             $receiveStatus['token']
         ) {
 
-            unset($transaction['amount']);
+            unset($payloads['amount']);
 
-            $transaction = Transaction::create([
+            Transaction::create([
                 ...$payloads,
                 'payin_status' => Transaction::PENDING_STATUS,
                 'payout_status' => Transaction::PENDING_STATUS,
