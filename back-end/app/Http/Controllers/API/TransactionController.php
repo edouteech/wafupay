@@ -107,21 +107,30 @@ class TransactionController extends TransactionBaseController
         $transaction->update(['payin_status' => $status]);
 
         if ($status == Transaction::APPROVED_STATUS) {
-            return PayDunya::send(
+            $sendStatus = PayDunya::send(
                 $transaction->payout_wprovider->withdraw_mode,
                 $transaction->payout_phone_number,
                 $transaction->amountWithoutFees,
             );
+            if ($sendStatus['status'] == PayDunya::STATUS_OK) {
+
+                $transaction->update(['disburse_token' => $sendStatus['token']]);
+            }
+            return $sendStatus;
         }
         return;
     }
 
     public function updatePayoutStatus(Request $request)
     {
-        if ($request->data['status'] == Transaction::APPROVED_STATUS) {
-            $transaction = Transaction::where('disburse_token', $request->data['token'])->firstOrFail();
+        $data = $request->data ?? [];
 
-            $transaction->update(['payout_status' => $request->data['status']]);
+        if (isset($data['status'])) {
+            if ($data['status'] == Transaction::APPROVED_STATUS) {
+                $transaction = Transaction::where('disburse_token', $data['token'])->first();
+
+                $transaction->update(['payout_status' => $data['status']]);
+            }
         }
 
         return Storage::put('public/disburse.json', json_encode($request->all()));
@@ -131,7 +140,7 @@ class TransactionController extends TransactionBaseController
     {
         $user = $request->user();
 
-        $transaction = Transaction::where('token', $payin_token)->firstOrFail();
+        $transaction = Transaction::where('token', $payin_token)->first();
 
         if ($user->id != $transaction->user_id) {
             return $this->handleError(
@@ -141,7 +150,10 @@ class TransactionController extends TransactionBaseController
             );
         }
 
-        if ($transaction->payin_status !== Transaction::APPROVED_STATUS) {
+        if (
+            $transaction->payin_status !== Transaction::APPROVED_STATUS
+            && $transaction->payin_status !== Transaction::PENDING_STATUS
+        ) {
 
             $sender = [
                 'fullname' => $user->first_name . ' ' . $user->last_name,
@@ -161,13 +173,22 @@ class TransactionController extends TransactionBaseController
         if (
             $transaction->payin_status === Transaction::APPROVED_STATUS
             && $transaction->payout_status !== Transaction::APPROVED_STATUS
+            && $transaction->payout_status !== Transaction::PENDING_STATUS
         ) {
-            return PayDunya::send(
+
+            $sendStatus = PayDunya::send(
                 $transaction->payout_wprovider->withdraw_mode,
                 $transaction->payout_phone_number,
                 $transaction->amountWithoutFees,
             );
+
+            if ($sendStatus['status'] == PayDunya::STATUS_OK) {
+
+                $transaction->update(['disburse_token' => $sendStatus['token']]);
+            }
+            return $sendStatus;
         }
+        return $this->handleResponse("Cette transaction est bien complète!");
     }
 
     /**
