@@ -94,12 +94,14 @@ class TransactionController extends TransactionBaseController
 
         $calculate_hash = hash('sha512', env('PAYDUNYA_MASTER_KEY'));
 
-        if ($calculate_hash !== $request->hash) {
+        $data = $request->data;
+
+        if ($calculate_hash !== $data['hash']) {
             return;
         }
 
-        $transaction = Transaction::where('token', $request->invoice['token'])->firstOrFail();
-        $serverStatus = $request->status;
+        $transaction = Transaction::where('token', $data['invoice']['token'])->firstOrFail();
+        $serverStatus = $data['status'];
 
         $status = $serverStatus === 'completed' ? 'success' : ($serverStatus == 'canceled' ? 'failed' : ($serverStatus == 'failed' ? 'failed' : 'failed'));
         $transaction->update(['payin_status' => $status]);
@@ -157,7 +159,7 @@ class TransactionController extends TransactionBaseController
         }
 
         if (
-            $transaction->payin_status == Transaction::APPROVED_STATUS
+            $transaction->payin_status === Transaction::APPROVED_STATUS
             && $transaction->payout_status !== Transaction::APPROVED_STATUS
         ) {
             return PayDunya::send(
