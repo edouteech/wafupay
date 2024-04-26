@@ -20,6 +20,7 @@ class Transaction extends Model
         'payout_wprovider_id',
         'payout_status',
         'amount',
+        'amountWithoutFees',
         'token',
         'disburse_token',
         'type'

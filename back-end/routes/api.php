@@ -67,6 +67,6 @@ Route::prefix('/v1')->group((function () {
     });
 
     Route::apiResource('countries', CountryController::class)->only('index');
-    Route::any('update-transaction-status', [TransactionController::class, 'updateTransactionStatus'])->name('transaction.updateStatus');
-    Route::any('disburse', [TransactionController::class, 'store_disburse'])->name('transaction.store_disburse');
+    Route::any('update-transaction-status', [TransactionController::class, 'updatePayinStatus'])->name('transaction.updateStatus');
+    Route::any('disburse', [TransactionController::class, 'updatePayoutStatus'])->name('transaction.store_disburse');
 }));

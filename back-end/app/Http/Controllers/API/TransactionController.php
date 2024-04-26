@@ -30,7 +30,7 @@ class TransactionController extends TransactionBaseController
             return $this->handleError(
                 __('validation.valid_sender_account'),
                 ['error' => 'Your account is not verified.'],
-                202
+                403
             );
         }
 
@@ -58,6 +58,8 @@ class TransactionController extends TransactionBaseController
             $receiveStatus['token']
         ) {
 
+            unset($transaction['amount']);
+
             $transaction = Transaction::create([
                 ...$payloads,
                 'payin_status' => Transaction::PENDING_STATUS,
@@ -65,34 +67,12 @@ class TransactionController extends TransactionBaseController
                 'type' => $request->type ?? 'others',
                 'token' => $receiveStatus['token'],
                 'user_id' => $user->id,
+                'amount' => $additionalData['amountWithFees'],
+                'amountWithoutFees' => $additionalData['amountWithoutFees'],
+                'otp_code' => $request->input('otp_code', 1),
             ]);
 
-            if ($this->confirm_received_status_in_async_mode($receiveStatus['token'])) {
-
-                $transaction->update(['payin_status' => Transaction::APPROVED_STATUS]);
-
-                $sendStatus = PayDunya::send(
-                    $additionalData['payoutProvider']->withdraw_mode,
-                    $request->payout_phone_number,
-                    $additionalData['amountWithoutFees']
-                );
-
-                if ($sendStatus['status'] == PayDunya::STATUS_OK) {
-
-                    $transaction->update(['disburse_token' => $sendStatus['token']]);
-
-                    $check = PayDunya::is_sent($sendStatus['token']);
-
-                    if ($check['response_code'] == PayDunya::STATUS_OK) {
-
-                        $transaction->update(['payout_status' => Transaction::APPROVED_STATUS]);
-
-                        return $this->handleResponse($transaction);
-                    }
-                }
-                return $this->handleError($sendStatus['description'], $sendStatus);
-            }
-            return $this->handleError('Delai d\'attente depassé, transaction échoué', $receiveStatus);
+            return $this->handleResponse($receiveStatus);
         }
         return $this->handleResponse($receiveStatus);
     }
@@ -104,10 +84,11 @@ class TransactionController extends TransactionBaseController
         if ($request->payin == true) {
             return $this->handleResponse(PayDunya::is_received($token));
         }
+
         return $this->handleResponse(PayDunya::is_sent($token));
     }
 
-    public function updateTransactionStatus(Request $request)
+    public function updatePayinStatus(Request $request)
     {
         $invoice = json_encode($request->all()) . ',' . Storage::get('public/transaction.json');
         Storage::put('public/transaction.json', $invoice);
@@ -123,9 +104,18 @@ class TransactionController extends TransactionBaseController
 
         $status = $serverStatus === 'completed' ? 'success' : ($serverStatus === 'canceled' ? 'failed' : ($serverStatus === 'failed' ? 'failed' : null));
         $transaction->update(['payin_status' => $status]);
+
+        if ($status == Transaction::APPROVED_STATUS) {
+            return PayDunya::send(
+                $transaction->payout_wprovider->withdraw_mode,
+                $transaction->payout_phone_number,
+                $transaction->amountWithoutFees,
+            );
+        }
+        return;
     }
 
-    public function store_disburse(Request $request)
+    public function updatePayoutStatus(Request $request)
     {
         if ($request->data['status'] == Transaction::APPROVED_STATUS) {
             $transaction = Transaction::where('disburse_token', $request->data['token'])->firstOrFail();
@@ -134,6 +124,49 @@ class TransactionController extends TransactionBaseController
         }
         $invoice = json_encode($request->all()) . ',' .  Storage::get('public/disburse.json');
         return Storage::put('public/disburse.json', $invoice);
+    }
+
+    public function refresh_transaction(Request $request, $payin_token)
+    {
+        $user = $request->user();
+
+        $transaction = Transaction::where('token', $payin_token)->firstOrFail();
+
+        if ($user->id != $transaction->user_id) {
+            return $this->handleError(
+                "Unauthorized action",
+                ['error' => 'Action non autorisée'],
+                403
+            );
+        }
+
+        if ($transaction->payin_status !== Transaction::APPROVED_STATUS) {
+
+            $sender = [
+                'fullname' => $user->first_name . ' ' . $user->last_name,
+                'email' => $user->email,
+                'country' => $user->country->slug,
+                'phone_num' => $transaction->payin_phone_number,
+                'otp_code' => $transaction->otp_code,
+            ];
+
+            return PayDunya::receive(
+                $transaction->amount,
+                $transaction->payin_wprovider,
+                $sender
+            );
+        }
+
+        if (
+            $transaction->payin_status == Transaction::APPROVED_STATUS
+            && $transaction->payout_status !== Transaction::APPROVED_STATUS
+        ) {
+            return PayDunya::send(
+                $transaction->payout_wprovider->withdraw_mode,
+                $transaction->payout_phone_number,
+                $transaction->amountWithoutFees,
+            );
+        }
     }
 
     /**
@@ -147,18 +180,11 @@ class TransactionController extends TransactionBaseController
     }
 
     /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Transaction $transaction)
-    {
-        //
-    }
-
-    /**
      * Remove the specified resource from storage.
      */
     public function destroy(Transaction $transaction)
     {
-        //
+        $transaction->delete();
+        return $this->handleResponse($transaction, 'Transaction deleted successfully.');
     }
 }
