@@ -158,10 +158,10 @@ return [
     'ulid' => 'The :attribute field must be a valid ULID.',
     'uuid' => 'The :attribute field must be a valid UUID.',
     // custom rules
-    'phone_valid_number' => 'The phone number must be in the format +CountryCodePhoneNumber and contain 8 or 10 digits after the country code(UEMOA zone Country).',
-    'valid_receiver_account' => 'The receiver\'s account exists but is not active',
-    'valid_sender_account' => 'Your account is not activated, please check it before any transaction',
-    'valid_provider_name' => 'The selected provider name is not supported yet, please choose between :providers',
+    'phone_valid_number' => "Le numéro de téléphone : doit être au format +CodeDyPaysNumeroDeTelephone et contenir 8 ou 10 chiffres après l'indicatif du pays(pays de l'UEMOA).",
+    'valid_receiver_account' => 'Le compte du destinataire existe mais n\'est pas actif',
+    'valid_sender_account' => 'Votre compte n\'est pas activé, merci de le vérifier avant toute transaction',
+    'valid_provider_name' => 'Le nom de l\'operateur monetaire selectionné n\'existe pas ou n\'est pas supporté pour le moment, veuillez choisir entre :providers',
 
     /*
     |--------------------------------------------------------------------------
