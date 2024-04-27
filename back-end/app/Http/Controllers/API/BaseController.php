@@ -34,7 +34,7 @@ class BaseController extends Controller
      * @param int $code The HTTP status code.
      * @return JsonResponse The JSON response.
      */
-    public function handleError($error, $errorMsg = [], $code = 404): JsonResponse
+    public function handleError($error, $errorMsg = [], $code = 403): JsonResponse
     {
         $res = [
             'success' => false,

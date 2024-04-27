@@ -90,8 +90,6 @@ class TransactionController extends TransactionBaseController
 
     public function updatePayinStatus(Request $request)
     {
-        Storage::put('public/transaction.json', json_encode($request->all()));
-
         $calculate_hash = hash('sha512', env('PAYDUNYA_MASTER_KEY'));
 
         $data = $request->data;
@@ -132,8 +130,6 @@ class TransactionController extends TransactionBaseController
                 $transaction->update(['payout_status' => $data['status']]);
             }
         }
-
-        return Storage::put('public/disburse.json', json_encode($request->all()));
     }
 
     public function refresh_transaction(Request $request, $payin_token)
@@ -146,7 +142,6 @@ class TransactionController extends TransactionBaseController
             return $this->handleError(
                 "Unauthorized action",
                 ['error' => 'Action non autorisée'],
-                403
             );
         }
 

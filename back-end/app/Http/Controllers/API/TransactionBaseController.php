@@ -48,32 +48,4 @@ class TransactionBaseController extends BaseController
             'amountWithFees' => (float) $amountWithFees,
         ];
     }
-
-    protected function confirm_received_status_in_async_mode(string $token)
-    {
-        $maxAttempts = 5;
-        $attempt = 0;
-
-        while ($attempt < $maxAttempts) {
-            $check = PayDunya::is_received($token);
-            $responseStatus = $check['status'];
-
-            if ($responseStatus == PayDunya::STATUS_COMPLETED_KEY) {
-                return true;
-            } elseif ($responseStatus == 'cancelled' || $responseStatus == 'failed') {
-                $transaction = Transaction::where('token', $token);
-
-                $status = ($responseStatus === 'canceled' ? 'failed' : ($responseStatus === 'failed' ? 'failed' : null));
-                $transaction->update(['payin_status' => $status]);
-                return false;
-            } else {
-                sleep(3);
-                $attempt++;
-            }
-        }
-
-        if ($attempt >= $maxAttempts) {
-            return false;
-        }
-    }
 }
