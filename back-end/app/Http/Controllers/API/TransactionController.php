@@ -29,8 +29,7 @@ class TransactionController extends TransactionBaseController
         if (!$user->is_active || !$user->is_verified) {
             return $this->handleError(
                 __('validation.valid_sender_account'),
-                ['error' => 'Your account is not verified.'],
-                403
+                ['error' => 'Votre compte n\'est pas vérifié.'],
             );
         }
 

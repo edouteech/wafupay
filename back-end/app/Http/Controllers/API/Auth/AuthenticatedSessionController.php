@@ -43,11 +43,16 @@ class AuthenticatedSessionController extends BaseController
 
         if (Auth::attempt($credentialsWithPhone) || Auth::attempt($credentialsWithEmail)) {
 
+            $user = $request->user();
+
+            if (!$user->is_active) return $this->handleError(
+                "Unauthorized action",
+                ['error' => 'Votre compte a été suspendu, veuillez ecrire au support technique'],
+            );
+
             if ($request->two_factor) {
                 return $this->check2fa($request);
             }
-
-            $user = $request->user();
 
             if ($user->is_2fa_active) {
 
@@ -67,12 +72,12 @@ class AuthenticatedSessionController extends BaseController
                     'last_name' => $user->last_name
                 ]));
 
-                return $this->handleResponse([], 'Two Factor Authentication Required, Check your mail');
+                return $this->handleResponse([], 'Authentification à deux facteurs requise, vérifiez votre courrier');
             }
 
             return $this->auth($request);
         }
-        return $this->handleError('Unauthorised.', ['error' => __('auth.failed')], 202);
+        return $this->handleError('Unauthorised.', ['error' => 'Vos identifiant de connexion sont invalides']);
     }
 
 
@@ -114,10 +119,10 @@ class AuthenticatedSessionController extends BaseController
         ) {
 
             if ($otp !== null && ($otp->expired_at !== null && Carbon::parse($otp->expired_at)->lte(Carbon::now()))) {
-                return $this->handleError('Two Factor Code is expired');
+                return $this->handleError('Le code à deux facteurs est expiré');
             }
             return $this->auth($request);
         }
-        return $this->handleError('Invalid Two Factor Code');
+        return $this->handleError('Code à deux facteurs invalide');
     }
 }
