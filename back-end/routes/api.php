@@ -65,6 +65,7 @@ Route::prefix('/v1')->group((function () {
 
         Route::apiResource('transactions', TransactionController::class)->only('store', 'show');
         Route::get('refresh-transaction/{payin_token}', [TransactionController::class, 'refresh_transaction'])->name('transaction.refresh');
+        Route::post('calculate-transaction-fees', [TransactionController::class, 'calculate_fees'])->name('transaction.calculateFees');
         Route::delete('delete-transaction/{transaction}', [TransactionController::class, 'destroyByUser'])->name('transaction.destroyYours');
     });
 
