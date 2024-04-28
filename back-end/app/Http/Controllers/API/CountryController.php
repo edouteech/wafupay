@@ -19,7 +19,7 @@ class CountryController extends BaseController
     public function index()
     {
         return $this->handleResponse(
-            Country::with('users')->get(),
+            Country::all(),
             'Countries retrieved successfully'
         );
     }
