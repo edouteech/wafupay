@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API\Auth;
 
 use App\Http\Controllers\API\BaseController;
+use App\Http\Resources\User as ResourcesUser;
 use App\Models\User;
 use App\Rules\ValidPhoneNumber;
 use Illuminate\Http\JsonResponse;
@@ -42,6 +43,7 @@ class RegistrationController extends BaseController
                 $userData['id_card'] = $logoPath;
             }
             $user = User::create($userData);
+            $user = new ResourcesUser($user);
             $user['token'] = $user->createToken($request->email)->plainTextToken;
 
             return $this->handleResponse($user, 'User successfully registered!');

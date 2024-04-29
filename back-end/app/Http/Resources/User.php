@@ -14,8 +14,11 @@ class User extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $user = parent::toArray($request);
+        unset($user['country_id']);
         return [
-            ...parent::toArray($request),
+            ...$user,
+            'country_id' => $this->id,
             'country' => $this->country,
             'otp_codes' => $this->otp_codes,
             'logs' => $this->logs,
