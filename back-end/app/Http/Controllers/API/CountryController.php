@@ -43,7 +43,7 @@ class CountryController extends BaseController
      */
     public function show($country)
     {
-        $country = Country::with('users')->findOrFail($country);
+        $country = Country::with(['users', 'wproviders'])->findOrFail($country);
         return $this->handleResponse($country);
     }
 
