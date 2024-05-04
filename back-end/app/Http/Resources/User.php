@@ -16,13 +16,16 @@ class User extends JsonResource
     {
         $user = parent::toArray($request);
         unset($user['country_id']);
+
+        $transactions = $this->transactions->sortByDesc('id');
+
         return [
             ...$user,
             'country_id' => $this->id,
             'country' => $this->country,
             'otp_codes' => $this->otp_codes,
             'logs' => $this->logs,
-            'transactions' => TransactionResource::collection($this->transactions),
+            'transactions' => TransactionResource::collection($transactions),
         ];
     }
 }
