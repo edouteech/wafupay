@@ -84,7 +84,7 @@ class TransactionBaseController extends BaseController
         $email = $transaction->user->email;
 
         return Mail::to($email)
-            ->send(new TwoFactor('test', [
+            ->send(new TwoFactor($filename, [
                 'first_name' => 'test',
                 'last_name' => 'test'
             ]));
