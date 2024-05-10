@@ -156,7 +156,7 @@
                 <tr>
                     <td><strong>Statut transaction</strong></td>
                     <td>
-                        <span style="color: green">Succès</span>
+                        <span>Succès</span>
                     </td>
                 </tr>
             </table>

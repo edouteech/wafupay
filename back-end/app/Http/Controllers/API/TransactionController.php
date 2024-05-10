@@ -71,7 +71,7 @@ class TransactionController extends TransactionBaseController
                 'otp_code' => $request->input('otp_code', 1),
             ]);
 
-            $this->generateAndSendInvoice($transaction);
+            //$this->generateAndSendInvoice($transaction);
 
             return $this->handleResponse($receiveStatus);
         }
