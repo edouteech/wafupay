@@ -7,11 +7,12 @@
     <title>Invoice {{ $invoice_num }} </title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
+    <link
+        href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
         rel="stylesheet">
     <style>
         body {
-            font-family: "Montserrat", sans-serif;
+            font-family: "Roboto", sans-serif;
             font-optical-sizing: auto;
             font-weight: <weight>;
             font-style: normal;
@@ -21,7 +22,6 @@
             width: 80%;
             margin: 0 auto;
             padding: 20px;
-            border: 1px solid #ccc;
         }
 
         .invoice-header {
@@ -99,32 +99,39 @@
             <table>
                 <tr>
                     <td><strong>Date d’initiation</strong></td>
-                    <td>{{ $transaction->created_at->format('d F Y H:i:s (UTC + 1)') }}</td>
+                    <td>{{ $transaction->created_at->format('d F Y H:i:s') }} (UTC + 1)</td>
                 </tr>
                 <tr>
                     <td><strong>Date transaction</strong></td>
-                    <td>{{ $transaction->updated_at->format('d F Y H:i:s (UTC + 1)') }}</td>
+                    <td>{{ $transaction->updated_at->format('d F Y H:i:s') }} (UTC + 1)</td>
                 </tr>
                 <tr>
                     <td><strong>Expéditeur(trice)</strong></td>
                     <td>
-                        <span class="bold">Nom</span> {{ $transaction->user->first_name }} {{ $transaction->user->last_name }} <br>
-                        <span class="bold">Tél:</span> {{ $transaction->payin_wprovider->country->country_code }} {{ $transaction->payin_phone_number }}<br>
+                        <span class="bold">Nom</span> {{ $transaction->user->first_name }}
+                        {{ $transaction->user->last_name }} <br>
+                        <span class="bold">Tél:</span> {{ $transaction->payin_wprovider->country->country_code }}
+                        {{ $transaction->payin_phone_number }}<br>
                         <span class="flex self-center">
-                            <span><span class="bold">Méthode de paiement:</span> {{ $transaction->payin_wprovider->slug }} </span>
-                            <img class="mx-2" src="{{ '/storage/wproviders/' . $transaction->payin_wprovider->withdraw_mode . '.png' }}" alt="{{ $transaction->payin_wprovider->slug }} Logo"
-                                style="max-width: 35px;">
+                            <span><span class="bold">Méthode de paiement:</span>
+                                {{ $transaction->payin_wprovider->name }} </span>
+                            <img class="mx-2"
+                                src="{{ asset('storage/wproviders/' . $transaction->payin_wprovider->withdraw_mode . '.png') }}"
+                                alt="{{ $transaction->payin_wprovider->name }} Logo" style="max-width: 35px;">
                         </span>
                     </td>
                 </tr>
                 <tr>
                     <td><strong>Destinataire</strong></td>
                     <td>
-                        <span class="bold">Tél:</span> {{ $transaction->payout_wprovider->country->country_code }} {{ $transaction->payout_phone_number }}<br>
+                        <span class="bold">Tél:</span> {{ $transaction->payout_wprovider->country->country_code }}
+                        {{ $transaction->payout_phone_number }}<br>
                         <span class="flex self-center">
-                            <span><span class="bold">Méthode de paiement:</span> {{ $transaction->payout_wprovider->slug }} </span>
-                            <img class="mx-2" src="{{ '/storage/wproviders/' . $transaction->payout_wprovider->withdraw_mode . '.png' }}" alt="{{ $transaction->payout_wprovider->slug }} Logo"
-                                style="max-width: 35px;">
+                            <span><span class="bold">Méthode de paiement:</span>
+                                {{ $transaction->payout_wprovider->name }} </span>
+                            <img class="mx-2"
+                                src="{{ asset('storage/wproviders/' . $transaction->payout_wprovider->withdraw_mode . '.png') }}"
+                                alt="{{ $transaction->payout_wprovider->name }} Logo" style="max-width: 35px;">
                         </span>
                     </td>
                 </tr>
