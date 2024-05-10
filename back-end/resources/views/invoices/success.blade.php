@@ -120,7 +120,6 @@
                 <tr>
                     <td><strong>Destinataire</strong></td>
                     <td>
-                        <span class="bold">Nom</span> {{ $transaction->user->first_name }} {{ $transaction->user->last_name }} <br>
                         <span class="bold">Tél:</span> {{ $transaction->payout_wprovider->country->country_code }} {{ $transaction->payout_phone_number }}<br>
                         <span class="flex self-center">
                             <span><span class="bold">Méthode de paiement:</span> {{ $transaction->payout_wprovider->slug }} </span>

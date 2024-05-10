@@ -82,7 +82,6 @@ class TransactionController extends TransactionBaseController
 
         $isPayInToken = filter_var($request->input('payin'), FILTER_VALIDATE_BOOLEAN);
 
-
         if ($isPayInToken) {
             return $this->handleResponse(PayDunya::is_received($token));
         }

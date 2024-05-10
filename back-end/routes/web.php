@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\API\TransactionBaseController;
+use App\Models\Transaction;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,5 +16,6 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/invoice', function () {
-    return view('invoices.success');
+    $invoice_method = new TransactionBaseController();
+    return $invoice_method->generateInvoice(92);
 });
