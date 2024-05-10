@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Invoice</title>
+    <title>Invoice {{ $invoice_num }} </title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
@@ -90,7 +90,7 @@
     <div class="invoice">
         <div class="invoice-header">
             <img src="{{ asset('logo.png') }}" alt="WafuPay Logo">
-            <h2>Réçu N°: 111111111111111111111</h2>
+            <h2>Réçu N°: {{ $invoice_num }} </h2>
             <p>Adresse: 123 Main Street, Abomey-Calavi, Benin</p>
             <p>Phone: +123 456 789</p>
             <p>Email: info@wafupay.com</p>
@@ -98,17 +98,21 @@
         <div class="invoice-details">
             <table>
                 <tr>
+                    <td><strong>Date d’initiation</strong></td>
+                    <td>{{ $transaction->created_at->format('d F Y H:i:s (UTC + 1)') }}</td>
+                </tr>
+                <tr>
                     <td><strong>Date transaction</strong></td>
-                    <td>{{ date('Y-m-d H-m-i') }}</td>
+                    <td>{{ $transaction->updated_at->format('d F Y H:i:s (UTC + 1)') }}</td>
                 </tr>
                 <tr>
                     <td><strong>Expéditeur(trice)</strong></td>
                     <td>
-                        <span class="bold">Nom</span> ALASSANE Kabirou<br>
-                        <span class="bold">Tél:</span> 95181019<br>
+                        <span class="bold">Nom</span> {{ $transaction->user->first_name }} {{ $transaction->user->last_name }} <br>
+                        <span class="bold">Tél:</span> {{ $transaction->payin_wprovider->country->country_code }} {{ $transaction->payin_phone_number }}<br>
                         <span class="flex self-center">
-                            <span><span class="bold">Méthode de paiement:</span> MTN BENIN</span>
-                            <img class="mx-2" src="{{ '/storage/wproviders/mtn-benin.png' }}" alt="Sender Logo"
+                            <span><span class="bold">Méthode de paiement:</span> {{ $transaction->payin_wprovider->slug }} </span>
+                            <img class="mx-2" src="{{ '/storage/wproviders/' . $transaction->payin_wprovider->withdraw_mode . '.png' }}" alt="{{ $transaction->payin_wprovider->slug }} Logo"
                                 style="max-width: 35px;">
                         </span>
                     </td>
@@ -116,11 +120,11 @@
                 <tr>
                     <td><strong>Destinataire</strong></td>
                     <td>
-                        <span class="bold">Nom</span> Fortunatus KIDJE<br>
-                        <span class="bold">Tél:</span> 96457545<br>
+                        <span class="bold">Nom</span> {{ $transaction->user->first_name }} {{ $transaction->user->last_name }} <br>
+                        <span class="bold">Tél:</span> {{ $transaction->payout_wprovider->country->country_code }} {{ $transaction->payout_phone_number }}<br>
                         <span class="flex self-center">
-                            <span><span class="bold">Méthode de paiement:</span> MTN BENIN</span>
-                            <img class="mx-2" src="{{ '/storage/wproviders/mtn-benin.png' }}" alt="Sender Logo"
+                            <span><span class="bold">Méthode de paiement:</span> {{ $transaction->payout_wprovider->slug }} </span>
+                            <img class="mx-2" src="{{ '/storage/wproviders/' . $transaction->payout_wprovider->withdraw_mode . '.png' }}" alt="{{ $transaction->payout_wprovider->slug }} Logo"
                                 style="max-width: 35px;">
                         </span>
                     </td>
@@ -128,25 +132,25 @@
                 <tr>
                     <td><strong>Montant Envoyer</strong></td>
                     <td>
-                        1035 FCFA
+                        {{ $transaction->amount }} FCFA
                     </td>
                 </tr>
                 <tr>
                     <td><strong>Frais de Transfert</strong></td>
                     <td>
-                        35 FCFA
+                        {{ $transaction->amount - $transaction->amountWithoutFees }} FCFA
                     </td>
                 </tr>
                 <tr>
                     <td><strong>Montant Réçu</strong></td>
                     <td>
-                        1000 FCFA
+                        {{ $transaction->amountWithoutFees }} FCFA
                     </td>
                 </tr>
                 <tr>
                     <td><strong>Statut transaction</strong></td>
                     <td>
-                        Sucess
+                        Succès
                     </td>
                 </tr>
             </table>

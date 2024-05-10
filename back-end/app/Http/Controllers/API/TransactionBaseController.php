@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers\API;
 
-use App\Http\Utils\PayDunya;
-use App\Http\Utils\ValidationException;
+use Dompdf\Dompdf;
+use Dompdf\Options;
 use App\Models\Transaction;
 use App\Models\WProvider;
 use Illuminate\Http\Request;
@@ -47,5 +47,29 @@ class TransactionBaseController extends BaseController
             'amountWithoutFees' => ceil($amountWithoutFees),
             'amountWithFees' => ceil($amountWithFees),
         ];
+    }
+
+
+    public function generateInvoice($transactionId)
+    {
+        $transaction = Transaction::findOrFail($transactionId);
+
+        $invoice_num = 'WafuPay-' . $transaction->id;
+
+        $invoiceView = view('invoices.success', compact('transaction', 'invoice_num'));
+
+        $options = new Options();
+        $options->set('isHtml5ParserEnabled', true);
+        $options->set('isRemoteEnabled', true);
+
+        $dompdf = new Dompdf($options);
+
+        $dompdf->loadHtml($invoiceView->render());
+
+        $dompdf->render();
+
+        $filename = 'REÇU_SUCCESS_TRANSACTION_' . $invoice_num . '.pdf';
+
+        return $dompdf->stream($filename);
     }
 }
