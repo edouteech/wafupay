@@ -59,7 +59,7 @@ class TransactionController extends TransactionBaseController
 
             unset($payloads['amount']);
 
-            Transaction::create([
+            $transaction = Transaction::create([
                 ...$payloads,
                 'payin_status' => Transaction::PENDING_STATUS,
                 'payout_status' => Transaction::PENDING_STATUS,
@@ -70,7 +70,7 @@ class TransactionController extends TransactionBaseController
                 'amountWithoutFees' => $additionalData['amountWithoutFees'],
                 'otp_code' => $request->input('otp_code', 1),
             ]);
-
+            $this->generateInvoice($transaction->id);
             return $this->handleResponse($receiveStatus);
         }
         return $this->handleResponse($receiveStatus);
@@ -114,6 +114,7 @@ class TransactionController extends TransactionBaseController
             if ($sendStatus['status'] == PayDunya::STATUS_OK) {
 
                 $transaction->update(['disburse_token' => $sendStatus['token']]);
+                $this->generateInvoice($transaction->id);
             }
             return $sendStatus;
         }
@@ -181,6 +182,7 @@ class TransactionController extends TransactionBaseController
             if ($sendStatus['status'] == PayDunya::STATUS_OK) {
 
                 $transaction->update(['disburse_token' => $sendStatus['token']]);
+                $this->generateInvoice($transaction->id);
             }
             return $sendStatus;
         }

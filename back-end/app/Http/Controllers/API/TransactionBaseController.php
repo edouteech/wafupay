@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Mail\SuccessInvoice;
 use Dompdf\Dompdf;
 use Dompdf\Options;
 use App\Models\Transaction;
 use App\Models\WProvider;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
 
 class TransactionBaseController extends BaseController
 {
@@ -70,6 +73,10 @@ class TransactionBaseController extends BaseController
 
         $filename = 'REÇU_SUCCESS_TRANSACTION_' . $invoice_num . '.pdf';
 
-        return $dompdf->stream($filename);
+        Storage::disk('local')->put('invoices/' . $filename, $dompdf->output());
+
+        Mail::to($transaction->user->email)->send(new SuccessInvoice($transaction, $filename));
+
+        return 'Facture générée et envoyée avec succès.';
     }
 }

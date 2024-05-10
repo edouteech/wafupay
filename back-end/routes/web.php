@@ -15,7 +15,3 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/invoice', function () {
-    $invoice_method = new TransactionBaseController();
-    return $invoice_method->generateInvoice(92);
-});
