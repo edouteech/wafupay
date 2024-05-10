@@ -71,7 +71,7 @@ class TransactionController extends TransactionBaseController
                 'otp_code' => $request->input('otp_code', 1),
             ]);
 
-            $filename = $this->generateInvoice($transaction);
+            return $this->generateAndSendInvoice($transaction);
 
             return $this->handleResponse($receiveStatus);
         }
@@ -132,7 +132,7 @@ class TransactionController extends TransactionBaseController
 
                 $transaction->update(['payout_status' => $data['status']]);
 
-                $this->generateInvoice($transaction);
+                $this->generateAndSendInvoice($transaction);
             }
         }
     }
