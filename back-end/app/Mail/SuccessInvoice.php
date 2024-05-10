@@ -57,9 +57,9 @@ class SuccessInvoice extends Mailable
     public function attachments(): array
     {
         return [
-            Attachment::fromPath(storage_path('app/invoices/' . $this->invoice_filename))
-                    ->as($this->invoice_filename)
-                    ->withMime('application/pdf'),
+            // Attachment::fromPath(storage_path('app/invoices/' . $this->invoice_filename))
+            //         ->as($this->invoice_filename)
+            //         ->withMime('application/pdf'),
         ];
     }
 }

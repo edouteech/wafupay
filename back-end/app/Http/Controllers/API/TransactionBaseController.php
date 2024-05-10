@@ -53,7 +53,7 @@ class TransactionBaseController extends BaseController
     }
 
 
-    public function generateInvoice(Transaction $transaction): string
+    public function generateInvoice(Transaction $transaction)
     {
         $invoice_num = 'WafuPay-' . $transaction->id;
 
@@ -73,7 +73,7 @@ class TransactionBaseController extends BaseController
 
         Storage::disk('local')->put('invoices/' . $filename, $dompdf->output());
 
-        return $filename;
+        return Mail::to($transaction->user->email)->send(new SuccessInvoice($transaction, $filename));
 
     }
 }

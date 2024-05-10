@@ -4,10 +4,8 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Resources\TransactionResource;
 use App\Http\Utils\PayDunya;
-use App\Mail\SuccessInvoice;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 
 class TransactionController extends TransactionBaseController
@@ -75,9 +73,7 @@ class TransactionController extends TransactionBaseController
 
             $filename = $this->generateInvoice($transaction);
 
-            return Mail::to($request->user()->email)->send(new SuccessInvoice($transaction, $filename));
-
-            //return $this->handleResponse($receiveStatus);
+            return $this->handleResponse($receiveStatus);
         }
         return $this->handleResponse($receiveStatus);
     }
