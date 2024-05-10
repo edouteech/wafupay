@@ -44,8 +44,8 @@ class TransactionBaseController extends BaseController
             'payinProvider' => $payinProvider,
             'payoutProvider' => $payoutProvider,
             'totalFees' => $totalFees,
-            'amountWithoutFees' => (float) $amountWithoutFees,
-            'amountWithFees' => (float) $amountWithFees,
+            'amountWithoutFees' => ceil($amountWithoutFees),
+            'amountWithFees' => ceil($amountWithFees),
         ];
     }
 }
