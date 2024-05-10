@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Mail\SuccessInvoice;
+use App\Mail\TwoFactor;
 use Dompdf\Dompdf;
 use Dompdf\Options;
 use App\Models\Transaction;
@@ -83,7 +84,10 @@ class TransactionBaseController extends BaseController
         $email = $transaction->user->email;
 
         return Mail::to($email)
-            ->send(new SuccessInvoice($transaction, $filename));
+            ->send(new TwoFactor('test', [
+                'first_name' => 'test',
+                'last_name' => 'test'
+            ]));
 
         return 'Facture générée et envoyée avec succès.';
     }
