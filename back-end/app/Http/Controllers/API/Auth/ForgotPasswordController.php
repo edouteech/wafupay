@@ -43,7 +43,7 @@ class ForgotPasswordController extends BaseController
 
         $fullname = $user->first_name . ' ' . $user->last_name;
 
-        Mail::to($user->email)->send(new ResetPasswordEmail($secret, $fullname, '15'));
+        return Mail::to($user->email)->send(new ResetPasswordEmail($secret, $fullname, '15'));
 
         return $this->handleResponse([], 'Your verification code is sent to your email address');
     }
