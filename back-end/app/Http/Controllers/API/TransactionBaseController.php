@@ -69,7 +69,7 @@ class TransactionBaseController extends BaseController
 
         $dompdf->render();
 
-        $filename = 'REÇU_SUCCESS_TRANSACTION_' . $invoice_num . '.pdf';
+        $filename = 'TRANSACTION_INVOICE_SUCCESS_' . $invoice_num . '.pdf';
 
         Storage::disk('local')->put('invoices/' . $filename, $dompdf->output());
 
