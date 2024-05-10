@@ -92,18 +92,18 @@
             <img src="{{ asset('logo.png') }}" alt="WafuPay Logo">
             <h2>Réçu N°: {{ $invoice_num }} </h2>
             <p>Adresse: 123 Main Street, Abomey-Calavi, Benin</p>
-            <p>Phone: +123 456 789</p>
+            <p>Tél: +123 456 789</p>
             <p>Email: info@wafupay.com</p>
         </div>
         <div class="invoice-details">
             <table>
                 <tr>
                     <td><strong>Date d’initiation</strong></td>
-                    <td>{{ $transaction->created_at->format('d F Y H:i:s') }} (UTC + 1)</td>
+                    <td>{{ $transaction->created_at->format('d F Y H:i:s') }} (UTC)</td>
                 </tr>
                 <tr>
                     <td><strong>Date transaction</strong></td>
-                    <td>{{ $transaction->updated_at->format('d F Y H:i:s') }} (UTC + 1)</td>
+                    <td>{{ $transaction->updated_at->format('d F Y H:i:s') }} (UTC)</td>
                 </tr>
                 <tr>
                     <td><strong>Expéditeur(trice)</strong></td>
@@ -122,7 +122,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <td><strong>Destinataire</strong></td>
+                    <td><strong>Destinataire(trice)</strong></td>
                     <td>
                         <span class="bold">Tél:</span> {{ $transaction->payout_wprovider->country->country_code }}
                         {{ $transaction->payout_phone_number }}<br>
@@ -156,7 +156,7 @@
                 <tr>
                     <td><strong>Statut transaction</strong></td>
                     <td>
-                        Succès
+                        <span style="color: green">Succès</span>
                     </td>
                 </tr>
             </table>
