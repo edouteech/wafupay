@@ -4,11 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Transaction WafuPay réussie</title>
-    <style>
-        body {
-            font-size: 18px;
-        }
-    </style>
 </head>
 <body>
     <div style="background-color: #f0f0f0; padding: 20px;text-align:center">
