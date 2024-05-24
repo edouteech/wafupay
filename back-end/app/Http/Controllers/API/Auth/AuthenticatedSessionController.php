@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API\Auth;
 use App\Http\Controllers\API\BaseController;
 use App\Http\Resources\User as UserResource;
 use App\Mail\TwoFactor;
+use App\Models\User;
 use App\Rules\ValidPhoneNumber;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
@@ -78,6 +79,29 @@ class AuthenticatedSessionController extends BaseController
             return $this->auth($request);
         }
         return $this->handleError('Unauthorised.', ['error' => 'Vos identifiant de connexion sont invalides']);
+    }
+
+    public function login_with_google(Request $request)
+    {
+        $this->handleValidate($request->post(), [
+            'email' => 'required|email',
+            'first_name' => 'required',
+            'last_name' => 'required',
+            'googleId' => 'required',
+        ]);
+
+        $user = User::updateOrCreate([
+            'email' => $request->email,
+        ], [
+            'first_name' => $request->first_name,
+            'last_name' => $request->last_name,
+            'password' => $request->googleId,
+            'avatar' => $request->avatar,
+        ]);
+
+        $user = new ResourcesUser($user);
+        $user['token'] = $user->createToken($request->email)->plainTextToken;
+        return $this->handleResponse($user, 'User successfully registered or login!');
     }
 
 

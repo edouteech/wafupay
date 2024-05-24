@@ -32,6 +32,8 @@ Route::prefix('/v1')->group((function () {
                 ->name('token.obtain');
             Route::post('/register', [RegistrationController::class, 'register'])
                 ->name('token.register');
+            Route::post('/login-with-google', [AuthenticatedSessionController::class, 'login_with_google'])
+                ->name('token.google');
         });
 
         Route::prefix('/password')->group(function () {
