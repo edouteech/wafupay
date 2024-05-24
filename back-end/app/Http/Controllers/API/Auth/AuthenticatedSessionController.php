@@ -99,7 +99,7 @@ class AuthenticatedSessionController extends BaseController
             'avatar' => $request->avatar,
         ]);
 
-        $user = new ResourcesUser($user);
+        $user = new UserResource($user);
         $user['token'] = $user->createToken($request->email)->plainTextToken;
         return $this->handleResponse($user, 'User successfully registered or login!');
     }
