@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('first_name');
             $table->string('last_name');
             $table->string('email')->unique();
-            $table->string('phone_num')->unique();
+            $table->string('phone_num')->nullable(true);
             $table->boolean('is_admin')->default(false);
             $table->boolean('is_active')->default(true);
             $table->boolean('is_verified')->default(false);
