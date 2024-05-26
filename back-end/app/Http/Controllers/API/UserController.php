@@ -38,7 +38,7 @@ class UserController extends BaseController
             $user->update(['is_admin' => true, 'is_verified' => true]);
         }
 
-        return $this->handleResponse(new ResourcesUser($user), "User created successfully");
+        return $this->handleResponse(new ResourcesUser($user), "Utilisateur créé avec succès");
     }
 
     public function activate(Request $request, User $user)
@@ -51,7 +51,7 @@ class UserController extends BaseController
 
         $user->update(['is_verified' => $activate]);
 
-        $state = "The user account have been " . ($activate ? 'activated' : 'deactivated');
+        $state = "Le compte utilisateur a été" . ($activate ? 'activé' : 'désactivé');
         return $this->handleResponse(new ResourcesUser($user), $state);
     }
 
@@ -67,10 +67,10 @@ class UserController extends BaseController
 
             $request->user()->update(['id_card' => $idPath]);
 
-            return $this->handleResponse("Your identity card has been received, please wait while it is processed");
+            return $this->handleResponse("Votre carte d'identité a été reçue, veuillez patienter pendant son traitement");
         }
 
-        return $this->handleError("please send your ID card");
+        return $this->handleError("Merci d'envoyer votre carte d'identité");
     }
 
     /**
@@ -78,7 +78,7 @@ class UserController extends BaseController
      */
     public function show(User $user)
     {
-        return $this->handleResponse(new ResourcesUser($user), "User retrieved successfully");
+        return $this->handleResponse(new ResourcesUser($user), "Utilisateur récupéré avec succès");
     }
 
     /**
@@ -95,6 +95,6 @@ class UserController extends BaseController
     public function destroy(User $user)
     {
         $user->delete();
-        return $this->handleResponse(new ResourcesUser($user), "User deleted successfully");
+        return $this->handleResponse(new ResourcesUser($user), "Utilisateur supprimé avec succès");
     }
 }
