@@ -54,6 +54,10 @@ Route::prefix('/v1')->group((function () {
 
         Route::post('submit-identity-card', [UserController::class, 'submit_card']);
 
+        Route::prefix('/user')->group(function () {
+            Route::post('update-profile');
+        });
+
         Route::middleware('admin')->group(function () {
             Route::apiResource('transactions-fees', TransactionFeesController::class);
             Route::apiResource('countries', CountryController::class)->except('index');

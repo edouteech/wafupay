@@ -55,24 +55,6 @@ class UserController extends BaseController
         return $this->handleResponse(new ResourcesUser($user), $state);
     }
 
-    public function submit_card(Request $request)
-    {
-
-        $this->handleValidate($request->post(), [
-            'identity_card' => 'extensions:jpg,jpeg,png,bmp,gif,svg,pdf|file',
-        ]);
-
-        if ($request->hasFile('identity_card')) {
-            $idPath = $request->file('identity_card')->store('ID', 'public');
-
-            $request->user()->update(['id_card' => $idPath]);
-
-            return $this->handleResponse("Votre carte d'identité a été reçue, veuillez patienter pendant son traitement");
-        }
-
-        return $this->handleError("Merci d'envoyer votre carte d'identité");
-    }
-
     /**
      * Display the specified resource.
      */
