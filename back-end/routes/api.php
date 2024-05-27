@@ -56,7 +56,7 @@ Route::prefix('/v1')->group((function () {
         Route::post('submit-identity-card', [AuthenticatedSessionController::class, 'submit_legal_document']);
 
         Route::prefix('/user')->group(function () {
-            Route::post('update-profile');
+            Route::post('update-profile', [AuthenticatedSessionController::class, 'update_profile']);
         });
 
         Route::middleware('admin')->group(function () {

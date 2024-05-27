@@ -47,4 +47,20 @@ class AuthenticatedSessionController extends BaseController
         return $this->handleError("Merci d'envoyer votre carte d'identité");
     }
 
+    public function update_profile(Request $request)
+    {
+        $this->handleValidate($request->post(), [
+            'first_name' =>'required',
+            'last_name' =>'required',
+            'phone_number' => ['required', new ValidPhoneNumber()],
+        ]);
+
+        $request->user()->update([
+            'first_name' => $request->first_name,
+            'last_name' => $request->last_name,
+            'phone_number' => $request->phone_number,
+        ]);
+
+        return $this->handleResponse("Votre profil a été mis à jour avec succès");
+    }
 }
