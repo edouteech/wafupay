@@ -29,7 +29,7 @@ class AuthenticatedSessionController extends BaseController
         return $this->handleResponse(new UserResource($request->user()));
     }
 
-    public function submit_card(Request $request)
+    public function submit_legal_document(Request $request)
     {
 
         $this->handleValidate($request->post(), [

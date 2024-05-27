@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\API\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\API\Auth\LoginController;
 use App\Http\Controllers\API\Auth\ForgotPasswordController;
 use App\Http\Controllers\API\Auth\RegistrationController;
 use App\Http\Controllers\API\CountryController;
@@ -28,11 +29,11 @@ Route::get('/check-api', function () {
 Route::prefix('/v1')->group((function () {
     Route::middleware('guest')->group(function () {
         Route::prefix('/token')->group(function () {
-            Route::post('/', [AuthenticatedSessionController::class, 'login'])
+            Route::post('/', [LoginController::class, 'login'])
                 ->name('token.obtain');
             Route::post('/register', [RegistrationController::class, 'register'])
                 ->name('token.register');
-            Route::post('/login-with-google', [AuthenticatedSessionController::class, 'login_with_google'])
+            Route::post('/login-with-google', [LoginController::class, 'login_with_google'])
                 ->name('token.google');
         });
 
@@ -46,13 +47,13 @@ Route::prefix('/v1')->group((function () {
 
     Route::middleware('auth:sanctum')->group(function () {
         Route::prefix('/token')->group(function () {
-            Route::get('/verify', [AuthenticatedSessionController::class, 'verify'])
+            Route::get('/verify', [AuthenticatedSessionController::class, 'me'])
                 ->name('token.verify');
             Route::post('/revoke', [RegistrationController::class, 'revoke'])
                 ->name('token.revoke');
         });
 
-        Route::post('submit-identity-card', [UserController::class, 'submit_card']);
+        Route::post('submit-identity-card', [AuthenticatedSessionController::class, 'submit_legal_document']);
 
         Route::prefix('/user')->group(function () {
             Route::post('update-profile');
