@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API\Auth;
 
 use App\Http\Controllers\API\BaseController;
 use App\Http\Resources\User as UserResource;
+use App\Http\Services\LoggerService;
 use App\Rules\ValidPhoneNumber;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -44,8 +45,8 @@ class AuthenticatedSessionController extends BaseController
     public function update_profile(Request $request)
     {
         $this->handleValidate($request->post(), [
-            'first_name' =>'required',
-            'last_name' =>'required',
+            'first_name' => 'required',
+            'last_name' => 'required',
             'phone_number' => ['required', new ValidPhoneNumber()],
         ]);
 
@@ -56,5 +57,23 @@ class AuthenticatedSessionController extends BaseController
         ]);
 
         return $this->handleResponse("Votre profil a été mis à jour avec succès");
+    }
+
+    /**
+     * Revoke the user's authentication token.
+     *
+     * @param Request $request The incoming request.
+     * @return JsonResponse A JSON response containing an empty array and a message.
+     */
+    public function revoke(
+        Request $request,
+        LoggerService $logger
+    ): JsonResponse {
+
+        $logger->saveLog($request, $logger::LOGOUT);
+
+        $request->user()->token()->revoke();
+
+        return $this->handleResponse([], 'User logged out!');
     }
 }

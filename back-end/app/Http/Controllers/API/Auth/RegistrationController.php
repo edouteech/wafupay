@@ -51,20 +51,4 @@ class RegistrationController extends BaseController
             return $this->handleError($th);
         }
     }
-
-    /**
-     * Revoke the user's authentication token.
-     *
-     * @param Request $request The incoming request.
-     * @return JsonResponse A JSON response containing an empty array and a message.
-     */
-    public function revoke(Request $request): JsonResponse
-    {
-        $request->user()->token()->revoke();
-        $request->user()->logs()->create([
-            'action' => 'logout',
-            'ip_address' => $request->ip()
-        ]);
-        return $this->handleResponse([], 'User logged out!');
-    }
 }

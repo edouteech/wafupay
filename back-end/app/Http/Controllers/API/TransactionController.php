@@ -80,6 +80,8 @@ class TransactionController extends BaseController
                 'otp_code' => $request->input('otp_code', 1),
             ]);
 
+            $this->logger->saveLog($request, $this->logger::TRANSFER);
+
             return $this->handleResponse($receiveStatus);
         }
         return $this->handleResponse($receiveStatus);

@@ -49,7 +49,7 @@ Route::prefix('/v1')->group((function () {
         Route::prefix('/token')->group(function () {
             Route::get('/verify', [AuthenticatedSessionController::class, 'me'])
                 ->name('token.verify');
-            Route::post('/revoke', [RegistrationController::class, 'revoke'])
+            Route::post('/revoke', [AuthenticatedSessionController::class, 'revoke'])
                 ->name('token.revoke');
         });
 

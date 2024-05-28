@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API\Auth;
 
 use App\Http\Controllers\API\BaseController;
 use App\Http\Resources\User as UserResource;
+use App\Http\Services\LoggerService;
 use App\Mail\TwoFactor;
 use App\Models\User;
 use App\Rules\ValidPhoneNumber;
@@ -23,6 +24,11 @@ class LoginController extends BaseController
         'password' => 'required',
         'two_factor' => 'string|min:7'
     ];
+
+    public function __construct(
+        public readonly LoggerService $logger
+    ) {
+    }
 
 
     /**
@@ -99,8 +105,11 @@ class LoginController extends BaseController
             'avatar' => $request->avatar,
         ]);
 
+        $this->logger->saveLog($request, $this->logger::LOGIN, $user);
+
         $user = new UserResource($user);
         $user['token'] = $user->createToken($request->email)->plainTextToken;
+
         return $this->handleResponse($user, 'User successfully registered or login!');
     }
 
@@ -113,10 +122,7 @@ class LoginController extends BaseController
 
         $user->otp_codes()->where(['code' => $user->otp_code, 'type' => '2fa'])->update(['is_verified' => true]);
 
-        $user->logs()->create([
-            'action' => 'login',
-            'ip_address' => $request->ip()
-        ]);
+        $this->logger->saveLog($request, $this->logger::LOGIN);
 
         return $this->handleResponse(['token' => $token->plainTextToken], 'User logged-in!');
     }
