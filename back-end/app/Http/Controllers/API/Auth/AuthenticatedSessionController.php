@@ -72,7 +72,11 @@ class AuthenticatedSessionController extends BaseController
 
         $logger->saveLog($request, $logger::LOGOUT);
 
-        $request->user()->token()->revoke();
+        $token = $request->user()->currentAccessToken();
+
+        if ($token) {
+            $token->delete();
+        }
 
         return $this->handleResponse([], 'User logged out!');
     }
