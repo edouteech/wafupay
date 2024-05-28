@@ -5,6 +5,8 @@ namespace App\Http\Controllers\API\Auth;
 use App\Http\Controllers\API\BaseController;
 use App\Http\Resources\User as ResourcesUser;
 use App\Http\Services\LoggerService;
+use App\Http\Services\TwoFactorService;
+use App\Models\OtpCode;
 use App\Models\User;
 use App\Rules\ValidPhoneNumber;
 use Illuminate\Http\JsonResponse;
@@ -14,7 +16,8 @@ class RegistrationController extends BaseController
 {
 
     public function __construct(
-        private readonly LoggerService $logger
+        private readonly LoggerService $logger,
+        private readonly TwoFactorService $twoFactorService,
     ) {
     }
 
@@ -40,18 +43,53 @@ class RegistrationController extends BaseController
             'phone_num' => ['required', 'unique:users', new ValidPhoneNumber],
         ]);
 
-        try {
+        $user = User::create($payloads);
+        return $this->twoFactorService->sendEmailVerificationToken($user);
+    }
 
-            $user = User::create($payloads);
+    public function resendEmailVerificationToken(Request $request)
+    {
+        $this->handleValidate($request->post(), [
+            'email' => 'required|email',
+        ]);
 
+        $user = User::where('email', $request->post('email'))
+            ->firstOrFail();
+
+        return $this->twoFactorService->sendEmailVerificationToken($user);
+    }
+
+    /**
+     * Verify the user's email address.
+     *
+     * @param Request $request
+     * @return JsonResponse
+     * @throws \LogicException
+     */
+
+    public function verifyEmailAddress(Request $request)
+    {
+        $this->handleValidate($request->post(), [
+            'token' => ['required'],
+            'email' => ['required', 'email'],
+        ]);
+
+        $user = User::where('email', $request->post('email'))
+            ->firstOrFail();
+
+        $checkedStatus = $this->twoFactorService->checkToken($user, $request->token, OtpCode::EmailVerificationTYPE);
+
+        if (!$checkedStatus instanceof JsonResponse) {
+            $this->twoFactorService->markVerified($user, OtpCode::EmailVerificationTYPE);
             $this->logger->saveLog($request, $this->logger::LOGIN, $user);
+            $user->update(['email_verified_at' => new \DateTime()]);
 
             $user = new ResourcesUser($user);
             $user['token'] = $user->createToken($request->email)->plainTextToken;
 
             return $this->handleResponse($user, 'User successfully registered!');
-        } catch (\Throwable $th) {
-            return $this->handleError($th);
         }
+
+        return $checkedStatus;
     }
 }

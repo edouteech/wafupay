@@ -50,14 +50,14 @@ class TwoFactorService extends BaseController
 
     public function sendEmailVerificationToken(?User $user): JsonResponse
     {
-        $secret = $this->create_and_store_token($user);
+        $secret = $this->create_and_store_token($user, OtpCode::EmailVerificationTYPE);
 
         $this->process_mail(
             $user,
             new EmailVerification($secret, $this->getFullname($user))
         );
 
-        return $this->handleResponse([], "Vérifier votre boite mail pour verifier votre email email avec le code OTP récu");
+        return $this->handleResponse([], "Vérifier votre boite email pour vérifier votre adresse email avec le code OTP récu");
     }
 
     public function create_and_store_token(?User $user, string $type = OtpCode::TwoFactor): string

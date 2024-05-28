@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('otp_codes', function (Blueprint $table) {
             $table->id();
             $table->string('code');
-            $table->enum('type', ['2fa', 'reset_password', 'email_verification']);
+            $table->enum('type', ['2fa', 'reset_password']);
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->boolean('is_verified')->default(false);
             $table->timestamps();

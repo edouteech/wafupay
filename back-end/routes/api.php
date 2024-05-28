@@ -35,6 +35,10 @@ Route::prefix('/v1')->group((function () {
                 ->name('token.register');
             Route::post('/login-with-google', [LoginController::class, 'login_with_google'])
                 ->name('token.google');
+            Route::post('/verify-email', [RegistrationController::class, 'verifyEmailAddress'])
+                ->name('token.verify.email');
+            Route::post('/resend-email-token', [RegistrationController::class, 'resendEmailVerificationToken'])
+                ->name('token.verify.email.resend');
         });
 
         Route::prefix('/password')->group(function () {
