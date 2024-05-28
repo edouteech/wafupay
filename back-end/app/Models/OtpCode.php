@@ -19,6 +19,12 @@ class OtpCode extends Model
         'expired_at',
     ];
 
+    public const TwoFactor = '2fa';
+
+    public const PASSWORD_RESET = 'reset_password';
+
+    public const EmailVerificationTYPE = 'email_verification';
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);

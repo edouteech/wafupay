@@ -4,48 +4,36 @@ namespace App\Http\Controllers\API\Auth;
 
 use App\Http\Controllers\API\BaseController;
 use App\Http\Utils\ValidationException;
-use App\Mail\ResetPasswordEmail;
 use App\Models\User;
 use App\Rules\ValidPhoneNumber;
-use Carbon\Carbon;
+use App\Http\Services\TwoFactorService;
+use App\Models\OtpCode;
 use Illuminate\Auth\Events\PasswordReset;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Validation\Rules;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Mail;
-use RobThree\Auth\TwoFactorAuth;
 
 class ForgotPasswordController extends BaseController
 {
+
+    public function __construct(
+        private readonly TwoFactorService $twoFactorService,
+    ) {
+    }
+
     public function send_otp(Request $request)
     {
         $this->handleValidate($request->post(), [
             'email' => 'required_without:phone_num|email',
-            'phone_num' => ['required_without:email', new ValidPhoneNumber]
         ]);
 
-        $user = User::where('email', $request->post('email'))
-            ->orWhere('phone_num', $request->post('phone_num'))
-            ->first();
-
-        if (!$user) {
-            return $this->handleError('User not found');
+        if ($user = User::where('email', $request->post('email'))
+            ->first()
+        ) {
+            return $this->twoFactorService->sendPasswordResetToken($user);
         }
-        $app = new TwoFactorAuth();
-        $secret =  $app->createSecret(32);
 
-        $expirationTime = Carbon::now()->addMinutes(15);
-
-        $user->otp_codes()->create([
-            'code' => $secret,
-            'type' => 'reset_password',
-            'expired_at' => $expirationTime,
-        ]);
-
-        $fullname = $user->first_name . ' ' . $user->last_name;
-
-        Mail::to($user->email)->send(new ResetPasswordEmail($secret, $fullname, '15'));
-
-        return $this->handleResponse([], 'Your verification code is sent to your email address');
+        return $this->handleError('Adresse email invalide');
     }
 
     public function reset_password(Request $request)
@@ -59,7 +47,11 @@ class ForgotPasswordController extends BaseController
 
         $user = User::where('email', $request->email)->firstOrFail();
 
-        $this->check2fa($request->otp, $user);
+        $checkedStatus = $this->check2fa($request->otp, $user);
+
+        if ($checkedStatus instanceof JsonResponse) {
+            return $checkedStatus;
+        }
 
         if ($user->update(['password' => $request->password])) {
             event(new PasswordReset($user));
@@ -67,22 +59,13 @@ class ForgotPasswordController extends BaseController
         }
     }
 
-    private function check2fa(string $user_otp, User $user)
+    private function check2fa(string $token, User $user)
     {
-        if ($otp = $user->otp_codes()
-            ->where(['code' => $user_otp, 'is_verified' => false])
-            ->latest()
-            ->first()
-        ) {
+        $checkedStatus = $this->twoFactorService->checkToken($user, $token, OtpCode::PASSWORD_RESET);
 
-            if ($otp !== null && ($otp->expired_at !== null && Carbon::parse($otp->expired_at)->lte(Carbon::now()))) {
-                throw new ValidationException(json_encode('Two Factor Code is expired'));
-            }
-
-            if ($user_otp == $otp->code) {
-                return;
-            }
+        if (!$checkedStatus instanceof JsonResponse) {
+            return $this->twoFactorService->markVerified($user, OtpCode::PASSWORD_RESET);
         }
-        throw new ValidationException(json_encode('Invalid Two Factor Code'));
+        return $checkedStatus;
     }
 }

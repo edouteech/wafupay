@@ -5,15 +5,13 @@ namespace App\Http\Controllers\API\Auth;
 use App\Http\Controllers\API\BaseController;
 use App\Http\Resources\User as UserResource;
 use App\Http\Services\LoggerService;
-use App\Mail\TwoFactor;
+use App\Http\Services\TwoFactorService;
+use App\Models\OtpCode;
 use App\Models\User;
 use App\Rules\ValidPhoneNumber;
-use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Mail;
-use RobThree\Auth\TwoFactorAuth;
 
 
 class LoginController extends BaseController
@@ -26,7 +24,8 @@ class LoginController extends BaseController
     ];
 
     public function __construct(
-        public readonly LoggerService $logger
+        public readonly LoggerService $logger,
+        private readonly TwoFactorService $twoFactorService,
     ) {
     }
 
@@ -54,7 +53,7 @@ class LoginController extends BaseController
 
             if (!$user->is_active) return $this->handleError(
                 "Unauthorized action",
-                ['error' => 'Votre compte a été suspendu, veuillez ecrire au support technique'],
+                ['error' => 'Votre compte a été suspendu, veuillez contacter le support technique'],
             );
 
             if ($request->two_factor) {
@@ -62,29 +61,12 @@ class LoginController extends BaseController
             }
 
             if ($user->is_2fa_active) {
-
-                $app = new TwoFactorAuth();
-                $secret =  $app->createSecret(32);
-
-                $expirationTime = Carbon::now()->addMinutes(15);
-
-                $user->otp_codes()->create([
-                    'code' => $secret,
-                    'type' => '2fa',
-                    'expired_at' => $expirationTime,
-                ]);
-
-                Mail::to($user->email)->send(new TwoFactor($secret, [
-                    'first_name' => $user->first_name,
-                    'last_name' => $user->last_name
-                ]));
-
-                return $this->handleResponse([], 'Authentification à deux facteurs requise, vérifiez votre courrier');
+                return $this->twoFactorService->send2FAToken($user);
             }
 
             return $this->auth($request);
         }
-        return $this->handleError('Unauthorised.', ['error' => 'Vos identifiant de connexion sont invalides']);
+        return $this->handleError('Unauthorised.', ['error' => 'Vos identifiants de connexion sont invalides']);
     }
 
     public function login_with_google(Request $request)
@@ -120,7 +102,7 @@ class LoginController extends BaseController
 
         $token = $user->createToken(isset($request->email) ? $request->email : $request->phone_num);
 
-        $user->otp_codes()->where(['code' => $user->otp_code, 'type' => '2fa'])->update(['is_verified' => true]);
+        $this->twoFactorService->markVerified($user);
 
         $this->logger->saveLog($request, $this->logger::LOGIN);
 
@@ -131,17 +113,11 @@ class LoginController extends BaseController
     {
         $user = $request->user();
 
-        if ($otp = $user->otp_codes()
-            ->where(['code' => $request->two_factor, 'is_verified' => false])
-            ->latest()
-            ->first()
-        ) {
+        $checkedStatus = $this->twoFactorService->checkToken($user, $request->two_factor);
 
-            if ($otp !== null && ($otp->expired_at !== null && Carbon::parse($otp->expired_at)->lte(Carbon::now()))) {
-                return $this->handleError('Le code à deux facteurs est expiré');
-            }
+        if (!$checkedStatus instanceof JsonResponse) {
             return $this->auth($request);
         }
-        return $this->handleError('Code à deux facteurs invalide');
+        return $checkedStatus;
     }
 }
