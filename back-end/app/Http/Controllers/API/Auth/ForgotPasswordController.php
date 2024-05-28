@@ -57,9 +57,9 @@ class ForgotPasswordController extends BaseController
             'confirm_password' => 'required|same:password',
         ]);
 
-        $this->check2fa($request->email, $request->otp);
+        $user = User::where('email', $request->email)->firstOrFail();
 
-        $user = User::where('email', $request->email)->first();
+        $this->check2fa($request->email, $request->otp, $user);
 
         if ($user->update(['password' => $request->password])) {
             event(new PasswordReset($user));
@@ -67,10 +67,8 @@ class ForgotPasswordController extends BaseController
         }
     }
 
-    private function check2fa($email, $user_otp)
+    private function check2fa(string $email, string $user_otp, User $user)
     {
-        $user = User::where('email', $email)->first();
-
         if ($otp = $user->otp_codes()
             ->where(['code' => $user_otp, 'is_verified' => false])
             ->latest()

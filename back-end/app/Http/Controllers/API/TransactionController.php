@@ -149,7 +149,7 @@ class TransactionController extends BaseController
     {
         $user = $request->user();
 
-        $transaction = Transaction::where('token', $payin_token)->first();
+        $transaction = Transaction::where('token', $payin_token)->firstOrFail();
 
         if ($user->id != $transaction->user_id) {
             return $this->handleError(
