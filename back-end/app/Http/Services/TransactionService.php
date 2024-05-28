@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\API;
+namespace App\Http\Services;
 
 use App\Mail\SuccessInvoice;
 use Dompdf\Dompdf;
@@ -11,9 +11,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 
-class TransactionBaseController extends BaseController
+class TransactionService
 {
-    protected array $rules = [
+    private array $rules = [
         'payin_phone_number' => 'required|min_digits:8|numeric|max_digits:10',
         'payin_wprovider_id' => ['required', 'exists:w_providers,id'],
         'payout_phone_number' => 'required|min_digits:8|numeric|max_digits:10',
@@ -24,7 +24,12 @@ class TransactionBaseController extends BaseController
         'otp_code' => 'string|min:4',
     ];
 
-    protected function calculate_fees(Request $request): array
+    public function getRules(): array
+    {
+        return $this->rules;
+    }
+
+    public function calculate_fees(Request $request): array
     {
         $isSupportedFee = filter_var($request->post('sender_support_fee'), FILTER_VALIDATE_BOOLEAN);
 
@@ -53,7 +58,7 @@ class TransactionBaseController extends BaseController
     }
 
 
-    protected function generateInvoice(Transaction $transaction)
+    private function generateInvoice(Transaction $transaction)
     {
         $invoice_num = 'WafuPay-' . $transaction->id;
 

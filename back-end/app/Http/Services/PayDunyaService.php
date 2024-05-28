@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Utils;
+namespace App\Http\Services;
 
 use Illuminate\Support\Facades\Http;
 
-class PayDunya
+class PayDunyaService
 {
     private const TRANSFER = "TRANSFER";
 
@@ -247,14 +247,14 @@ class PayDunya
         ];
     }
 
-    public static function is_received(string $token): array
+    public static function payinStatus(string $token): array
     {
         $url = self::BASE_API_URL . "v1/checkout-invoice/confirm/$token";
         $res = Http::withHeaders(self::getHeaders())->get($url);
         return $res->json();
     }
 
-    public static function is_sent(string $disburse_invoice): array
+    public static function payoutStatus(string $disburse_invoice): array
     {
         $data = [
             "disburse_invoice" => $disburse_invoice

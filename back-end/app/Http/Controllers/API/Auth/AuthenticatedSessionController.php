@@ -4,15 +4,9 @@ namespace App\Http\Controllers\API\Auth;
 
 use App\Http\Controllers\API\BaseController;
 use App\Http\Resources\User as UserResource;
-use App\Mail\TwoFactor;
-use App\Models\User;
 use App\Rules\ValidPhoneNumber;
-use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Mail;
-use RobThree\Auth\TwoFactorAuth;
 
 
 class AuthenticatedSessionController extends BaseController

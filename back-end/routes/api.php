@@ -65,7 +65,7 @@ Route::prefix('/v1')->group((function () {
             Route::apiResource('wallet-providers', WProviderController::class);
             Route::apiResource('users', UserController::class);
             Route::post('activate-account/{user}', [UserController::class, 'activate']);
-            Route::get('check-transaction-status/{token}', [TransactionController::class, 'checkTransactionStatus']);
+            Route::get('check-transaction-status/{token}/{type}', [TransactionController::class, 'check_transaction_status']);
             Route::apiResource('transactions', TransactionController::class)
                 ->except('store', 'show', 'delete');
         });
@@ -77,6 +77,6 @@ Route::prefix('/v1')->group((function () {
     });
 
     Route::apiResource('countries', CountryController::class)->only('index');
-    Route::any('update-transaction-status', [TransactionController::class, 'updatePayinStatus'])->name('transaction.updateStatus');
-    Route::any('disburse', [TransactionController::class, 'updatePayoutStatus'])->name('transaction.store_disburse');
+    Route::any('update-transaction-status', [TransactionController::class, 'update_payin_status'])->name('transaction.updateStatus');
+    Route::any('disburse', [TransactionController::class, 'update_payout_status'])->name('transaction.store_disburse');
 }));

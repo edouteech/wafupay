@@ -3,13 +3,22 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Resources\TransactionResource;
-use App\Http\Utils\PayDunya;
+use App\Http\Services\LoggerService;
+use App\Http\Services\PayDunyaService;
+use App\Http\Services\TransactionService;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 
-class TransactionController extends TransactionBaseController
+class TransactionController extends BaseController
 {
+
+    public function __construct(
+        private readonly PayDunyaService $payDunya,
+        private readonly LoggerService $logger,
+        private readonly TransactionService $process,
+    ) {
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -33,9 +42,9 @@ class TransactionController extends TransactionBaseController
             );
         }
 
-        $payloads = $this->handleValidate($request->post(), $this->rules);
+        $payloads = $this->handleValidate($request->post(), $this->process->getRules());
 
-        $additionalData = $this->calculate_fees($request);
+        $additionalData = $this->process->calculate_fees($request);
 
         $sender = [
             'fullname' => $user->first_name . ' ' . $user->last_name,
@@ -45,21 +54,21 @@ class TransactionController extends TransactionBaseController
             'otp_code' => $request->input('otp_code', 1),
         ];
 
-        $receiveStatus = PayDunya::receive(
+        $receiveStatus = $this->payDunya->receive(
             $additionalData['amountWithFees'],
             $additionalData['payinProvider'],
             $sender
         );
 
         if (
-            $receiveStatus['status'] == PayDunya::STATUS_OK &&
+            $receiveStatus['status'] == $this->payDunya::STATUS_OK &&
             $receiveStatus['message']['success'] === true &&
             $receiveStatus['token']
         ) {
 
             unset($payloads['amount']);
 
-            $transaction = Transaction::create([
+            Transaction::create([
                 ...$payloads,
                 'payin_status' => Transaction::PENDING_STATUS,
                 'payout_status' => Transaction::PENDING_STATUS,
@@ -71,29 +80,28 @@ class TransactionController extends TransactionBaseController
                 'otp_code' => $request->input('otp_code', 1),
             ]);
 
-            //$this->generateAndSendInvoice($transaction);
-
             return $this->handleResponse($receiveStatus);
         }
         return $this->handleResponse($receiveStatus);
     }
 
-    public function checkTransactionStatus(Request $request, $token)
+    public function calculate_fees(Request $request)
     {
-        $this->handleValidate($request->input(), ['payin' => 'required']);
-
-        $isPayInToken = filter_var($request->input('payin'), FILTER_VALIDATE_BOOLEAN);
-
-        if ($isPayInToken) {
-            return $this->handleResponse(PayDunya::is_received($token));
-        }
-
-        return $this->handleResponse(PayDunya::is_sent($token));
+        return $this->process->calculate_fees($request);
     }
 
-    public function updatePayinStatus(Request $request)
+    public function check_transaction_status(string $token, string $type)
     {
-        $calculate_hash = hash('sha512', env('PAYDUNYA_MASTER_KEY'));
+        if ($type == 'payin') {
+            return $this->handleResponse($this->payDunya->payinStatus($token));
+        }
+
+        return $this->handleResponse($this->payDunya->payoutStatus($token));
+    }
+
+    public function update_payin_status(Request $request)
+    {
+        $calculate_hash = hash('sha512', env('$this->payDunya_MASTER_KEY'));
 
         $data = $request->data;
 
@@ -108,12 +116,12 @@ class TransactionController extends TransactionBaseController
         $transaction->update(['payin_status' => $status]);
 
         if ($status == Transaction::APPROVED_STATUS) {
-            $sendStatus = PayDunya::send(
+            $sendStatus = $this->payDunya::send(
                 $transaction->payout_wprovider->withdraw_mode,
                 $transaction->payout_phone_number,
                 $transaction->amountWithoutFees,
             );
-            if ($sendStatus['status'] == PayDunya::STATUS_OK) {
+            if ($sendStatus['status'] == $this->payDunya::STATUS_OK) {
 
                 $transaction->update(['disburse_token' => $sendStatus['token']]);
             }
@@ -122,7 +130,7 @@ class TransactionController extends TransactionBaseController
         return;
     }
 
-    public function updatePayoutStatus(Request $request)
+    public function update_payout_status(Request $request)
     {
         $data = $request->data ?? [];
 
@@ -137,7 +145,7 @@ class TransactionController extends TransactionBaseController
         }
     }
 
-    public function refresh_transaction(Request $request, $payin_token)
+    public function refresh_transaction(Request $request, string $payin_token)
     {
         $user = $request->user();
 
@@ -163,7 +171,7 @@ class TransactionController extends TransactionBaseController
                 'otp_code' => $transaction->otp_code,
             ];
 
-            return PayDunya::receive(
+            return $this->payDunya::receive(
                 $transaction->amount,
                 $transaction->payin_wprovider,
                 $sender
@@ -176,13 +184,13 @@ class TransactionController extends TransactionBaseController
             && $transaction->payout_status !== Transaction::PENDING_STATUS
         ) {
 
-            $sendStatus = PayDunya::send(
+            $sendStatus = $this->payDunya::send(
                 $transaction->payout_wprovider->withdraw_mode,
                 $transaction->payout_phone_number,
                 $transaction->amountWithoutFees,
             );
 
-            if ($sendStatus['status'] == PayDunya::STATUS_OK) {
+            if ($sendStatus['status'] == $this->payDunya::STATUS_OK) {
 
                 $transaction->update(['disburse_token' => $sendStatus['token']]);
             }
