@@ -19,11 +19,11 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => ['*'],
+    'allowed_origins' => ['*', 'http://localhost', 'http://127.0.0.1'],
 
     'allowed_origins_patterns' => [],
 
-    'allowed_headers' => ['*', 'http://localhost', 'http://127.0.0.1'],
+    'allowed_headers' => ['*'],
 
     'exposed_headers' => [],
 
