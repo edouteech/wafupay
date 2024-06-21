@@ -6,16 +6,17 @@ import { useState } from "react"
 import { EyeOff, Eye } from "lucide-react"
 import { strict } from "assert"
 import Link from "next/link"
+import axios from "axios"
 
 function Register() {
     //################################## CONSTANTES #############################//
-
+    const apiUrl = process.env.NEXT_PUBLIC_APIURL
 
     //################################## VARIABLES ##############################//
 
     const [showPassword1, setShowPassword1] = useState(false)
     const [showPassword2, setShowPassword2] = useState(false)
-    const [user, setUser] = useState<{first_name : string, last_name : string, email : string, phone_num : number | string, password :string, password2 : string}>({first_name : "", last_name : "", email : "", phone_num : "", password :"", password2 : ""})
+    const [user, setUser] = useState<{"first_name" : string, "last_name" : string, "email" : string, "phone_num" : number | string, "password" :string, "password2" : string}>({"first_name" : "", "last_name" : "", "email" : "", "phone_num" : "", "password" :"", "password2" : ""})
 
 
 
@@ -39,7 +40,13 @@ function Register() {
     }
 
     const handleSubmit = (e:any) =>{
-        e.prevent.default
+        e.preventDefault();
+        console.log(apiUrl)
+        axios.post(`${apiUrl}/token/register/`, {user}).then((resp)=>{
+            console.log(resp.data)
+        }).catch((err)=>{
+            console.log(err)
+        })
     }
 
 
