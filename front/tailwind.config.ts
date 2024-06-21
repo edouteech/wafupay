@@ -17,7 +17,10 @@ const config: Config = {
         "primary" : "#1877F2",
         "secBlue" : "",
         "textGray" : "#606060",
-        "thinBlue" : "#e3effd"
+        "thinBlue" : "#e3effd",
+        "thinGray" : "#b1b1b1",
+        "bodyBg" : "#f5f7fa"
+
 
       },
       boxShadow : {

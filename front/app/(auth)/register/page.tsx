@@ -39,15 +39,17 @@ function Register() {
         ))
     }
 
-    const handleSubmit = (e:any) =>{
+    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        console.log(apiUrl)
-        axios.post(`${apiUrl}/token/register/`, {user}).then((resp)=>{
-            console.log(resp.data)
-        }).catch((err)=>{
-            console.log(err)
-        })
-    }
+        axios.post(`${apiUrl}/token/register/`, { user })
+            .then((resp) => {
+                console.log(resp.data);
+            })
+            .catch((err) => {
+                console.error('Error registering user:', err);
+            });
+    };
+    
 
 
 
@@ -117,7 +119,7 @@ function Register() {
                         <div className="flex flex-col items-center gap-2">
                             <button className="bg-primary rounded-lg text-white p-2 px-4"> S'inscrire </button>
                             <span className="text-black">ou</span>
-                            <Link href={'#'} className="text-sm text-primary">Connexion</Link>
+                            <Link href={'/login'} className="text-sm text-primary">Connexion</Link>
                         </div>
 
                     </form>
