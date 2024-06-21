@@ -3,30 +3,31 @@ import NavBar from "../Components/NavBar"
 import Image from "next/image"
 import mailVerif from "@/public/assets/images/mailVerif.png"
 import { useEffect, useRef, useState } from "react"
-import { EyeOff, Eye } from "lucide-react"
-import { strict } from "assert"
-import Link from "next/link"
 import axios from "axios"
-import { Country } from "@/app/types/types"
-import { count } from "console"
+import { useRouter } from "next/navigation"
 
 function MailVarification() {
     //################################## CONSTANTES #############################//
     const apiUrl = process.env.NEXT_PUBLIC_APIURL
+    const router = useRouter()
 
     //################################## VARIABLES ##############################//
 
     const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
     const [inputValues, setInputValues] = useState<string[]>(['', '', '', '', '', '']);
+    const email = window.location.href.substring(45, window.location.href.length)
+
 
 
 
     //################################## MOUNTED ################################//
 
 
-
     //################################## WATCHER #################################//
-
+    useEffect(()=>{
+        console.log(email);
+        
+    },[email])
 
 
     //################################## METHODS #################################//
@@ -61,7 +62,7 @@ function MailVarification() {
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        axios.post(`${apiUrl}/token/verify-email`, { "token": inputValues.join(""), "email": "" })
+        axios.post(`${apiUrl}/token/verify-email`, { "token": inputValues.join(""), "email": email })
             .then((resp) => {
                 console.log(resp.data);
             })

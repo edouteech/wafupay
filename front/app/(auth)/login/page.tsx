@@ -15,8 +15,8 @@ function Register() {
     //################################## VARIABLES ##############################//
 
     const [showPassword1, setShowPassword1] = useState(false)
-    const [showPassword2, setShowPassword2] = useState(false)
-    const [user, setUser] = useState<{"mailOrTel" : string, "password" :string}>({"mailOrTel" : "","password" : ""})
+    const [useMail, setUseMail] = useState(false)
+    const [user, setUser] = useState<{ "mail": string, tel: string, "password": string }>({ "mail": "", "password": "", "tel": "" })
 
 
 
@@ -30,18 +30,18 @@ function Register() {
 
     //################################## METHODS #################################//
 
-    const handleInput = (e:{target : {value : string}}, field: string) => {
-        setUser((prevUser)=>(
+    const handleInput = (e: { target: { value: string } }, field: string) => {
+        setUser((prevUser) => (
             {
                 ...prevUser,
-                [field] : e.target.value
+                [field]: e.target.value
             }
         ))
     }
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        axios.post(`${apiUrl}/token/register/`, { user })
+        axios.post(`${apiUrl}/token`, { "phone_num": user.tel, "email": user.mail, "password": user.password })
             .then((resp) => {
                 console.log(resp.data);
             })
@@ -49,7 +49,7 @@ function Register() {
                 console.error('Error registering user:', err);
             });
     };
-    
+
 
 
 
@@ -65,31 +65,45 @@ function Register() {
                     <Image alt="bienvenue" src={welcome}></Image>
                 </div>
                 <div>
-                    <form action="" className="shadow-lg p-12 rounded-3xl shadow-gray-400" onSubmit={(e)=>{handleSubmit(e)}}>
+                    <form action="" className="shadow-lg p-12 rounded-3xl shadow-gray-400" onSubmit={(e) => { handleSubmit(e) }}>
                         <legend className="mb-8 text-black font-semibold text-2xl text-center">Connexion</legend>
-                        <div className="relative mb-4">
-                            <label htmlFor="last_name" className="font-semibold absolute top-[-10px] bg-white left-4 px-1 text-sm">E-mail ou Téléphone</label>
-                            <input type="text" placeholder="johndoe@exemple.com" className="border p-4 rounded-2xl" value={user.mailOrTel} onChange={(e)=>{handleInput(e, "mailOrTel")}}/>
-                        </div>
+                        {!useMail && (
+                            <div className="relative mb-4">
+                                <label htmlFor="tel" className="font-semibold absolute top-[-10px] bg-white left-4 px-1 text-sm"> Téléphone</label>
+                                <input type="tel" placeholder="+22956525854" className="border p-4 rounded-2xl" value={user.tel} onChange={(e) => { handleInput(e, "tel") }} />
+                            </div>
+                        )}
+                        {useMail && (
+                            <div className="relative mb-4">
+                                <label htmlFor="email" className="font-semibold absolute top-[-10px] bg-white left-4 px-1 text-sm"> Email</label>
+                                <input type="email" placeholder="johndoe@exemple.com" className="border p-4 rounded-2xl" value={user.mail} onChange={(e) => { handleInput(e, "mail") }} />
+                            </div>
+                        )}
                         <div className="relative mb-4">
                             {!showPassword1 && (
                                 <>
                                     <label htmlFor="password1" className="font-semibold absolute top-[-10px] bg-white left-4 px-1 text-sm">Mot de passe</label>
-                                    <input type="password" placeholder="Entrer votre mot de passe" className="border p-4 rounded-2xl" value={user.password} onChange={(e)=>{handleInput(e, "password")}}/>
-                                    <button><Eye onClick={()=>{setShowPassword1(true)}} className="absolute top-4 right-5"></Eye></button>
+                                    <input type="password" placeholder="Entrer votre mot de passe" className="border p-4 rounded-2xl" value={user.password} onChange={(e) => { handleInput(e, "password") }} />
+                                    <button><Eye onClick={() => { setShowPassword1(true) }} className="absolute top-4 right-5"></Eye></button>
                                 </>
                             )}
                             {showPassword1 && (
                                 <>
                                     <label htmlFor="password1" className="font-semibold absolute top-[-10px] bg-white left-4 px-1 text-sm">Mot de passe</label>
-                                    <input type="text" placeholder="Entrer votre mot de passe" className="border p-4 rounded-2xl" value={user.password} onChange={(e)=>{handleInput(e, "password")}}/>
-                                    <button><EyeOff onClick={()=>{setShowPassword1(false)}} className="absolute top-4 right-5"></EyeOff></button>
+                                    <input type="text" placeholder="Entrer votre mot de passe" className="border p-4 rounded-2xl" value={user.password} onChange={(e) => { handleInput(e, "password") }} />
+                                    <button><EyeOff onClick={() => { setShowPassword1(false) }} className="absolute top-4 right-5"></EyeOff></button>
                                 </>
                             )}
                         </div>
 
                         <div className="flex flex-col items-center gap-4 text-black text-xs">
                             <button className="bg-primary rounded-sm shadow-lg shadow-gray-300 text-white p-2 px-4"> Se connecter </button>
+                            {!useMail && (
+                                <span>Se connecter avec <button className="text-primary" onClick={()=>{setUseMail(true)}}> un email</button></span>
+                            )}
+                            {useMail && (
+                                <span>Se connecter avec <button className="text-primary" onClick={()=>{setUseMail(false)}}> un téléphone</button></span>
+                            )}
                             <span>Vous avez déjà un compte ? <Link href={'/register'} className="text-sm text-primary">Créer un compte</Link></span>
                             <Link href={'/login'} className="text-sm text-primary">Mot de passe oublier</Link>
                         </div>

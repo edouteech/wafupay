@@ -10,6 +10,7 @@ import Link from "next/link"
 import axios from "axios"
 import { Country } from "@/app/types/types"
 import { count } from "console"
+import Email from 'next-auth/providers/email';
 
 function Register() {
     //################################## CONSTANTES #############################//
@@ -34,7 +35,6 @@ function Register() {
         })
     }, [])
 
-
     //################################## WATCHER #################################//
 
 
@@ -55,7 +55,9 @@ function Register() {
         axios.post(`${apiUrl}/token/register`, { "first_name": user.first_name, "last_name": user.last_name, "email": user.email, "password": user.password, "confirm_password": user.password2, "phone_num": country?.country_code + "" + user.phone_num, "country_id": user.country_id })
             .then((resp) => {
                 if (resp.status == 200) {
-                    router.push('/mail-verification')
+                    console.log(resp.data);
+                    
+                    router.push(`/mail-verification?mail=${resp.data.data[0].email}`)
                 }
             })
             .catch((err) => {
