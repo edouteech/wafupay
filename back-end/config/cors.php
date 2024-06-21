@@ -23,7 +23,7 @@ return [
 
     'allowed_origins_patterns' => [],
 
-    'allowed_headers' => ['*'],
+    'allowed_headers' => ['*', 'http://localhost', 'http://127.0.0.1'],
 
     'exposed_headers' => [],
 
