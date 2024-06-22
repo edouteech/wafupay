@@ -6,7 +6,9 @@ import { useState } from "react"
 import { EyeOff, Eye } from "lucide-react"
 import { strict } from "assert"
 import Link from "next/link"
+import {useRouter} from "next/navigation"
 import axios from "axios"
+import Swal from "sweetalert2"
 
 function Register() {
     //################################## CONSTANTES #############################//
@@ -17,6 +19,7 @@ function Register() {
     const [showPassword1, setShowPassword1] = useState(false)
     const [useMail, setUseMail] = useState(false)
     const [user, setUser] = useState<{ "mail": string, tel: string, "password": string }>({ "mail": "", "password": "", "tel": "" })
+    const router = useRouter()
 
 
 
@@ -41,13 +44,38 @@ function Register() {
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        axios.post(`${apiUrl}/token`, { "phone_num": user.tel, "email": user.mail, "password": user.password })
+        if (user.tel) {
+            axios.post(`${apiUrl}/token`, { "phone_num": user.tel ? user.tel : null, "password": user.password })
             .then((resp) => {
                 console.log(resp.data);
+                localStorage.setItem('token', resp.data.token)
+                router.push('/dashboard')
             })
             .catch((err) => {
                 console.error('Error registering user:', err);
+                Swal.fire({
+                    icon : 'error',
+                    title : 'Mauvaise entrées',
+                    text : err.response.data.phone_num ? err.response.data.phone_num : err.response.data.email ? err.response.data.email : 'Aucun compte trouvé avec ces informations veuillez vérifier et rééssayer'
+                })
             });
+        }else {
+            axios.post(`${apiUrl}/token`, {"email": user.mail ? user.mail : null, "password": user.password })
+            .then((resp) => {
+                console.log(resp.data);
+                localStorage.setItem('token', resp.data.token)
+                router.push('/dashboard')
+            })
+            .catch((err) => {
+                console.error('Error registering user:', err);
+                Swal.fire({
+                    icon : 'error',
+                    title : 'Mauvaise entrées',
+                    text : err.response.data.phone_num ? err.response.data.phone_num : err.response.data.email ? err.response.data.email : 'Aucun compte trouvé avec ces informations veuillez vérifier et rééssayer'
+                })
+            });
+        }
+        
     };
 
 
@@ -99,10 +127,10 @@ function Register() {
                         <div className="flex flex-col items-center gap-4 text-black text-xs">
                             <button className="bg-primary rounded-sm shadow-lg shadow-gray-300 text-white p-2 px-4"> Se connecter </button>
                             {!useMail && (
-                                <span>Se connecter avec <button className="text-primary" onClick={()=>{setUseMail(true)}}> un email</button></span>
+                                <span>Se connecter avec <button className="text-primary" onClick={()=>{setUseMail(true); handleInput({target:{value : ""}}, "tel")}}> un email</button></span>
                             )}
                             {useMail && (
-                                <span>Se connecter avec <button className="text-primary" onClick={()=>{setUseMail(false)}}> un téléphone</button></span>
+                                <span>Se connecter avec <button className="text-primary" onClick={()=>{setUseMail(false); handleInput({target:{value : ""}}, "mail")}}> un téléphone</button></span>
                             )}
                             <span>Vous avez déjà un compte ? <Link href={'/register'} className="text-sm text-primary">Créer un compte</Link></span>
                             <Link href={'/login'} className="text-sm text-primary">Mot de passe oublier</Link>
