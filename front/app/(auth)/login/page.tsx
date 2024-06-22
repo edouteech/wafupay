@@ -48,7 +48,7 @@ function Register() {
             axios.post(`${apiUrl}/token`, { "phone_num": user.tel ? user.tel : null, "password": user.password })
             .then((resp) => {
                 console.log(resp.data);
-                localStorage.setItem('token', resp.data.token)
+                localStorage.setItem('token', resp.data.data.token)
                 router.push('/dashboard')
             })
             .catch((err) => {
@@ -63,7 +63,7 @@ function Register() {
             axios.post(`${apiUrl}/token`, {"email": user.mail ? user.mail : null, "password": user.password })
             .then((resp) => {
                 console.log(resp.data);
-                localStorage.setItem('token', resp.data.token)
+                localStorage.setItem('token', resp.data.data.token)
                 router.push('/dashboard')
             })
             .catch((err) => {
