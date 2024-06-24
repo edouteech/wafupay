@@ -6,7 +6,7 @@ import { useEffect, useState } from "react"
 import axios from "axios"
 import { headers } from "next/headers"
 
-function CarteId() {
+function Permis() {
     //################################## CONSTANTES #############################//
     const apiUrl = process.env.NEXT_PUBLIC_APIURL
     const router = useRouter();
@@ -56,7 +56,7 @@ function CarteId() {
             <Dashbord>
                 <div>
                     <h2 className=" mt-8 mb-4 text-center text-2xl font-bold text-primary">Vérification d'identité</h2>
-                    <h3 className=" mb-4 text-center text-1xl font-bold text-primary">Carte d'identité</h3>
+                    <h3 className=" mb-4 text-center text-1xl font-bold text-primary">Permis de conduire</h3>
                     <ul className="ml-16 mb-8 text-base">
                         <li>Document original en taille réelle, non édité</li>
                         <li>Émis par le gouvernement</li>
@@ -86,4 +86,4 @@ function CarteId() {
     )
 }
 
-export default CarteId
+export default Permis

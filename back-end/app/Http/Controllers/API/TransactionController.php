@@ -53,7 +53,6 @@ class TransactionController extends BaseController
             'phone_num' => $request->payin_phone_number,
             'otp_code' => $request->input('otp_code', 1),
         ];
-
         $receiveStatus = $this->payDunya->receive(
             $additionalData['amountWithFees'],
             $additionalData['payinProvider'],

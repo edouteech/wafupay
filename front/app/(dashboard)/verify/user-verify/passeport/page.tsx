@@ -6,7 +6,7 @@ import { useEffect, useState } from "react"
 import axios from "axios"
 import { headers } from "next/headers"
 
-function CarteId() {
+function Passeport() {
     //################################## CONSTANTES #############################//
     const apiUrl = process.env.NEXT_PUBLIC_APIURL
     const router = useRouter();
@@ -56,7 +56,7 @@ function CarteId() {
             <Dashbord>
                 <div>
                     <h2 className=" mt-8 mb-4 text-center text-2xl font-bold text-primary">Vérification d'identité</h2>
-                    <h3 className=" mb-4 text-center text-1xl font-bold text-primary">Carte d'identité</h3>
+                    <h3 className=" mb-4 text-center text-1xl font-bold text-primary">Passeport</h3>
                     <ul className="ml-16 mb-8 text-base">
                         <li>Document original en taille réelle, non édité</li>
                         <li>Émis par le gouvernement</li>
@@ -71,8 +71,8 @@ function CarteId() {
                     <form className="w-full" onSubmit={(e)=>{submitCard(e)}}>
                         <legend className="text-base text-black text-center font-semibold">La taille réelle doit être comprise entre 10 Ko et 5 120 Ko au format jpeg ou png</legend>
                         <div className="flex justify-evenly gap-8 mx-auto w-7/12 my-4">
-                            <UploadButton text={`${pics[0] ? pics[0].name : 'téléchargez la page avant'}`} onUpload={(file:File)=>{getPics(file,0)}}></UploadButton>
-                            <UploadButton text={`${pics[1] ? pics[1].name : 'téléchargez la page arrière'}`} onUpload={(file:File)=>{getPics(file,1)}}></UploadButton>
+                            <UploadButton text={`${pics[0] ? pics[0].name : 'téléchargez le passeport'}`} onUpload={(file:File)=>{getPics(file,0)}}></UploadButton>
+                            {/* <UploadButton text={`${pics[1] ? pics[1].name : 'téléchargez la page arrière'}`} onUpload={(file:File)=>{getPics(file,1)}}></UploadButton> */}
                         </div>
                         <button className="mx-auto w-32 block p-4 m-4 bg-primary mt-8 rounded font-bold text-white">Continuer</button>
                     </form>
@@ -86,4 +86,4 @@ function CarteId() {
     )
 }
 
-export default CarteId
+export default Passeport

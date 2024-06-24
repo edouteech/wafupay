@@ -25,8 +25,8 @@ useEffect(()=>{
     return (
         <>
             <div className="relative text-[19px] bg-bodyBg text-white overflow-hidden h-[100vh] w-[100vw]">
-                <div className="absolute left-0 top-0 bottom-0 w-60 z-10">
-                    <ul className="py-2 text-textGray bg-white px-8 flex-col flex gap-6 h-full">
+                <div className="absolute left-0 top-0 bottom-0 w-60 z-20">
+                    <ul className="py-2 text-textGray bg-white px-8 flex-col flex gap-6 h-full border-r">
                     <Image alt="logo" className="w-[143px]" src={logo}></Image>
                         <li><Link className={`${href[3] == "dashboard" || href[3] == "verify" ? 'text-primary' : ''} flex items-center gap-3`} href={'dashboard'}><Home f={`${href[3] == "dashboard" || href[3] == "verify" ? '#1877F2' : '#606060'}`}></Home>Dashboard</Link></li>
                         <li> <button onClick={()=>{setShowTrans(!showTrans)}} className={`${href[3] == "transactions" ? 'text-primary' : ''} flex items-center gap-3`}><TransCash f={`${href[3] == "transactions" ? '#1877F2' : '#606060'}`} ></TransCash>Transactions</button>
@@ -41,7 +41,7 @@ useEffect(()=>{
                         <li><Link className={`${href[3] == "faq" ? 'text-primary' : ''} flex items-center gap-3`} href={'faq'}><Faq f={`${href[3] == "faq" ? '#1877F2' : '#606060'}`}></Faq>FAQ</Link></li>
                     </ul>
                 </div>
-                <div className="flex bg-white p-2 items-center absolute top-0 h-24 pl-56 w-full">
+                <div className="flex bg-white p-2 items-center absolute top-0 h-24 pl-56 w-full z-10">
                     <div className="flex items-center gap-4 bg-white w-full p-2 text-primary rounded-lg justify-end">
                         <Bell></Bell>
                         <Image alt="belle femme" src={userPic}></Image>

@@ -71,7 +71,7 @@ const Verify: React.FC = () => {
                             <p className="text-lg">Veuillez authentifier votre compte</p>
                         </div>
                         <div className="mt-4 w-96 flex justify-center">
-                            <button className="bg-primary py-1 px-2 rounded-sm text-sm w-2/3 text-center m-auto">Lancer la vérification</button>
+                            <Link href={'/verify/user-verify'} className="bg-primary py-1 px-2 rounded-sm text-sm w-2/3 text-center m-auto text-white">Lancer la vérification</Link>
                         </div>
                     </div>
                 </div>
