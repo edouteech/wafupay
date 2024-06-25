@@ -2,7 +2,7 @@
 import Dashbord from "../../Components/Dashbord"
 import { useRouter } from "next/navigation"
 
-function Dashboard() {
+function Carte() {
     //################################## CONSTANTES #############################//
     const apiUrl = process.env.NEXT_PUBLIC_APIURL
     const router = useRouter()
@@ -39,4 +39,4 @@ function Dashboard() {
     )
 }
 
-export default Dashboard
+export default Carte

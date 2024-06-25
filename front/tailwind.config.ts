@@ -15,7 +15,7 @@ const config: Config = {
       },
       colors : {
         "primary" : "#1877F2",
-        "secBlue" : "",
+        "secBlue" : "#718ebf",
         "textGray" : "#606060",
         "thinBlue" : "#e3effd",
         "thinGray" : "#b1b1b1",

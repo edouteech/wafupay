@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation"
 import { headers } from "next/headers"
 import Link from "next/link"
 
-function Dashboard() {
+function EndVerification() {
     //################################## CONSTANTES #############################//
     const apiUrl = process.env.NEXT_PUBLIC_APIURL
     const router = useRouter()
@@ -72,4 +72,4 @@ function Dashboard() {
     )
 }
 
-export default Dashboard
+export default EndVerification

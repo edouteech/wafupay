@@ -57,3 +57,26 @@ export interface WProvider {
     fees: Fee[];
     country: Country;
 }
+
+export interface Transaction {
+    amount: string;
+    amountWithoutFees: string;
+    created_at: string;
+    deleted_at: string | null;
+    disburse_token: string | null;
+    id: number;
+    otp_code: string | null;
+    payin_phone_number: string;
+    payin_status: string;
+    payin_wprovider_id: string;
+    payout_phone_number: string;
+    payout_status: string;
+    payout_wprovider_id: string;
+    receiver: string | null;
+    sender: string | null;
+    token: string;
+    type: string;
+    updated_at: string;
+    user_id: string;
+  }
+  
