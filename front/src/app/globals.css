@@ -1,0 +1,11 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@import url('../../public/assets/fonts/fonts.css');
+
+
+body {
+  /* background-color: red; */
+  font-family: 'Poppins' !important;
+  color: #606060;
+}
