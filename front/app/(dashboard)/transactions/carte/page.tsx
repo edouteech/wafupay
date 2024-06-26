@@ -1,8 +1,6 @@
 "use client"
 import Dashbord from "../../Components/Dashbord"
 import { useRouter } from "next/navigation"
-import { AiOutlineCalendar, AiOutlineLock } from 'react-icons/ai';
-import { FaCcVisa, FaCcMastercard } from 'react-icons/fa';
 import visa from "@/public/assets/images/visa.png"
 import mscard from "@/public/assets/images/mscard.png"
 import Image from "next/image";
