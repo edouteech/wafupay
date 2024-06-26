@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation"
 import axios from "axios"
 import mtnmomo from "@/public/assets/images/mtnmomo.png"
 import Image from "next/image"
+// import qsdf from "@/"
 import { Country, WProvider } from "@/app/types/types"
 import Swal from "sweetalert2"
 import Link from "next/link"
@@ -167,7 +168,7 @@ function Mobile() {
                       {countries.map((country) => (
                         <option key={country.id} onClick={() => {
                           setCountry(country); console.log(country);
-                        }} value={country.id} className="hover:bg-red-500 bg-white text-gray-700">{country.country_code} {country.slug}</option>
+                        }} value={country.id} className="hover:bg-red-500 bg-white text-gray-700">{country.country_code} {country.slug} <Image alt="momo" src={mtnmomo}></Image></option>
                       ))}
                     </select>
                     <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
@@ -208,9 +209,9 @@ function Mobile() {
               <div className="flex items-center relative">
                 <div className="relative w-1/4 z-[5]">
                   <select className="block appearance-none bg-white border border-gray-300 w-full text-gray-700 p-4 pr-7 rounded-2xl leading-tight focus:outline-none focus:border-blue-500" value={trans.to.country} onChange={(e) => { handleChange(e, 'to.country') }}>
-                    {countries.map((country) => (
+                    {countries.map((country,i) => (
                       <option key={country.id} onClick={() => { setCountry(country) }} value={country.id} className="hover:bg-red-500 bg-white text-gray-700">{country.country_code} {country.slug}</option>
-                    ))}
+                    ))}   
                   </select>
                   <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
                     <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">

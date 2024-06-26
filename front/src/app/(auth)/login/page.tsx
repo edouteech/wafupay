@@ -1,15 +1,16 @@
 "use client"
 import NavBar from "../Components/NavBar"
 import Image from "next/image"
-import welcome from "../../../../public/assets/images/welcome.png"
+import welcome from "@/public/assets/images/welcome.png"
 import { useState } from "react"
 import { EyeOff, Eye } from "lucide-react"
 import { strict } from "assert"
 import Link from "next/link"
-import {useRouter} from "next/navigation"
+import { useRouter } from "next/navigation"
 import axios from "axios"
 import Swal from "sweetalert2"
 import { signIn } from "next-auth/react"
+import { kMaxLength } from "buffer"
 
 function Register() {
     //################################## CONSTANTES #############################//
@@ -48,55 +49,35 @@ function Register() {
         const email = user.mail
         const phone_num = user.tel
         const password = user.password
-        const result  = signIn("credentials",{
+        const result = signIn("credentials", {
             email,
             phone_num,
-            password, 
-            redirect : false,
-            callbackUrl : '/dashboard'
+            password,
+            redirect: false,
+            callbackUrl: '/dashboard'
+        })
+        // console.log(result);
+        result?.then((resp) => {
+            if (resp?.status == 401) {
+                Swal.fire({
+                    icon: "error",
+                    title: "Mauvaise entrées",
+                    text: "Aucun compte trouvé avec ces informations veuillez vérifier et rééssayer",
+                });
+            } else {
+                router.push('/dashboard')
+            }
+
+        }).catch((err) => {
+            console.log(err);
+
+            Swal.fire({
+                icon: "error",
+                title: "Mauvaise entrées",
+                text: "Aucun compte trouvé avec ces informations veuillez vérifier et rééssayer",
+            });
         })
 
-        if (!result) {
-            Swal.fire({
-              icon: "error",
-              title: "Mauvaise entrées",
-              text: "Aucun compte trouvé avec ces informations veuillez vérifier et rééssayer",
-            });
-          } else {
-            router.push('/dashboard')
-          }
-        // if (user.tel) {
-        //     axios.post(`${apiUrl}/token`, { "phone_num": user.tel ? user.tel : null, "password": user.password })
-        //     .then((resp) => {
-        //         console.log(resp.data);
-        //         localStorage.setItem('token', resp.data.data.token)
-        //         router.push('/dashboard')
-        //     })
-        //     .catch((err) => {
-        //         console.error('Error registering user:', err);
-        //         Swal.fire({
-        //             icon : 'error',
-        //             title : 'Mauvaise entrées',
-        //             text : err.response.data.phone_num ? err.response.data.phone_num : err.response.data.email ? err.response.data.email : 'Aucun compte trouvé avec ces informations veuillez vérifier et rééssayer'
-        //         })
-        //     });
-        // }else {
-        //     axios.post(`${apiUrl}/token`, {"email": user.mail ? user.mail : null, "password": user.password })
-        //     .then((resp) => {
-        //         console.log(resp.data);
-        //         localStorage.setItem('token', resp.data.data.token)
-        //         router.push('/dashboard')
-        //     })
-        //     .catch((err) => {
-        //         console.error('Error registering user:', err);
-        //         Swal.fire({
-        //             icon : 'error',
-        //             title : 'Mauvaise entrées',
-        //             text : err.response.data.phone_num ? err.response.data.phone_num : err.response.data.email ? err.response.data.email : 'Aucun compte trouvé avec ces informations veuillez vérifier et rééssayer'
-        //         })
-        //     });
-        // }
-        
     };
 
 
@@ -148,10 +129,10 @@ function Register() {
                         <div className="flex flex-col items-center gap-4 text-black text-xs">
                             <button className="bg-primary rounded-sm shadow-lg shadow-gray-300 text-white p-2 px-4"> Se connecter </button>
                             {!useMail && (
-                                <span>Se connecter avec <button className="text-primary" onClick={()=>{setUseMail(true); handleInput({target:{value : ""}}, "tel")}}> un email</button></span>
+                                <span>Se connecter avec <button className="text-primary" onClick={() => { setUseMail(true); handleInput({ target: { value: "" } }, "tel") }}> un email</button></span>
                             )}
                             {useMail && (
-                                <span>Se connecter avec <button className="text-primary" onClick={()=>{setUseMail(false); handleInput({target:{value : ""}}, "mail")}}> un téléphone</button></span>
+                                <span>Se connecter avec <button className="text-primary" onClick={() => { setUseMail(false); handleInput({ target: { value: "" } }, "mail") }}> un téléphone</button></span>
                             )}
                             <span>Vous avez déjà un compte ? <Link href={'/register'} className="text-sm text-primary">Créer un compte</Link></span>
                             <Link href={'/login'} className="text-sm text-primary">Mot de passe oublier</Link>

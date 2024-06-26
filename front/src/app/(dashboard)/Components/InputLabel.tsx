@@ -1,6 +1,6 @@
 // components/InputWithLabel.tsx
 
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import styles from './InputWithLabel.module.css';
 
 type InputWithLabelProps = {

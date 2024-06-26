@@ -2,18 +2,21 @@
 import Dashbord from "../Components/Dashbord"
 import { useRouter } from "next/navigation"
 import Image from "next/image"
-import dashm from '../../../../public/assets/images/dashm.png'
-import dashmSt from '../../../../public/assets/images/dashmSt.png'
-import dashc from '../../../../public/assets/images/dashc.png'
-import dashcSt from '../../../../public/assets/images/dashcSt.png'
-import dashList from '../../../../public/assets/images/dashListe.png'
+import dashm from '@/public/assets/images/dashm.png'
+import dashmSt from '@/public/assets/images/dashmSt.png'
+import dashc from '@/public/assets/images/dashc.png'
+import dashcSt from '@/public/assets/images/dashcSt.png'
+import dashList from '@/public/assets/images/dashListe.png'
 import { useSession } from "next-auth/react"
+import { headers } from "next/headers"
+import { url } from "inspector"
 
 function Dashboard() {
     //################################## CONSTANTES #############################//
     const apiUrl = process.env.NEXT_PUBLIC_APIURL
     const router = useRouter()
     const {data : session} = useSession()
+    const auth = {headers : {Authorization : `Bearer ${session?.user.token}`}}
     //################################## VARIABLES ##############################//
 
 
