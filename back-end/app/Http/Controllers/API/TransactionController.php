@@ -27,6 +27,11 @@ class TransactionController extends BaseController
         $transactions = TransactionResource::collection(Transaction::orderByDesc('id')->get());
         return $this->handleResponse($transactions);
     }
+    public function getTrans()
+    {
+        $transactions = TransactionResource::collection(Transaction::orderByDesc('id')->get());
+        return $this->handleResponse($transactions);
+    }
 
     /**
      * Store a newly created resource in storage.
@@ -92,6 +97,15 @@ class TransactionController extends BaseController
     }
 
     public function check_transaction_status(string $token, string $type)
+    {
+        if ($type == 'payin') {
+            return $this->handleResponse($this->payDunya->payinStatus($token));
+        }
+
+        return $this->handleResponse($this->payDunya->payoutStatus($token));
+    }
+
+    public function check_status(string $token, string $type)
     {
         if ($type == 'payin') {
             return $this->handleResponse($this->payDunya->payinStatus($token));

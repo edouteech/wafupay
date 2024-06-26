@@ -67,13 +67,14 @@ Route::prefix('/v1')->group((function () {
             Route::apiResource('transactions-fees', TransactionFeesController::class);
             Route::apiResource('countries', CountryController::class)->except('index');
             Route::apiResource('wallet-providers', WProviderController::class);
-            Route::apiResource('users', UserController::class);
+            Route::apiResource('users', UserController::class)->except('update');
             Route::post('activate-account/{user}', [UserController::class, 'activate']);
             Route::get('check-transaction-status/{token}/{type}', [TransactionController::class, 'check_transaction_status']);
             Route::apiResource('transactions', TransactionController::class)
                 ->except('store', 'show', 'delete');
         });
-
+        Route::get('check-status/{token}/{type}', [TransactionController::class, 'check_status']);
+        Route::get('indexTrans', [TransactionController::class, 'getTrans'])->name('getTrans');
         Route::apiResource('transactions', TransactionController::class)->only('store', 'show');
         Route::get('refresh-transaction/{payin_token}', [TransactionController::class, 'refresh_transaction'])->name('transaction.refresh');
         Route::post('calculate-transaction-fees', [TransactionController::class, 'calculate_fees'])->name('transaction.calculateFees');
