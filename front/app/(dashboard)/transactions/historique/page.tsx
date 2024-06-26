@@ -38,7 +38,14 @@ function Historique() {
         return new Date(dateString).toLocaleDateString('fr-FR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
     }
 
-    // const get
+    const getState = (tran: Transaction) => {
+
+        axios.get(`${apiUrl}/check-transaction-status/${tran.token}/payin`, auth).then((resp) => {
+            tran.payin_status = resp.data.data.status
+            tran.payout_status = resp.data.data.status
+        })
+        setTrans(trans)
+    }
 
 
     //################################## HTML ####################################//
@@ -87,14 +94,14 @@ function Historique() {
                                         <td className="p-2">{parseInt(tran.amount) - parseInt(tran.amountWithoutFees)}</td>
                                         <td className="p-2 text-primary">{tran.amount}</td>
                                         <td className="">
-                                            <span className={`${tran.payin_status == 'pending' ? 'bg-yellow-500' : tran.payin_status == 'succes' ? 'bg-green-500' : tran.payin_status == 'reject' ? 'bg-red-500' : ''} p-2 text-white rounded`}>{`${tran.payin_status == 'pending' ? 'en cours' : tran.payin_status == 'succes' ? 'effectué' : tran.payin_status == 'reject' ? 'rejeté' : ''}`}</span>
+                                            <span className={`${tran.payin_status == 'pending' ? 'bg-yellow-500' : tran.payin_status == 'succes' ? 'bg-green-500' : tran.payin_status == 'failed' ? 'bg-red-500' : ''} p-2 text-white rounded`}>{`${tran.payin_status == 'pending' ? 'en cours' : tran.payin_status == 'succes' ? 'effectué' : tran.payin_status == 'failed' ? 'rejeté' : ''}`}</span>
                                         </td>
                                         <td className="">
-                                            <span className={`${tran.payout_status == 'pending' ? 'bg-yellow-500' : tran.payout_status == 'succes' ? 'bg-green-500' : tran.payout_status == 'reject' ? 'bg-red-500' : ''} p-2 text-white rounded`}>{`${tran.payout_status == 'pending' ? 'en cours' : tran.payout_status == 'succes' ? 'effectué' : tran.payout_status == 'reject' ? 'rejeté' : ''}`}</span>
+                                            <span className={`${tran.payout_status == 'pending' ? 'bg-yellow-500' : tran.payout_status == 'succes' ? 'bg-green-500' : tran.payout_status == 'failed' ? 'bg-red-500' : ''} p-2 text-white rounded`}>{`${tran.payout_status == 'pending' ? 'en cours' : tran.payout_status == 'succes' ? 'effectué' : tran.payout_status == 'failed' ? 'rejeté' : ''}`}</span>
                                         </td>
                                         <td>
                                             <div className="relative group">
-                                                <button className="flex items-center justify-center rounded-full shadow-md duration-300">
+                                                <button onClick={() => { getState(tran) }} className="flex items-center justify-center rounded-full shadow-md duration-300">
                                                     <RefreshCcw className="w-6 h-6" />
                                                 </button>
                                                 <div className="absolute top-full -left-1/2 mt-2 mb-2 transform opacity-0 group-hover:opacity-100 bg-black bg-opacity-50 text-white text-xs rounded py-1 px-2 transition-opacity duration-300">

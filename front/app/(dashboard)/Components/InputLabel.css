@@ -1,0 +1,32 @@
+/* components/InputWithLabel.module.css */
+
+.inputContainer {
+    position: relative;
+    margin: 30px;
+  }
+  
+  .inputField {
+    padding: 10px;
+    width: 300px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+    transition: border-color 0.3s ease-in-out;
+  }
+  
+  .label {
+    position: absolute;
+    top: 50%;
+    left: 10px;
+    transform: translateY(-50%);
+    color: #999;
+    pointer-events: none;
+    transition: top 0.3s, font-size 0.3s, color 0.3s;
+  }
+  
+  .labelActive {
+    top: 10px;
+    font-size: 12px;
+    color: #555;
+  }
+  
