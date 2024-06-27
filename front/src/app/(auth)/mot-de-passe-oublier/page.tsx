@@ -13,7 +13,7 @@ import Swal from "sweetalert2";
 
 
 
-function Carte() {
+function ForgetPassword() {
     //################################## CONSTANTES #############################//
     const apiUrl = process.env.NEXT_PUBLIC_APIURL
     const router = useRouter()
@@ -92,4 +92,4 @@ function Carte() {
     )
 }
 
-export default Carte
+export default ForgetPassword

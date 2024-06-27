@@ -7,6 +7,6 @@ export const config = {
         signIn : '/login'
     },
     matcher : [
-        '/((?!login|register|home|mail-verification|mot-de-passe-oublier).*)'
+        '/((?!login|register|home|mail-verification|mot-de-passe-oublier|nouveau-mot-de-passe).*)'
     ]
 }
