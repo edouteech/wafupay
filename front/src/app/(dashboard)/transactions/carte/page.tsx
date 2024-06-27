@@ -39,11 +39,11 @@ function Carte() {
                     <div className="text-base max-w-md mx-auto bg-white shadow-md rounded-lg p-6">
                         <div className="flex justify-center space-x-4 mb-6 gap-4">
                             <div className="flex items-center">
-                                <input type="radio" id="visa" className="w-6 h-6" name="card"/>
-                                <label htmlFor="visa"  className="pl-2"><Image alt="logo visa" src={visa}></Image></label>
+                                <input type="radio" id="visa" className="w-6 h-6" name="card" />
+                                <label htmlFor="visa" className="pl-2"><Image alt="logo visa" src={visa}></Image></label>
                             </div>
                             <div className="flex items-center">
-                                <input type="radio" id="mscard" className="w-6 h-6" name="card"/>
+                                <input type="radio" id="mscard" className="w-6 h-6" name="card" />
                                 <label htmlFor="mscard" className="pl-2"><Image alt="logo mscard" src={mscard}></Image></label>
                             </div>
                         </div>
@@ -53,15 +53,15 @@ function Carte() {
                                 <InputLabel type="text" id="num" label="Numéro de votre carte"></InputLabel>
                                 <InputLabel type="month" id="lavel" label="Date d'expiration"></InputLabel>
                                 <div className="relative">
-                                <InputLabel type={`${showCvv ? 'text' : 'password'}`} id="lavel" label="CVV" classes="pl-32"></InputLabel>
-                                <button onClick={() => { setShowCvv(!showCvv) }} className="z-10">
-                                    {showCvv && (
-                                        <EyeOff  className="absolute top-4 right-5"></EyeOff>
-                                    )}
-                                    {!showCvv && (
-                                        <Eye  className="absolute top-4 right-5"></Eye>
-                                    )}
-                                </button>
+                                    <InputLabel type={`${showCvv ? 'text' : 'password'}`} id="lavel" label="CVV" classes="pl-32"></InputLabel>
+                                    <button onClick={() => { setShowCvv(!showCvv) }} className="z-10">
+                                        {showCvv && (
+                                            <EyeOff className="absolute top-4 right-5"></EyeOff>
+                                        )}
+                                        {!showCvv && (
+                                            <Eye className="absolute top-4 right-5"></Eye>
+                                        )}
+                                    </button>
                                 </div>
                             </div>
                         </div>
