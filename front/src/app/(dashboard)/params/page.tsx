@@ -6,20 +6,31 @@ import Image from "next/image"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { useSession } from "next-auth/react"
-import { User } from "@/app/types/types"
+import { Country, User } from "@/app/types/types"
 import mtnmomo from '@/public/assets/images/mtnmomo.png'
 
 
 function Parameters()
 {
+    //################################## CONSTANTES #############################//
+
+
+
+    //################################## VARIABLES ##############################//
     const [auth,setAuth] = useState({ headers: { Authorization: '' } })
     const [editProfilOpen , setEditProfilOpen] = useState(false);
     const [editPasswordOpen , setEditPasswordlOpen] = useState(false);
     const [user, setUser] = useState<User>()
     const {data : session} = useSession()
+    const [countries, setCountries] = useState<Country[]>([])
     const apiUrl = process.env.NEXT_PUBLIC_APIURL
 
-    /* Mounted */
+    
+    //################################## MOUNTED ################################//
+
+
+
+    //################################## WATCHER #################################//
     useEffect(() => {
        
         if (session) {
@@ -29,16 +40,25 @@ function Parameters()
                 console.log(resp.data);
                 setUser(resp.data.data)
             })
+            axios.get(`${apiUrl}/countries`).then((resp) => {
+                setCountries(resp.data.data)
+            })
         } 
     },[session])
 
-    /* ---------------------------------------------------------------------------------------------------------- */
+
+    //################################## METHODS #################################//
+
     const toggleEditProfilForm = () => {
         setEditProfilOpen(!editProfilOpen)
     }
     const toggleEditPasswordForm = () => {
         setEditPasswordlOpen(!editPasswordOpen)
     }
+
+    const handleChange = ()
+
+    //################################## HTML ####################################//
     return(
         <>
             <Dashbord>
@@ -81,16 +101,19 @@ function Parameters()
                                     name="email"
                                     placeholder="Adresse mail" />
                                 </div>
-                                <div className="mb-4">
-                                    <input 
-                                    className="p-5 text-center w-full border-b border-black focus-visible:outline-none focus:border-b-2 focus:border-primary "
-                                    type="text"
-                                    id="password"
-                                    name="password"
-                                    placeholder="Veuillez saisir votre mot de passe pour confirmer" />
-                                </div>
                                 <div className="flex justify-between mb-4 ">
-                                    <Image alt="" src={mtnmomo}></Image>
+                                <div className="relative w-1/4 z-[5]">
+                                <select className="block appearance-none bg-white border border-gray-300 w-full text-gray-700 p-4 pr-7 rounded-2xl leading-tight focus:outline-none focus:border-blue-500" value={user?.country_id} >
+                                {countries.map((country) => (
+                                    <option key={country.id} value={country.id} className="hover:bg-red-500 bg-white text-gray-700">{country.country_code} {country.slug}</option>
+                                ))}
+                                </select>
+                                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                                <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                                    <path d="M5.516 7.548L10 12.032l4.484-4.484L16 8.576 10 14.576 4 8.576z" />
+                                </svg>
+                                </div>
+                                </div>
                                     <input 
                                     className="p-5 text-center w-full border-b border-black focus-visible:outline-none focus:border-b-2 focus:border-primary "
                                     type="text"
@@ -99,6 +122,14 @@ function Parameters()
                                     name="phone_num"
                                     />
 
+                                </div>
+                                <div className="mb-4">
+                                    <input 
+                                    className="p-5 text-center w-full border-b border-black focus-visible:outline-none focus:border-b-2 focus:border-primary "
+                                    type="text"
+                                    id="password"
+                                    name="password"
+                                    placeholder="Veuillez saisir votre mot de passe pour confirmer" />
                                 </div>
                                 <div className="mb-4 flex justify-center">
                                     <button className="bg-primary text-white px-4 py-2 rounded-md">Enregistrer</button>
