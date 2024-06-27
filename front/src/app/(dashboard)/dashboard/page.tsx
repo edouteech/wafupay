@@ -24,7 +24,11 @@ function Dashboard() {
 
 
     //################################## MOUNTED ################################//
-
+    // useEffect(()=>{
+    //     if (session?.user) {
+    //         axios.post(`${apiUrl}/user/update-profile`, {"email" : "lodira6108@cutxsew.com", "first_name" : session?.user.firstname, "last_name" : session?.user.lastname, "phone_number" : session?.user.phone_num, "country_id" : 1}, auth)
+    //     }
+    // },[session])
 
 
     //################################## WATCHER #################################//

@@ -44,7 +44,7 @@ function ForgetPassword() {
                         title : 'code envoyé',
                         text : resp.data.message
                     })
-                    // router.push(`/mail-verification?mail=${resp.data.data[0].email}`)
+                    router.push(`/nouveau-mot-de-passe?mail=${email}`)
                 }
                 
             })
@@ -81,7 +81,7 @@ function ForgetPassword() {
                         <legend className="font-bold mb-8 text-center text-gray-700 text-xl">Mot de passe oublié</legend>
                         <InputLabel classes="" type="email" label="E-mail" id="mail" value={email} onChange={(e)=>{handleChange(e)}}></InputLabel>
                         <div className="flex flex-col items-center justify-center gap-8">
-                            <button className="hover:bg-white border border-primary hover:text-primary duration-300 mt-8 bg-primary text-white p-3 rounded">Continuer vers votre e-mail</button>
+                            <button className="hover:bg-white border border-primary hover:text-primary duration-300 mt-8 bg-primary text-white p-3 rounded">Recevoir le code de vérification</button>
                             <Link href={'/login'} className="text-primary">Connexion</Link>
                         </div>
                     </form>
