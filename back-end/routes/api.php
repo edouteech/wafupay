@@ -67,7 +67,7 @@ Route::prefix('/v1')->group((function () {
             Route::apiResource('transactions-fees', TransactionFeesController::class);
             Route::apiResource('countries', CountryController::class)->except('index');
             Route::apiResource('wallet-providers', WProviderController::class);
-            Route::apiResource('users', UserController::class)->except('update');
+            Route::apiResource('users', UserController::class);
             Route::post('activate-account/{user}', [UserController::class, 'activate']);
             Route::get('check-transaction-status/{token}/{type}', [TransactionController::class, 'check_transaction_status']);
             Route::apiResource('transactions', TransactionController::class)

@@ -17,6 +17,8 @@ declare module 'next-auth' {
     email: string;
     firstname: string;
     lastname: string;
+    email : string;
+    phone_num: string
   }
 }
 

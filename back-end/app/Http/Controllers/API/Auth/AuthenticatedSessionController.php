@@ -48,12 +48,16 @@ class AuthenticatedSessionController extends BaseController
             'first_name' => 'required',
             'last_name' => 'required',
             'phone_number' => ['required', new ValidPhoneNumber()],
+            'email' => 'required|email|unique:users',
+            'country_id' => 'required|exists:countries,id',
         ]);
 
         $request->user()->update([
             'first_name' => $request->first_name,
             'last_name' => $request->last_name,
             'phone_number' => $request->phone_number,
+            'email' => $request->email,
+            'country_id'=>$request->country_id,
         ]);
 
         return $this->handleResponse("Votre profil a été mis à jour avec succès");

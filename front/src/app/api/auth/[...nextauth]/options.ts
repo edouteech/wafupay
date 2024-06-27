@@ -66,6 +66,8 @@ export const options: NextAuthOptions = {
         token.id = user.id;
         token.lastname = user.lastname;
         token.firstname = user.firstname;
+        token.email = user.email;
+        token.phone_num = user.phone_num;
       }
       return token;
     },
@@ -75,6 +77,8 @@ export const options: NextAuthOptions = {
         token: token.id,
         firstname: token.firstname,
         lastname: token.lastname,
+        email : token.email,
+        phone_num : token.phone_num
       };
       return session;
     },

@@ -135,7 +135,7 @@ function Register() {
                                 <span>Se connecter avec <button className="text-primary" onClick={() => { setUseMail(false); handleInput({ target: { value: "" } }, "mail") }}> un téléphone</button></span>
                             )}
                             <span>Vous avez déjà un compte ? <Link href={'/register'} className="text-sm text-primary">Créer un compte</Link></span>
-                            <Link href={'/login'} className="text-sm text-primary">Mot de passe oublier</Link>
+                            <Link href={'/mot-de-passe-oublier'} className="text-sm text-primary">Mot de passe oublier</Link>
                         </div>
 
                     </form>
