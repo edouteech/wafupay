@@ -134,7 +134,12 @@ function Register() {
                             {useMail && (
                                 <span>Se connecter avec <button className="text-primary" onClick={() => { setUseMail(false); handleInput({ target: { value: "" } }, "mail") }}> un téléphone</button></span>
                             )}
-                            <span>Vous avez déjà un compte ? <Link href={'/register'} className="text-sm text-primary">Créer un compte</Link></span>
+                            <button
+                                onClick={() => signIn('google')}
+                                className="px-4 py-2 text-white bg-primary rounded-lg hover:bg-blue-600">
+                                Connectez-vous avec Google
+                            </button>
+                                        <span>Vous avez déjà un compte ? <Link href={'/register'} className="text-sm text-primary">Créer un compte</Link></span>
                             <Link href={'/mot-de-passe-oublier'} className="text-sm text-primary">Mot de passe oublier</Link>
                         </div>
 

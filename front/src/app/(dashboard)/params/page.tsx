@@ -56,8 +56,6 @@ function Parameters()
         setEditPasswordlOpen(!editPasswordOpen)
     }
 
-    const handleChange = ()
-
     //################################## HTML ####################################//
     return(
         <>

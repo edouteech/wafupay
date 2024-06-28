@@ -1,6 +1,7 @@
 import axios from "axios";
 import { NextAuthOptions, User } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
+import GoogleProvider from "next-auth/providers/google"
 import router from "next/router";
 import Swal from "sweetalert2";
 
@@ -9,8 +10,26 @@ const apiUrl = process.env.NEXT_PUBLIC_APIURL;
 // Définir l'interface User
 
 
-export const options: NextAuthOptions = {
+export const options = {
   providers: [
+    GoogleProvider({
+      profile(profile : any){
+        console.log("Profile Google:",profile);
+
+        let userRole = "Google User"
+        if (profile?.email == "kekeadjignonjeanpaul@gmail.com") {
+          userRole = "admin";
+        }
+        return{
+          ...profile,
+          id : profile.sub,
+         role : userRole,      
+        }
+      },
+      clientId : process.env.GOOGLE_ID as string,
+      clientSecret : process.env.GOOGLE_Secret as string,
+    }),
+
     CredentialsProvider({
       type: "credentials",
       credentials: {},
