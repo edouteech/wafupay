@@ -102,8 +102,8 @@ function Register() {
                             <input type="text" placeholder="Entrer votre mail" className="border p-4 rounded-2xl leading-tight focus:outline-none focus:border-blue-500" value={user.email} onChange={(e) => { handleInput(e, "email") }} />
                         </div>
                         <div className="flex items-center gap-2 justify-center">
-                            <Select classes=" p-4 pr-7 rounded-2xl leading-tight focus:outline-none focus:border-blue-500" id={typeof (user.country_id) == 'string' ? parseInt(user.country_id) : user.country_id} countries={countries} onChange={(e: { target: { value: string; }; }) => { handleInput(e, 'country_id') }}></Select>
-                            <div className="relative mb-4 w-3/4">
+                            <Select classes=" mb-4 p-4 rounded-2xl leading-tight focus:outline-none focus:border-blue-500" id={typeof (user.country_id) == 'string' ? parseInt(user.country_id) : user.country_id} countries={countries} onChange={(e: { target: { value: string; }; }) => { handleInput(e, 'country_id') }}></Select>
+                            <div className="relative mb-4 w-full">
                                 <label htmlFor="phone_num" className="font-semibold absolute top-[-10px] bg-white left-4 px-1 text-sm">Numéro de téléphone</label>
                                 <input type="number" placeholder="Numéro de téléphone" className="w-full border p-4 rounded-2xl leading-tight focus:outline-none focus:border-blue-500" value={user.phone_num} onChange={(e) => { handleInput(e, "phone_num") }} />
                             </div>

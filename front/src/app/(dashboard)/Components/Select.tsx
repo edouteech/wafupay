@@ -55,12 +55,12 @@ const Select: React.FC<SelectProp> = ({ countries = [], providers = [], onChange
 
     return (
         <div className="relative">
-            <div className="relative text-base font-bold text-gray-700 w-32 z-[5]">
+            <div className="relative text-base font-bold text-gray-700 w-28 z-[5]">
                 {country && (
-                    <button className={"flex items-center gap-2 bg-white border border-gray-300 text-gray-700" + classes} onClick={() => { setShow(!show) }}>
+                    <button className={"flex items-center gap-2 bg-white border border-gray-300 text-gray-700 pr-6 " + classes} onClick={() => { setShow(!show) }}>
                         <Image src={require(`../../../public/assets/images/${country.country_code}.png`)} width={19} height="12" className="h-[14px]" alt="Country Flag" />
                         <span>{country.country_code}</span>
-                        <span className="duration-500 absolute right-5">
+                        <span className="duration-500 absolute left-20">
                             {show ? <ChevronDown /> : <ChevronRight />}
                         </span>
                     </button>
