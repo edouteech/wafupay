@@ -1,6 +1,7 @@
 import axios from "axios";
 import { NextAuthOptions, User } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
+import GoogleProvider from "next-auth/providers/google";
 import router from "next/router";
 import Swal from "sweetalert2";
 
@@ -71,7 +72,7 @@ export const options: NextAuthOptions = {
         token.email = user.email;
         token.phone_num = user.phone_num;
       }
-      return token;
+      return token; 
     },
 
     async session({ session, token }: any) {

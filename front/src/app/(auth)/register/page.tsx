@@ -2,7 +2,7 @@
 import { useRouter } from 'next/navigation';
 import NavBar from "../Components/NavBar"
 import Image from "next/image"
-import signIn from "../../../../public/assets/images/signIn.png"
+import signIn from "@/public/assets/images/signIn.png"
 import { useEffect, useState } from "react"
 import { EyeOff, Eye } from "lucide-react"
 import { strict } from "assert"
@@ -11,6 +11,7 @@ import axios from "axios"
 import { Country } from "@/app/types/types"
 import { count } from "console"
 import Email from 'next-auth/providers/email';
+import Select from '@/app/(dashboard)/Components/Select';
 
 function Register() {
     //################################## CONSTANTES #############################//
@@ -21,7 +22,7 @@ function Register() {
 
     const [showPassword1, setShowPassword1] = useState(false)
     const [showPassword2, setShowPassword2] = useState(false)
-    const [user, setUser] = useState<{ "first_name": string, "last_name": string, "email": string, "phone_num": number | string, "password": string, "password2": string, "country_id" : string | number }>({ "first_name": "", "last_name": "", "email": "", "phone_num": "", "password": "", "password2": "", "country_id" : 1 })
+    const [user, setUser] = useState<{ "first_name": string, "last_name": string, "email": string, "phone_num": number | string, "password": string, "password2": string, "country_id": string | number }>({ "first_name": "", "last_name": "", "email": "", "phone_num": "", "password": "", "password2": "", "country_id": 1 })
     const [countries, setCountries] = useState<Country[]>([])
     const [country, setCountry] = useState<Country>()
 
@@ -30,7 +31,7 @@ function Register() {
     //################################## MOUNTED ################################//
     useEffect(() => {
         axios.get(`${apiUrl}/countries`).then((resp) => {
-            setCountries(resp.data.data)  
+            setCountries(resp.data.data)
             setCountry(resp.data.data[0])
         })
     }, [])
@@ -48,15 +49,21 @@ function Register() {
                 [field]: e.target.value
             }
         ))
+        if (field == 'country_id') {
+            setCountry(findElementById(parseInt(e.target.value), countries))
+        }
     }
 
+    const findElementById = (id: number, list: any[]) => {
+        return list.find(item => item.id === id);
+    }
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         axios.post(`${apiUrl}/token/register`, { "first_name": user.first_name, "last_name": user.last_name, "email": user.email, "password": user.password, "confirm_password": user.password2, "phone_num": country?.country_code + "" + user.phone_num, "country_id": user.country_id })
             .then((resp) => {
                 if (resp.status == 200) {
                     console.log(resp.data);
-                    
+
                     router.push(`/mail-verification?mail=${resp.data.data[0].email}`)
                 }
             })
@@ -95,18 +102,7 @@ function Register() {
                             <input type="text" placeholder="Entrer votre mail" className="border p-4 rounded-2xl leading-tight focus:outline-none focus:border-blue-500" value={user.email} onChange={(e) => { handleInput(e, "email") }} />
                         </div>
                         <div className="flex items-center gap-2 justify-center">
-                            <div className="relative w-1/4">
-                                <select className="block appearance-none bg-white border border-gray-300 w-full text-gray-700 p-4 mb-2 pr-7 rounded-2xl leading-tight focus:outline-none focus:border-blue-500" value={user.country_id} onChange={(e)=>{handleInput(e, "country_id")}}>
-                                    {countries.map((country) => (
-                                        <option onClick={()=>{setCountry(country)}} value={country.id} className="hover:bg-red-500 bg-white text-gray-700">{country.country_code} {country.slug}</option>
-                                    ))}
-                                </select>
-                                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                                    <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                                        <path d="M5.516 7.548L10 12.032l4.484-4.484L16 8.576 10 14.576 4 8.576z" />
-                                    </svg>
-                                </div>
-                            </div>
+                            <Select classes=" p-4 pr-7 rounded-2xl leading-tight focus:outline-none focus:border-blue-500" id={typeof (user.country_id) == 'string' ? parseInt(user.country_id) : user.country_id} countries={countries} onChange={(e: { target: { value: string; }; }) => { handleInput(e, 'country_id') }}></Select>
                             <div className="relative mb-4 w-3/4">
                                 <label htmlFor="phone_num" className="font-semibold absolute top-[-10px] bg-white left-4 px-1 text-sm">Numéro de téléphone</label>
                                 <input type="number" placeholder="Numéro de téléphone" className="w-full border p-4 rounded-2xl leading-tight focus:outline-none focus:border-blue-500" value={user.phone_num} onChange={(e) => { handleInput(e, "phone_num") }} />
