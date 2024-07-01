@@ -6,25 +6,47 @@ import router from "next/router";
 import Swal from "sweetalert2";
 
 const apiUrl = process.env.NEXT_PUBLIC_APIURL;
-
 // Définir l'interface User
 
 
 export const options = {
   providers: [
     GoogleProvider({
-      profile(profile : any){
+      profile : async (profile : any) => {
         console.log("Profile Google:",profile);
 
         let userRole = "Google User"
         if (profile?.email == "kekeadjignonjeanpaul@gmail.com") {
           userRole = "admin";
         }
+        try {
+          const resp = await axios.post(`${apiUrl}/token/login-with-google`,{"email" : profile?.email , "first_name" : profile.given_name , "last_name" : profile.family_name , "googleId" : profile.sub })
+          if (resp) {
+            const user = {
+                token : resp.data.data.token,
+            }
+            return{
+              ...profile,
+              id : profile.sub,
+              token : user.token,
+              firstname : profile.given_name,
+              lastname :profile.family_name,
+              role : userRole
+          
+            }
+          }
+        } catch (error) {
+          console.error('API Request Error:', error);
+        }
         return{
           ...profile,
           id : profile.sub,
-         role : userRole,      
+          firstname : profile.given_name,
+          lastname :profile.family_name,
+          role : userRole
+      
         }
+        
       },
       clientId : process.env.GOOGLE_ID as string,
       clientSecret : process.env.GOOGLE_Secret as string,
@@ -84,18 +106,31 @@ export const options = {
   callbacks: {
     async jwt({ token, user }: any) {
       if (user) {
-        token.id = user.id;
-        token.lastname = user.lastname;
-        token.firstname = user.firstname;
-        token.email = user.email;
-        token.phone_num = user.phone_num;
+        if (user.role) {
+          token.googleID = user.id,
+          token.token = user.token
+          token.role = user.role;
+          token.firstname = user.firstname;
+          token.lastname = user.lastname;
+        }
+        if (user.phone_num) {
+          token.id = user.id;
+          token.lastname = user.lastname;
+          token.firstname = user.firstname;
+          token.email = user.email;
+          token.phone_num = user.phone_num;
+        }
+       
       }
       return token; 
     },
 
     async session({ session, token }: any) {
       session.user = {
+        google_token : token.token,
+        googleID : token.googleID,
         token: token.id,
+        role: token.role,
         firstname: token.firstname,
         lastname: token.lastname,
         email: token.email,
