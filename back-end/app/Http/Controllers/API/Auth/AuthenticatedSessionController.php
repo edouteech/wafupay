@@ -48,7 +48,7 @@ class AuthenticatedSessionController extends BaseController
             'first_name' => 'required',
             'last_name' => 'required',
             'phone_number' => ['required', new ValidPhoneNumber()],
-            'email' => 'required|email|unique:users',
+            'email' => 'required',
             'country_id' => 'required|exists:countries,id',
         ]);
 

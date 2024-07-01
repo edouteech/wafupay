@@ -1,7 +1,7 @@
 import axios from "axios";
 import { NextAuthOptions, User } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import GoogleProvider from "next-auth/providers/google"
+import GoogleProvider from "next-auth/providers/google";
 import router from "next/router";
 import Swal from "sweetalert2";
 
@@ -64,21 +64,23 @@ export const options = {
 
         let resp;
         try {
-        if (phone_num) {
-            resp = await axios.post(`${apiUrl}/token`, { "phone_num": phone_num ? phone_num : null, "password": password});
+          if (phone_num) {
+            resp = await axios.post(`${apiUrl}/token`, { "phone_num": phone_num ? phone_num : null, "password": password });
           } else if (email) {
-            resp = await axios.post(`${apiUrl}/token`, {"email": email ? email : null, "password": password});
+            resp = await axios.post(`${apiUrl}/token`, { "email": email ? email : null, "password": password });
           }
 
           if (resp && resp.data) {
-            const user : any = {
+            const user: any = {
               id: resp.data.data.token,
               firstname: resp.data.data.first_name,
               lastname: resp.data.data.last_name,
+              email: resp.data.data.email,
+              phone_num: resp.data.data.phone_num
             };
             return user;
           }
-        } catch (err  : any) {
+        } catch (err: any) {
           console.error("Error registering user:", err);
           Swal.fire({
             icon: "error",
@@ -86,8 +88,8 @@ export const options = {
             text: err.response.data.phone_num
               ? err.response.data.phone_num
               : err.response.data.email
-              ? err.response.data.email
-              : "Aucun compte trouvé avec ces informations veuillez vérifier et rééssayer",
+                ? err.response.data.email
+                : "Aucun compte trouvé avec ces informations veuillez vérifier et rééssayer",
           });
         }
         return null;
@@ -120,7 +122,7 @@ export const options = {
         }
        
       }
-      return token;
+      return token; 
     },
 
     async session({ session, token }: any) {
@@ -131,8 +133,8 @@ export const options = {
         role: token.role,
         firstname: token.firstname,
         lastname: token.lastname,
-        email : token.email,
-        phone_num : token.phone_num
+        email: token.email,
+        phone_num: token.phone_num
       };
       return session;
     },

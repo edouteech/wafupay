@@ -12,6 +12,7 @@ import { headers } from "next/headers"
 import { url } from "inspector"
 import { useEffect } from "react"
 import axios from "axios"
+import Select from "../Components/Select"
 
 function Dashboard() {
     //################################## CONSTANTES #############################//
@@ -24,7 +25,11 @@ function Dashboard() {
 
 
     //################################## MOUNTED ################################//
-
+    // useEffect(()=>{
+    //     if (session?.user) {
+    //         axios.post(`${apiUrl}/user/update-profile`, {"email" : "lodira6108@cutxsew.com", "first_name" : session?.user.firstname, "last_name" : session?.user.lastname, "phone_number" : session?.user.phone_num, "country_id" : 1}, auth)
+    //     }
+    // },[session])
 
 
     //################################## WATCHER #################################//
@@ -52,6 +57,8 @@ function Dashboard() {
                     <div className="m-16">
                         <Image src={dashList} alt="liste"></Image>
                     </div>
+
+                    
                 </div>
             </Dashbord>
         </>

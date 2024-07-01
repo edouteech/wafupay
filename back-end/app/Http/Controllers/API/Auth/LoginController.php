@@ -106,7 +106,20 @@ class LoginController extends BaseController
 
         $this->logger->saveLog($request, $this->logger::LOGIN);
 
-        return $this->handleResponse(['token' => $token->plainTextToken], 'User logged-in!');
+        $data = [
+            "token" => $token->plainTextToken,
+            "id" => $user->id,
+            "first_name" => $user->first_name,
+            "last_name" => $user->last_name,
+            "email" => $user->email,
+            "phone_num" => $user->phone_num,
+            "avatar" => $user->avatar,
+            "id_card" => $user->id_card,
+            "country_id" => $user->country_id,
+            "is_verified" => $user->is_verified,
+        ];
+        // return $this->handleResponse(['token' => $token->plainTextToken], 'User logged-in!');
+        return $this->handleResponse($data, 'User logged-in!');
     }
 
     private function check2fa(Request $request): JsonResponse
