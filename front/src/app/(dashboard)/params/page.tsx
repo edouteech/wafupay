@@ -19,6 +19,7 @@ function Parameters() {
     const [auth, setAuth] = useState({ headers: { Authorization: '' } })
     const [editProfilOpen, setEditProfilOpen] = useState(false);
     const [editPasswordOpen, setEditPasswordlOpen] = useState(false);
+    const [editAuthentification, setEditAuthentification] = useState(false);
     const [user, setUser] = useState<User>()
     const { data: session } = useSession()
     const [countries, setCountries] = useState<Country[]>([])
@@ -58,6 +59,9 @@ function Parameters() {
         setEditPasswordlOpen(!editPasswordOpen)
     }
 
+    const toggleEditAuthentification = () => {
+        setEditAuthentification(!editAuthentification)
+    }
     const handleChange = (e: any, field: 'phone_number' | 'email' | 'first_name' | 'last_name' | 'country_id') => {
         setData((prevData) => ({
             ...prevData,
@@ -69,6 +73,10 @@ function Parameters() {
         e.preventDefault();
         axios.post(`${apiUrl}/user/update-profile`, data, auth)
     }
+
+
+
+
 
     //################################## HTML ####################################//
     return (
@@ -85,7 +93,7 @@ function Parameters() {
                                 </button>
                             </li>
                             {editProfilOpen && (
-                                <form className="mt-4" onClick={(e)=>{handleSubmit(e)}}>
+                                <form className="mt-4" onClick={(e) => { handleSubmit(e) }}>
                                     <div className="mb-4">
                                         <input
                                             className="p-5 w-full border-b border-black focus-visible:outline-none focus:border-b-2 focus:border-primary "
@@ -190,16 +198,42 @@ function Parameters() {
                                 </form>
                             )}
                             <li>
-                                <button onClick={toggleEditProfilForm} className="flex justify-between items-center border-b border-black pb-2 w-full">
+                                <button onClick={toggleEditAuthentification} className="flex justify-between items-center border-b border-black pb-2 w-full">
                                     <span className="p-3 font-bold">Authentification à double valeur</span>
-                                    <span className="cursor-pointer"> {editProfilOpen ? <ChevronDown /> : <ChevronRight />}</span>
+                                    <span className="cursor-pointer"> {editAuthentification ? <ChevronDown /> : <ChevronRight />}</span>
                                 </button>
                             </li>
+                            {editAuthentification && (
+                                <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
+                                    <div className="mb-6">
+                                        <p className="text-gray-600 text-sm mt-2">Pour plus de sécurité, activez l'authentification en deux étapes. Cela nécessitera un code pin lorsque vous vous connectez sur un téléphone ou un ordinateur</p>
+                                    </div>
+                                    <button className="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 mb-6">Commencer</button>
+                                    <div>
+                                        <h4 className="text-center text-lg bold-black font-bold mb-4">Choisissez votre méthode</h4>
+                                        <div className="space-y-4">
+                                            <div className="flex items-center space-x-3">
+                                                <input type="checkbox" id="extraProtection" className="form-checkbox h-5 w-5 text-blue-600" />
+                                                <label htmlFor="extraProtection" className="text-black-800">Protection supplémentaire</label>
+                                            </div>
+                                            <p className="pl-8 text-sm text-gray-500">Nous vous demanderons votre mot de passe plus un code de connexion chaque fois que nous remarquerons une connexion inhabituelle</p>
+                                            <div className="flex items-center space-x-3 mt-4">
+                                                <input type="checkbox" id="smsMessage" className="form-checkbox h-5 w-5 text-blue-600" />
+                                                <label htmlFor="smsMessage" className="text-black-800">Via SMS Message</label>
+                                            </div>
+                                            <p className="pl-8 text-sm text-gray-500">Nous vous enverrons un SMS avec un code de vérification à chaque fois que vous vous connectez via un appareil de votre choix</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+
+
                             <li>
                                 <button className="flex justify-between items-center">
                                     <span className="p-3 font-bold">Mode sombre</span>
                                     <input type="checkbox" className="toggle-checkbox" />
                                 </button>
+
 
                             </li>
                         </ul>
@@ -209,4 +243,5 @@ function Parameters() {
         </>
     )
 }
-export default Parameters
+
+export default Parameters;
