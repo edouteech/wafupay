@@ -51,10 +51,9 @@ function AdminDashboard() {
                             </tr>
                         </thead>
                         <span className="block mt-12"></span>
-                        <tbody className="block bg-white p-3 rounded-2xl overflow-hidden w-full">
-
+                        <tbody className="bg-white p-3 rounded-2xl overflow-hidden w-full">
                             {countries.map((country, i) => (
-                                <tr className="">
+                                <tr className="" key={i}>
                                     <td className="p-3 pl-4 font-semibold">{country.slug}</td>
                                     <td className="p-3 pl-4 td flex items-center gap-4">
                                         {country.code}
