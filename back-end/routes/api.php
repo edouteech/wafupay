@@ -5,7 +5,9 @@ use App\Http\Controllers\API\Auth\LoginController;
 use App\Http\Controllers\API\Auth\ForgotPasswordController;
 use App\Http\Controllers\API\Auth\RegistrationController;
 use App\Http\Controllers\API\CountryController;
+use App\Http\Controllers\API\MyCountryController;
 use App\Http\Controllers\API\TransactionController;
+use App\Http\Controllers\API\MyTransactionController;
 use App\Http\Controllers\API\TransactionFeesController;
 use App\Http\Controllers\API\UserController;
 use App\Http\Controllers\API\WProviderController;
@@ -51,8 +53,8 @@ Route::prefix('/v1')->group((function () {
 
     Route::middleware('auth:sanctum')->group(function () {
         Route::prefix('/token')->group(function () {
-            Route::get('/verify', [AuthenticatedSessionController::class, 'me'])
-                ->name('token.verify');
+            // Route::get('/verify', [AuthenticatedSessionController::class, 'me'])
+            //     ->name('token.verify');
             Route::post('/revoke', [AuthenticatedSessionController::class, 'revoke'])
                 ->name('token.revoke');
         });
@@ -60,10 +62,19 @@ Route::prefix('/v1')->group((function () {
         Route::post('submit-identity-card', [AuthenticatedSessionController::class, 'submit_legal_document']);
 
         Route::prefix('/user')->group(function () {
+            Route::get('/profile', [AuthenticatedSessionController::class, 'profile'])->name('profile');
             Route::post('update-profile', [AuthenticatedSessionController::class, 'update_profile']);
         });
 
-        Route::middleware('admin')->group(function () {
+        // routes de transactions pour l'user
+        Route::get('check-status/{token}/{type}', [MyTransactionController::class, 'check_status']);
+        Route::apiResource('transactions', MyTransactionController::class)->only('index', 'store', 'show');
+        Route::get('refresh-transaction/{payin_token}', [MyTransactionController::class, 'refresh_transaction'])->name('transaction.refresh');
+        Route::post('calculate-transaction-fees', [MyTransactionController::class, 'calculate_fees'])->name('transaction.calculateFees');
+        Route::delete('delete-transaction/{transaction}', [MyTransactionController::class, 'destroyByUser'])->name('transaction.destroyYours');
+        
+        // routes des admins
+        Route::middleware('admin')->prefix('admin')->group(function () {
             Route::apiResource('transactions-fees', TransactionFeesController::class);
             Route::apiResource('countries', CountryController::class)->except('index');
             Route::apiResource('wallet-providers', WProviderController::class);
@@ -73,15 +84,10 @@ Route::prefix('/v1')->group((function () {
             Route::apiResource('transactions', TransactionController::class)
                 ->except('store', 'show', 'delete');
         });
-        Route::get('check-status/{token}/{type}', [TransactionController::class, 'check_status']);
-        Route::get('indexTrans', [TransactionController::class, 'getTrans'])->name('getTrans');
-        Route::apiResource('transactions', TransactionController::class)->only('store', 'show');
-        Route::get('refresh-transaction/{payin_token}', [TransactionController::class, 'refresh_transaction'])->name('transaction.refresh');
-        Route::post('calculate-transaction-fees', [TransactionController::class, 'calculate_fees'])->name('transaction.calculateFees');
-        Route::delete('delete-transaction/{transaction}', [TransactionController::class, 'destroyByUser'])->name('transaction.destroyYours');
     });
 
+    Route::apiResource('wallet-providers', WProviderController::class)->only('index');
     Route::apiResource('countries', CountryController::class)->only('index');
-    Route::any('update-transaction-status', [TransactionController::class, 'update_payin_status'])->name('transaction.updateStatus');
-    Route::any('disburse', [TransactionController::class, 'update_payout_status'])->name('transaction.store_disburse');
+    Route::any('update-transaction-status', [MyTransactionController::class, 'update_payin_status'])->name('transaction.updateStatus');
+    Route::any('disburse', [MyTransactionController::class, 'update_payout_status'])->name('transaction.store_disburse');
 }));
