@@ -204,60 +204,62 @@ function Parameters() {
                             </button>
                         </li>
                         {editAuthentification && (
-                            <div className="bg-white rounded-lg shadow-lg w-full max-w-full">
-                                <div className="m-10 flex justify-center">
-                                    <p className="text-gray-600 text-sm w-3/4 text-center">Pour plus de sécurité, activez l'authentification en deux étapes. Cela nécessitera un code pin lorsque vous vous connectez sur un téléphone ou un ordinateur</p>
-                                </div>
-                                <div className="m-5 mb-9 flex justify-center">
-                                    <button className="bg-primary text-white px-4 py-2 rounded-md">Commencer</button>
-                                </div>
-                                <div>
-                                    <h4 className="text-center text-lg bold-black font-bold mb-4">Choisissez votre méthode</h4>
-                                    <div className="bg-white flex items-center justify-center m-10">
-                                        <div className="container mx-auto p-4">
-                                            <div className="flex flex-wrap -mx-4">
-                                                <div className="w-full md:w-1/2 px-4 mb-4 md:mb-0">
-                                                    <div className="flex items-center space-x-3 mt-4 md:mt-0 m-7">
-                                                        <input
-                                                            type="checkbox"
-                                                            id="custom-checkbox"
-                                                            className="hidden peer form-checkbox"
-                                                        />
-                                                        <label
-                                                            htmlFor="custom-checkbox"
-                                                            className="flex items-center justify-center w-8 h-6 border-2 border-black peer-checked:border-blue-500 peer-checked:bg-blue-500 peer-checked:before:content-['✔'] peer-checked:before:text-white text-blue-500 peer-checked:before:text-blue-500 cursor-pointer"
-                                                        > </label>
+                            <form>
+                                <div className="bg-white rounded-lg shadow-lg w-full max-w-full">
+                                    <div className="m-10 flex justify-center">
+                                        <p className="text-gray-600 text-sm w-3/4 text-center">Pour plus de sécurité, activez l'authentification en deux étapes. Cela nécessitera un code pin lorsque vous vous connectez sur un téléphone ou un ordinateur</p>
+                                    </div>
+                                    <div className="m-5 mb-9 flex justify-center" >
+                                        <button className="bg-primary text-white px-4 py-2 rounded-md" >Commencer</button>
+                                    </div>
+                                    <div>
+                                        <h4 className="text-center text-lg bold-black font-bold mb-4">Choisissez votre méthode</h4>
+                                        <div className="bg-white flex items-center justify-center m-10">
+                                            <div className="container mx-auto p-4">
+                                                <div className="flex flex-wrap -mx-4">
+                                                    <div className="w-full md:w-1/2 px-4 mb-4 md:mb-0">
+                                                        <div className="flex items-center space-x-3 mt-4 md:mt-0 m-7">
+                                                            <input
+                                                                type="checkbox"
+                                                                id="custom-checkbox"
+                                                                className="hidden peer form-checkbox"
+                                                            />
+                                                            <label
+                                                                htmlFor="custom-checkbox"
+                                                                className="flex items-center justify-center w-8 h-6 border-2 border-black peer-checked:border-blue-500 peer-checked:bg-blue-500 peer-checked:before:content-['✔'] peer-checked:before:text-white text-blue-500 peer-checked:before:text-blue-500 cursor-pointer"
+                                                            > </label>
 
 
-                                                        {/* <input type="checkbox" id="extraProtection" className="form-checkbox h-6 w-6" /> */}
-                                                        <label htmlFor="extraProtection" className="text-black-800 text-base">Protection supplémentaire</label>
+                                                            {/* <input type="checkbox" id="extraProtection" className="form-checkbox h-6 w-6" /> */}
+                                                            <label htmlFor="extraProtection" className="text-black-800 text-base">Protection supplémentaire</label>
+                                                        </div>
+                                                        <p className="pl-8 text-xs text-gray-500 items-center">Nous vous demanderons votre mot de passe plus un code de connexion chaque fois que nous remarquerons une connexion inhabituelle</p>
                                                     </div>
-                                                    <p className="pl-8 text-xs text-gray-500 items-center">Nous vous demanderons votre mot de passe plus un code de connexion chaque fois que nous remarquerons une connexion inhabituelle</p>
-                                                </div>
-                                                <div className="w-full md:w-1/2 px-4  mb-4 md:mb-0">
-                                                    <div className="flex items-center space-x-3 mt-4 md:mt-0 m-7">
-                                                        
-                                                    <input
-                                                            type="checkbox"
-                                                            id="custom-checkbox1"
-                                                            className="hidden peer form-checkbox h-5 w-5 "
-                                                        />
-                                                        <label
-                                                            htmlFor="custom-checkbox1"
-                                                            className="flex items-center justify-center w-6 h-6 border-2 border-black peer-checked:border-blue-500 peer-checked:bg-blue-500 peer-checked:before:content-['✔'] peer-checked:before:text-white text-blue-500 peer-checked:before:text-blue-500 cursor-pointer"
-                                                        > </label>
+                                                    <div className="w-full md:w-1/2 px-4  mb-4 md:mb-0">
+                                                        <div className="flex items-center space-x-3 mt-4 md:mt-0 m-7">
+
+                                                            <input
+                                                                type="checkbox"
+                                                                id="custom-checkbox1"
+                                                                className="hidden peer form-checkbox h-5 w-5 "
+                                                            />
+                                                            <label
+                                                                htmlFor="custom-checkbox1"
+                                                                className="flex items-center justify-center w-6 h-6 border-2 border-black peer-checked:border-blue-500 peer-checked:bg-blue-500 peer-checked:before:content-['✔'] peer-checked:before:text-white text-blue-500 peer-checked:before:text-blue-500 cursor-pointer"
+                                                            > </label>
 
 
-                                                        {/* <input type="checkbox" id="smsMessage" className="border-blue form-checkbox h-5 w-5" /> */}
-                                                        <label htmlFor="smsMessage" className="text-black-800 text-base m-2">Via  SMS  Message</label>
+                                                            {/* <input type="checkbox" id="smsMessage" className="border-blue form-checkbox h-5 w-5" /> */}
+                                                            <label htmlFor="smsMessage" className="text-black-800 text-base m-2">Via  SMS  Message</label>
+                                                        </div>
+                                                        <p className="pl-8 text-xs text-gray-500 items-center">Nous vous enverrons un SMS avec un code de vérification à chaque fois que vous vous connectez via un appareil de votre choix</p>
                                                     </div>
-                                                    <p className="pl-8 text-xs text-gray-500 items-center">Nous vous enverrons un SMS avec un code de vérification à chaque fois que vous vous connectez via un appareil de votre choix</p>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                            </form>
                         )}
 
 
