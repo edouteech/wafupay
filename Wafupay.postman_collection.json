@@ -11,6 +11,261 @@
 			"name": "members",
 			"item": [
 				{
+					"name": "auth",
+					"item": [
+						{
+							"name": "register",
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "first_name",
+											"value": "Kabirou",
+											"type": "default"
+										},
+										{
+											"key": "last_name",
+											"value": "ALASSANE",
+											"type": "default"
+										},
+										{
+											"key": "email",
+											"value": "kabirou2001@gmail.com",
+											"type": "default"
+										},
+										{
+											"key": "phone_num",
+											"value": "+22995181019",
+											"type": "default"
+										},
+										{
+											"key": "country_id",
+											"value": "1",
+											"type": "default"
+										},
+										{
+											"key": "password",
+											"value": "Limit123#",
+											"type": "default"
+										},
+										{
+											"key": "confirm_password",
+											"value": "Limit123#",
+											"type": "default"
+										}
+									]
+								},
+								"url": "{{base_url}}token/register"
+							},
+							"response": []
+						},
+						{
+							"name": "verify email",
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "email",
+											"value": "kabirou2001@gmail.com",
+											"type": "text"
+										},
+										{
+											"key": "token",
+											"value": "LZMXHS7",
+											"type": "text"
+										}
+									]
+								},
+								"url": "{{base_url}}token/verify-email"
+							},
+							"response": []
+						},
+						{
+							"name": "resend email verification token",
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "email",
+											"value": "kabirou2001@gmail.com",
+											"type": "text"
+										}
+									]
+								},
+								"url": "{{base_url}}token/resend-email-token"
+							},
+							"response": []
+						},
+						{
+							"name": "login",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// Vérifie si la réponse est réussie et contient le champ 'token'",
+											"if (pm.response.code === 200) {",
+											"    var jsonResponse = pm.response.json();",
+											"    if (jsonResponse.success && jsonResponse.data && jsonResponse.data.token) {",
+											"        // Stocke le token dans une variable de collection",
+											"        pm.collectionVariables.set(\"token\", jsonResponse.data.token);",
+											"    }",
+											"}",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "password",
+											"value": "Limit123#",
+											"type": "default"
+										},
+										{
+											"key": "email",
+											"value": "exemple@exemple.com",
+											"type": "default"
+										},
+										{
+											"key": "phone_num",
+											"value": "+22996431150",
+											"type": "default",
+											"disabled": true
+										}
+									]
+								},
+								"url": "{{base_url}}token"
+							},
+							"response": []
+						},
+						{
+							"name": "login with google",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "email",
+											"value": "darkmood038@gmail.com",
+											"type": "default"
+										},
+										{
+											"key": "first_name",
+											"value": "Kabirou",
+											"type": "text"
+										},
+										{
+											"key": "last_name",
+											"value": "HASSANE",
+											"type": "text"
+										},
+										{
+											"key": "googleId",
+											"value": "test1234",
+											"type": "text"
+										}
+									]
+								},
+								"url": "{{base_url}}token/login-with-google"
+							},
+							"response": []
+						},
+						{
+							"name": "logout",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"url": "{{base_url}}token/revoke"
+							},
+							"response": []
+						},
+						{
+							"name": "password.forgot",
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "email",
+											"value": "darkmood038@gmail.com",
+											"type": "default"
+										}
+									]
+								},
+								"url": "{{base_url}}password/forgot"
+							},
+							"response": []
+						},
+						{
+							"name": "password.reset",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "otp",
+											"value": "22X23AH",
+											"type": "text"
+										},
+										{
+											"key": "email",
+											"value": "darkmood038@gmail.com",
+											"type": "text"
+										},
+										{
+											"key": "password",
+											"value": "helloworld",
+											"type": "text"
+										},
+										{
+											"key": "confirm_password",
+											"value": "helloworld",
+											"type": "text"
+										}
+									]
+								},
+								"url": "{{base_url}}password/reset"
+							},
+							"response": []
+						}
+					]
+				},
+				{
 					"name": "transactions",
 					"item": [
 						{
@@ -163,261 +418,6 @@
 									""
 								]
 							}
-						}
-					]
-				},
-				{
-					"name": "auth",
-					"item": [
-						{
-							"name": "register",
-							"request": {
-								"auth": {
-									"type": "noauth"
-								},
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "formdata",
-									"formdata": [
-										{
-											"key": "first_name",
-											"value": "Kabirou",
-											"type": "default"
-										},
-										{
-											"key": "last_name",
-											"value": "ALASSANE",
-											"type": "default"
-										},
-										{
-											"key": "email",
-											"value": "kabirou2001@gmail.com",
-											"type": "default"
-										},
-										{
-											"key": "phone_num",
-											"value": "+22995181019",
-											"type": "default"
-										},
-										{
-											"key": "country_id",
-											"value": "1",
-											"type": "default"
-										},
-										{
-											"key": "password",
-											"value": "Limit123#",
-											"type": "default"
-										},
-										{
-											"key": "confirm_password",
-											"value": "Limit123#",
-											"type": "default"
-										}
-									]
-								},
-								"url": "{{base_url}}token/register"
-							},
-							"response": []
-						},
-						{
-							"name": "verify email",
-							"request": {
-								"auth": {
-									"type": "noauth"
-								},
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "formdata",
-									"formdata": [
-										{
-											"key": "email",
-											"value": "kabirou2001@gmail.com",
-											"type": "text"
-										},
-										{
-											"key": "token",
-											"value": "LZMXHS7",
-											"type": "text"
-										}
-									]
-								},
-								"url": "{{base_url}}token/verify-email"
-							},
-							"response": []
-						},
-						{
-							"name": "resend email verification token",
-							"request": {
-								"auth": {
-									"type": "noauth"
-								},
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "formdata",
-									"formdata": [
-										{
-											"key": "email",
-											"value": "kabirou2001@gmail.com",
-											"type": "text"
-										}
-									]
-								},
-								"url": "{{base_url}}token/resend-email-token"
-							},
-							"response": []
-						},
-						{
-							"name": "login",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"// Vérifie si la réponse est réussie et contient le champ 'token'",
-											"if (pm.response.code === 200) {",
-											"    var jsonResponse = pm.response.json();",
-											"    if (jsonResponse.success && jsonResponse.data && jsonResponse.data.token) {",
-											"        // Stocke le token dans une variable de collection",
-											"        pm.collectionVariables.set(\"token\", jsonResponse.data.token);",
-											"    }",
-											"}",
-											""
-										],
-										"type": "text/javascript",
-										"packages": {}
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "formdata",
-									"formdata": [
-										{
-											"key": "password",
-											"value": "Limit123#",
-											"type": "default"
-										},
-										{
-											"key": "email",
-											"value": "edou@tech.com",
-											"type": "default"
-										},
-										{
-											"key": "phone_num",
-											"value": "+22996431150",
-											"type": "default",
-											"disabled": true
-										}
-									]
-								},
-								"url": "{{base_url}}token"
-							},
-							"response": []
-						},
-						{
-							"name": "login with google",
-							"request": {
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "formdata",
-									"formdata": [
-										{
-											"key": "email",
-											"value": "darkmood038@gmail.com",
-											"type": "default"
-										},
-										{
-											"key": "first_name",
-											"value": "Kabirou",
-											"type": "text"
-										},
-										{
-											"key": "last_name",
-											"value": "HASSANE",
-											"type": "text"
-										},
-										{
-											"key": "googleId",
-											"value": "test1234",
-											"type": "text"
-										}
-									]
-								},
-								"url": "{{base_url}}token/login-with-google"
-							},
-							"response": []
-						},
-						{
-							"name": "logout",
-							"request": {
-								"method": "POST",
-								"header": [],
-								"url": "{{base_url}}token/revoke"
-							},
-							"response": []
-						},
-						{
-							"name": "password.forgot",
-							"request": {
-								"auth": {
-									"type": "noauth"
-								},
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "formdata",
-									"formdata": [
-										{
-											"key": "email",
-											"value": "darkmood038@gmail.com",
-											"type": "default"
-										}
-									]
-								},
-								"url": "{{base_url}}password/forgot"
-							},
-							"response": []
-						},
-						{
-							"name": "password.reset",
-							"request": {
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "formdata",
-									"formdata": [
-										{
-											"key": "otp",
-											"value": "22X23AH",
-											"type": "text"
-										},
-										{
-											"key": "email",
-											"value": "darkmood038@gmail.com",
-											"type": "text"
-										},
-										{
-											"key": "password",
-											"value": "helloworld",
-											"type": "text"
-										},
-										{
-											"key": "confirm_password",
-											"value": "helloworld",
-											"type": "text"
-										}
-									]
-								},
-								"url": "{{base_url}}password/reset"
-							},
-							"response": []
 						}
 					]
 				},
@@ -752,6 +752,14 @@
 						"url": "{{base_url}}activate-account/22"
 					},
 					"response": []
+				},
+				{
+					"name": "dashboard",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
 				}
 			]
 		}
@@ -787,7 +795,7 @@
 	"variable": [
 		{
 			"key": "base_url",
-			"value": "https://test-wafu.adbenin.org/api/v1/",
+			"value": "https://sruz5234.odns.fr/api/v1/",
 			"type": "string"
 		},
 		{

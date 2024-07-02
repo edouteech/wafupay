@@ -12,10 +12,24 @@ class UserController extends BaseController
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $users = ResourcesUser::collection(User::orderByDesc('id')->get());
-        return $this->handleResponse($users);
+        $per_page = $request->per_page ?? 10;
+
+        $admin = User::where('is_admin', true)->get();
+        $users = User::where('is_admin', false)->orderByDesc('created_at');
+        if ($request->search) {
+            $users = $users->where('first_name', 'like', '%' . $request->search . '%')
+                ->orWhere('last_name', 'like', '%' . $request->search . '%')
+                ->orWhere('first_name', 'like', '%' . $request->search . '%')
+                ->orWhere('email', 'like', '%' . $request->search . '%')
+                ->orWhere('phone_num', 'like', '%' . $request->search . '%');
+        }
+        $users = $users->paginate($per_page);
+        return $this->handleResponse([
+            'admins' => $admin,
+            'users' => $users,
+        ]);
     }
 
     /**
