@@ -1,5 +1,5 @@
 "use client"
-import Dashbord from "../Components/Dashbord"
+import Dashbord from "../Components/Dashbord";
 
 
 import { useSession } from "next-auth/react"
@@ -46,13 +46,13 @@ function Profil() {
         <>
 
             <Dashbord>
-            <h2 className="text-2xl font-bold text-black mb-6 text-center">Mes informations personnelles</h2>
+                <h2 className="text-2xl font-bold text-black mb-12 mt-12 text-center">Mes informations personnelles</h2>
 
-                <div className="max-w-lg mx-auto mt-10 p-6 bg-white rounded-lg shadow-md">
-                    <form>
+                <div className="max-w-2xl mx-auto mt-10 p-1 bg-white rounded-2xl shadow-md">
+                    
                         <div className="mb-4">
-                            <label className="block border-black-700 text-black text-sm font-bold mb-2" htmlFor="nom">
-                                Nom
+                            <label className="flex border-black-700 text-black text-sm font-bold mb-2" >
+                                Prenom
                             </label>
                             <input
                                 className="p-5 w-full border-b border-black focus-visible:outline-none focus:border-b-2 focus:border-primary"
@@ -63,9 +63,9 @@ function Profil() {
                                 placeholder="Nom"
                             />
                         </div>
-                        <div className="mb-4">
-                            <label className="block  border-black-700 text-black text-sm font-bold mb-2" htmlFor="prenom">
-                                Prénom
+                        <div className="mb-4" >
+                            <label className="flex border-black-700 text-black text-sm font-bold mb-2" htmlFor="prenom">
+                                Nom
                             </label>
                             <input
                                 className="p-5 w-full border-b border-black focus-visible:outline-none focus:border-b-2 focus:border-primary"
@@ -77,7 +77,7 @@ function Profil() {
                             />
                         </div>
                         <div className="mb-4">
-                            <label className="block  border-black-700 text-black text-sm font-bold mb-2" htmlFor="email">
+                            <label className="flex border-black-700 text-black text-sm font-bold mb-2" htmlFor="email">
                                 Email
                             </label>
                             <input
@@ -87,32 +87,34 @@ function Profil() {
                                 value={data.email}
                                 readOnly
                                 placeholder="Email"
+                                
                             />
                         </div>
                         <div className="mb-4">
-                            <label className="block  border-black-700 text-black text-sm font-bold mb-2" htmlFor="phone">
-                                Phone
+                            <label className=" border-black-700 text-black text-sm font-bold mb-2" htmlFor="phone">
+                                
                             </label>
                             <div className="flex">
-                                <div className="flex items-center justify-center w-12 bg-gray-200 border border-gray-300 rounded-l-md">
+                                <div className="flex items-center justify-center w-10 ml-10 ">
                                     <img
-                                        src={data.country_id}
+                                        src="https://flagcdn.com/w20/bj.png"
                                         alt="Benin Flag"
-                                        className="w-6 h-6"
+                                        className="w-8 h-6"
+                                        
                                     />
                                 </div>
                                 <input
-                                    className="shadow appearance-none border rounded-r w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                    className="p-4 w-full  border-black focus-visible:outline-none focus:border-b-2 focus:border-primary"
                                     id="phone"
                                     type="text"
                                     value={data.phone_number}
                                     readOnly
                                     placeholder="96 58 12 36"
-                                    
+
                                 />
                             </div>
                         </div>
-                    </form>
+                    
                 </div>
             </Dashbord >
 
