@@ -1,7 +1,7 @@
 "use client"
 import NavBar from "../Components/NavBar"
 import Image from "next/image"
-import mailVerif from "../../../../public/assets/images/mailVerif.png"
+import mailVerif from "@/public/assets/images/mailVerif.png"
 import { useEffect, useRef, useState } from "react"
 import axios from "axios"
 import { useRouter } from "next/navigation"
@@ -79,6 +79,9 @@ function MailVarification() {
                         title: 'Mauvais code',
                         text: resp.data.data.message
                     })
+                }
+                if (resp.status == 200) {
+                    router.push('/dashboard')
                 }
             })
             .catch((err) => {

@@ -23,7 +23,6 @@ function Historique() {
         let tok = localStorage.getItem('token')
         setAuth({ headers: { Authorization: `Bearer ${tok}` } })
         axios.get(`${apiUrl}/token/verify`, { headers: { Authorization: `Bearer ${tok}` } }).then((resp) => {
-            console.log(resp.data);
             setTrans(resp.data.data.transactions)
         })
     }, [])
@@ -40,7 +39,7 @@ function Historique() {
 
     const getState = (tran: Transaction) => {
 
-        axios.get(`${apiUrl}/check-transaction-status/${tran.token}/payin`, auth).then((resp) => {
+        axios.get(`${apiUrl}/check-transaction-status/${tran.token}/${tran.type}`, auth).then((resp) => {
             tran.payin_status = resp.data.data.status
             tran.payout_status = resp.data.data.status
         })
