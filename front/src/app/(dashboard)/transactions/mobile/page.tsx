@@ -87,7 +87,7 @@ function Mobile() {
   const handleSubmit = () => {
     console.log(auth);
 
-    axios.post(`${apiUrl}/transactions`, { "amount": trans.amount, "payin_phone_number": trans.from.phone, "payout_phone_number": trans.to.phone, "payin_wprovider_id": trans.from.method, "payout_wprovider_id": trans.to.method, "sender_support_fee": trans.sender_support_fee }, auth).then((resp) => {
+    axios.post(`${apiUrl}/transactions`, { "amount": trans.amount, "payin_phone_number": trans.from.phone, "payout_phone_number": trans.to.phone, "payin_wprovider_id": trans.from.method, "payout_wprovider_id": trans.to.method, "sender_support_fee": trans.sender_support_fee, "type" : "payin" }, auth).then((resp) => {
       if (resp.data.data.status == 200) {
         router.push('/transactions/historique')
       }
