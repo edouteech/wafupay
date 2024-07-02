@@ -13,8 +13,6 @@ import mtnmomo from '@/public/assets/images/mtnmomo.png'
 function Parameters() {
     //################################## CONSTANTES #############################//
 
-
-
     //################################## VARIABLES ##############################//
     const [auth, setAuth] = useState({ headers: { Authorization: '' } })
     const [editProfilOpen, setEditProfilOpen] = useState(false);
