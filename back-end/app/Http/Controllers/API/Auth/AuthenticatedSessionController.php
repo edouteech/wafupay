@@ -84,4 +84,8 @@ class AuthenticatedSessionController extends BaseController
 
         return $this->handleResponse([], 'User logged out!');
     }
+
+    public function dashboard(Request $request){
+
+    }
 }

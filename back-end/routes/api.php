@@ -63,6 +63,7 @@ Route::prefix('/v1')->group((function () {
 
         Route::prefix('/user')->group(function () {
             Route::get('/profile', [AuthenticatedSessionController::class, 'profile'])->name('profile');
+            Route::get('/dashboard', [AuthenticatedSessionController::class, 'dashboard'])->name('dashboard');
             Route::post('update-profile', [AuthenticatedSessionController::class, 'update_profile']);
         });
 
@@ -72,7 +73,7 @@ Route::prefix('/v1')->group((function () {
         Route::get('refresh-transaction/{payin_token}', [MyTransactionController::class, 'refresh_transaction'])->name('transaction.refresh');
         Route::post('calculate-transaction-fees', [MyTransactionController::class, 'calculate_fees'])->name('transaction.calculateFees');
         Route::delete('delete-transaction/{transaction}', [MyTransactionController::class, 'destroyByUser'])->name('transaction.destroyYours');
-        
+
         // routes des admins
         Route::middleware('admin')->prefix('admin')->group(function () {
             Route::apiResource('transactions-fees', TransactionFeesController::class);
