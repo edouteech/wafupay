@@ -38,7 +38,6 @@ function Register() {
                 phone_num,
                 password,
                 redirect: false,
-                callbackUrl: '/dashboard'
             });
             if (result?.status === 401) {
                 Swal.fire({
@@ -48,6 +47,7 @@ function Register() {
                 });
             } else {
                 router.push('/dashboard')
+                
             }
         } catch (err) {
             Swal.fire({

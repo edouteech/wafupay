@@ -32,7 +32,7 @@ function Mobile() {
     let tok = localStorage.getItem('token')
     auth.headers.Authorization = `Bearer ${tok}`
     setAuth({ headers: { Authorization: `Bearer ${tok}` } })
-    axios.get(`${apiUrl}/list-providers`, { headers: { Authorization: `Bearer ${tok}` } }).then((resp) => {
+    axios.get(`${apiUrl}/wallet-providers`, { headers: { Authorization: `Bearer ${tok}` } }).then((resp) => {
       setMethods(resp.data.data)
       setMethodIn(findElementById(1, resp.data.data))
       setMethodOut(findElementById(2, resp.data.data))
@@ -87,7 +87,7 @@ function Mobile() {
   const handleSubmit = () => {
     console.log(auth);
 
-    axios.post(`${apiUrl}/transactions`, { "amount": trans.amount, "payin_phone_number": trans.from.phone, "payout_phone_number": trans.to.phone, "payin_wprovider_id": trans.from.method, "payout_wprovider_id": trans.to.method, "sender_support_fee": trans.sender_support_fee, "type" : "payin" }, auth).then((resp) => {
+    axios.post(`${apiUrl}/transactions`, { "amount": trans.amount, "payin_phone_number": trans.from.phone, "payout_phone_number": trans.to.phone, "payin_wprovider_id": trans.from.method, "payout_wprovider_id": trans.to.method, "sender_support_fee": trans.sender_support_fee }, auth).then((resp) => {
       if (resp.data.data.status == 200) {
         router.push('/transactions/historique')
       }

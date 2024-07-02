@@ -134,7 +134,6 @@ class MyTransactionController extends BaseController
                 $transaction->amountWithoutFees,
             );
             if ($sendStatus['status'] == $this->payDunya::STATUS_OK) {
-
                 $transaction->update(['disburse_token' => $sendStatus['token']]);
             }
             return $sendStatus;

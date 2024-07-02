@@ -76,7 +76,8 @@ export const options = {
               firstname: resp.data.data.first_name,
               lastname: resp.data.data.last_name,
               email: resp.data.data.email,
-              phone_num: resp.data.data.phone_num
+              phone_num: resp.data.data.phone_num,
+              role : resp.data.data.id_admin
             };
             return user;
           }
@@ -119,6 +120,13 @@ export const options = {
           token.firstname = user.firstname;
           token.email = user.email;
           token.phone_num = user.phone_num;
+
+        if(user.role == 0){
+            user.role = 'user';
+        }else {
+          user.role = 'admin';
+        }
+        token.role = user.role;
         }
        
       }

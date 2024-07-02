@@ -27,6 +27,7 @@ useEffect(()=>{
 }, [window.location.href])
 
 
+
 const logout = ()=>{
     axios.post(`${apiUrl}/token/revoke`, {'user' : session?.user.token}, {headers : {Authorization :`Bearer ${session?.user.token}`}}).then((resp)=>{
         if (resp.status == 200) {

@@ -10,6 +10,7 @@ import axios from "axios";
 import { useSession } from "next-auth/react";
 import { signOut } from 'next-auth/react';
 import { ChevronDown, ChevronRight } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 
 type Props = {
@@ -20,6 +21,7 @@ function Dashbord({ children }: Props) {
     const [href, setHref] = useState<string[]>([])
     const [showTrans, setShowTrans] = useState(false)
     const apiUrl = process.env.NEXT_PUBLIC_APIURL
+    const router = useRouter()
     const { data: session } = useSession()
     useEffect(() => {
         let ref = window.location.href.split('/')
@@ -27,6 +29,13 @@ function Dashbord({ children }: Props) {
         console.log(window.location.href.substring(22, window.location.href.length))
     }, [window.location.href])
 
+    useEffect(()=>{
+        if (session) {
+            if (session.user.role != 'admin') {
+                router.push('/dashboard')
+            }
+        }
+    },[session])
 
     const logout = () => {
         axios.post(`${apiUrl}/token/revoke`, { 'user': session?.user.token }, { headers: { Authorization: `Bearer ${session?.user.token}` } }).then((resp) => {

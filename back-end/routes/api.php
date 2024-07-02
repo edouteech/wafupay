@@ -81,8 +81,7 @@ Route::prefix('/v1')->group((function () {
             Route::apiResource('users', UserController::class);
             Route::post('activate-account/{user}', [UserController::class, 'activate']);
             Route::get('check-transaction-status/{token}/{type}', [TransactionController::class, 'check_transaction_status']);
-            Route::apiResource('transactions', TransactionController::class)
-                ->except('store', 'show', 'delete');
+            Route::apiResource('transactions', TransactionController::class)->except('store', 'show', 'delete');
         });
     });
 

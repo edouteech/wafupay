@@ -4,7 +4,8 @@ import Dashbord from "../../Components/Dashbord"
 import { useRouter } from "next/navigation"
 import axios from "axios"
 import { Transaction } from "@/app/types/types"
-import { Redo, RefreshCcw } from "lucide-react"
+import { ChevronLeft, ChevronRight, Redo, RefreshCcw } from "lucide-react"
+import Link from "next/link"
 
 function Historique() {
     //################################## CONSTANTES #############################//
@@ -14,6 +15,11 @@ function Historique() {
     const [searchTerm, setSearchTerm] = useState('')
     const [searchBy, setSearchBy] = useState('')
     const [trans, setTrans] = useState<Transaction[]>([])
+    const [page, setPage] = useState<number>(1)
+    const [pageCount, setPageCount] = useState<number[]>([])
+    const [prev, setPrev] = useState('')
+    const [next, setNext] = useState('')
+
     //################################## VARIABLES ##############################//
 
 
@@ -22,8 +28,15 @@ function Historique() {
     useEffect(() => {
         let tok = localStorage.getItem('token')
         setAuth({ headers: { Authorization: `Bearer ${tok}` } })
-        axios.get(`${apiUrl}/token/verify`, { headers: { Authorization: `Bearer ${tok}` } }).then((resp) => {
-            setTrans(resp.data.data.transactions)
+        axios.get(`${apiUrl}/transactions`, { headers: { Authorization: `Bearer ${tok}` } }).then((resp) => {
+            setTrans(resp.data.data.data)
+            let tab = []
+            for (let i = 0; i < Math.ceil(resp.data.data.total / resp.data.data.per_page); i++) {
+                tab[i] = i + 1
+            }
+            setPageCount(tab)
+            setPrev(resp.data.data.prev_page_url)
+            setNext(resp.data.data.next_page_url)
         })
     }, [])
 
@@ -37,41 +50,62 @@ function Historique() {
         return new Date(dateString).toLocaleDateString('fr-FR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
     }
 
-    const getState = (tran: Transaction) => {
+    const getState = (tran: Transaction, i: number) => {
 
-        axios.get(`${apiUrl}/check-transaction-status/${tran.token}/${tran.type}`, auth).then((resp) => {
-            tran.payin_status = resp.data.data.status
-            tran.payout_status = resp.data.data.status
+        axios.get(`${apiUrl}/check-status/${tran.token}/payin`, auth).then((resp) => {
+            let tab = trans.slice()
+            tab[i].payin_status = resp.data.data.status
+            tab[i].payout_status = resp.data.data.status
+            setTrans(tab)
         })
         setTrans(trans)
     }
 
+    const changePage = (page:number) =>{
+        axios.get(`${apiUrl}/transactions?page=${page}`, auth).then((resp) => {
+            setTrans(resp.data.data.data)
+            let tab = []
+            for (let i = 0; i < Math.ceil(resp.data.data.total / resp.data.data.per_page); i++) {
+                tab[i] = i + 1
+            }
+            setPage(page)
+            setPageCount(tab)
+            setPrev(resp.data.data.prev_page_url)
+            setNext(resp.data.data.next_page_url)
+        })
+    }
+
+    const prevOrNext = (link : string) =>{
+        if (link) {
+            axios.get(`${link}`, auth).then((resp) => {
+                setTrans(resp.data.data.data)
+                let tab = []
+                for (let i = 0; i < Math.ceil(resp.data.data.total / resp.data.data.per_page); i++) {
+                    tab[i] = i + 1
+                }
+                setPage(resp.data.data.current_page)
+                setPageCount(tab)
+                setPrev(resp.data.data.prev_page_url)
+                setNext(resp.data.data.next_page_url)
+            })
+        }else{
+            return;
+        }
+    }
+
+    // const getData = () =>{
+        
+    // }
 
     //################################## HTML ####################################//
 
     return (
         <>
             <Dashbord>
-                <div className="p-16">
+                <div className="p-16 mb-8">
                     <h1 className="font-bold text-gray-700 mb-4">
                         Recherche et filtrage des transactions
                     </h1>
-                    <div className="text-base bg-white p-8 rounded-2xl w-9/12">
-                        <form className="flex gap-4 ">
-                            <input type="text" placeholder="Entrer votre recherche" className="focus-visible:outline-none rounded p-2 focus:border-2 focus:border-primary border-gray-200 border-2" />
-                            <button className="p-2 text-white bg-primary rounded">Rechercher</button>
-                        </form>
-                        <div className="mt-8">
-                            <button onClick={() => { setSearchBy('nom') }} className={`${searchBy == 'nom' ? 'bg-primary text-white' : 'bg-gray-200'} hover:bg-primary duration-500 hover:text-white py-1 px-2 mx-1`}>Nom</button>
-                            <button onClick={() => { setSearchBy('type') }} className={`${searchBy == 'type' ? 'bg-primary text-white' : 'bg-gray-200'} hover:bg-primary duration-500 hover:text-white py-1 px-2 mx-1`}>Type</button>
-                            <button onClick={() => { setSearchBy('trans_id') }} className={`${searchBy == 'trans_id' ? 'bg-primary text-white' : 'bg-gray-200'} hover:bg-primary duration-500 hover:text-white py-1 px-2 mx-1`}>Transaction ID</button>
-                            <button onClick={() => { setSearchBy('RD') }} className={`${searchBy == 'RD' ? 'bg-primary text-white' : 'bg-gray-200'} hover:bg-primary duration-500 hover:text-white py-1 px-2 mx-1`}>RD</button>
-                            <button onClick={() => { setSearchBy('ND') }} className={`${searchBy == 'ND' ? 'bg-primary text-white' : 'bg-gray-200'} hover:bg-primary duration-500 hover:text-white py-1 px-2 mx-1`}>ND</button>
-                            <button onClick={() => { setSearchBy('RA') }} className={`${searchBy == 'RA' ? 'bg-primary text-white' : 'bg-gray-200'} hover:bg-primary duration-500 hover:text-white py-1 px-2 mx-1`}>RA</button>
-                            <button onClick={() => { setSearchBy('NA') }} className={`${searchBy == 'NA' ? 'bg-primary text-white' : 'bg-gray-200'} hover:bg-primary duration-500 hover:text-white py-1 px-2 mx-1`}>NA</button>
-                            <button onClick={() => { setSearchBy('montant') }} className={`${searchBy == 'montant' ? 'bg-primary text-white' : 'bg-gray-200'} hover:bg-primary duration-500 hover:text-white py-1 px-2 mx-1`}>MONTANT</button>
-                        </div>
-                    </div>
                     <div className=" mt-8 text-base w-full">
                         <table className="rounded-3xl bg-white overflow-hidden text-center">
                             <thead className="text-secBlue border-b border-gray-300">
@@ -93,14 +127,14 @@ function Historique() {
                                         <td className="p-2">{parseInt(tran.amount) - parseInt(tran.amountWithoutFees)}</td>
                                         <td className="p-2 text-primary">{tran.amount}</td>
                                         <td className="">
-                                            <span className={`${tran.payin_status == 'pending' ? 'bg-yellow-500' : tran.payin_status == 'success' ? 'bg-green-500' : tran.payin_status == 'failed' ? 'bg-red-500' : ''} p-2 text-white rounded`}>{`${tran.payin_status == 'pending' ? 'en cours' : tran.payin_status == 'succes' ? 'effectué' : tran.payin_status == 'failed' ? 'rejeté' : ''}`}</span>
+                                            <span className={`${tran.payin_status == 'pending' ? 'bg-yellow-500' : tran.payin_status == 'success' ? 'bg-green-500' : tran.payin_status == 'failed' ? 'bg-red-500' : ''} p-2 text-white rounded`}>{`${tran.payin_status == 'pending' ? 'en cours' : tran.payin_status == 'succes' ? 'effectué' : tran.payin_status == 'failed' ? 'échoué' : ''}`}</span>
                                         </td>
                                         <td className="">
-                                            <span className={`${tran.payout_status == 'pending' ? 'bg-yellow-500' : tran.payout_status == 'success' ? 'bg-green-500' : tran.payout_status == 'failed' ? 'bg-red-500' : ''} p-2 text-white rounded`}>{`${tran.payout_status == 'pending' ? 'en cours' : tran.payout_status == 'succes' ? 'effectué' : tran.payout_status == 'failed' ? 'rejeté' : ''}`}</span>
+                                            <span className={`${tran.payout_status == 'pending' ? 'bg-yellow-500' : tran.payout_status == 'success' ? 'bg-green-500' : tran.payout_status == 'failed' ? 'bg-red-500' : ''} p-2 text-white rounded`}>{`${tran.payout_status == 'pending' ? 'en cours' : tran.payout_status == 'succes' ? 'effectué' : tran.payout_status == 'failed' ? 'échoué' : ''}`}</span>
                                         </td>
                                         <td>
                                             <div className="relative group">
-                                                <button onClick={() => { getState(tran) }} className="flex items-center justify-center rounded-full shadow-md duration-300">
+                                                <button onClick={() => { getState(tran, i) }} className="flex items-center justify-center rounded-full shadow-md duration-300">
                                                     <RefreshCcw className="w-6 h-6" />
                                                 </button>
                                                 <div className="absolute top-full -left-1/2 mt-2 mb-2 transform opacity-0 group-hover:opacity-100 bg-black bg-opacity-50 text-white text-xs rounded py-1 px-2 transition-opacity duration-300">
@@ -112,6 +146,19 @@ function Historique() {
                                 ))}
                             </tbody>
                         </table>
+                        <div className="flex float-end mt-8 gap-3 items-center">
+                            <button className="text-primary" onClick={()=>{prevOrNext(prev)}}>
+                                <ChevronLeft></ChevronLeft>
+                            </button>
+                            <div className="flex gap-2">
+                                {pageCount.map((btn,i)=>(
+                                    <button className={`${page == btn ? 'text-white bg-primary' : ' text-primary'} h-8 w-8 rounded`} onClick={()=>{changePage(btn)}} key={i}>{btn}</button>
+                                ))}
+                            </div>
+                            <button className="flex gap-1 text-primary" onClick={()=>{prevOrNext(next)}}>
+                                Suivant <ChevronRight></ChevronRight>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </Dashbord>
