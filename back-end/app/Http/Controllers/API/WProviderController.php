@@ -27,10 +27,8 @@ class WProviderController extends BaseController
      */
     public function index()
     {
-        return $this->handleResponse(
-            WProviderResource::collection(
-                WProvider::orderByDesc('id')->get()
-            )->resource,
+        $providers = WProvider::with('transaction_fees')->orderByDesc('id')->get();
+        return $this->handleResponse( $providers,
             'wallet providers and their associated transaction fees retrieved successfully'
         );
     }
