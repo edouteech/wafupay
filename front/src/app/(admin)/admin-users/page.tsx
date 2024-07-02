@@ -20,7 +20,7 @@ function AdminDashboard() {
     useEffect(()=>{
         if (session && !auth.headers.Authorization) {
             setAuth({headers : {Authorization : `Bearer ${session.user?.token}`}})
-            axios.get(`${apiUrl}/users`, {headers : {Authorization : `Bearer ${session.user?.token}`}}).then((resp)=>{resp.data})
+            axios.get(`${apiUrl}/admin/users`, {headers : {Authorization : `Bearer ${session.user?.token}`}}).then((resp)=>{resp.data})
         }
     },[session])
 

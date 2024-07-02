@@ -54,7 +54,6 @@ function Dashbord({ children }: Props) {
                     </div>
                     <ul className="py-2 text-textGray bg-white flex-col flex gap-6 h-full border-r border-primary px-2">
                         <li className="text-gray-700 font-semibold"><Link className={`${href[3] == "admin-dashboard" ? 'text-primary' : ''} flex items-center gap-3`} href={'/admin-dashboard'}><Home f={`${href[3] == "admin-dashboard" ? '#1877F2' : '#606060'}`}></Home>Tableau de bord</Link></li>
-                        <li className="text-gray-700 font-semibold"><Link className={`${href[3] == "admin-stats" ? 'text-primary' : ''} flex items-center gap-3`} href={'/admin-stats'}><Stat f={`${href[3] == "admin-stats" ? '#1877F2' : '#606060'}`}></Stat>Statistiques</Link></li>
                         <li className="text-gray-700 font-semibold"><Link className={`${href[3] == "admin-users" ? 'text-primary' : ''} flex items-center gap-3`} href={'/admin-users'}><Users f={`${href[3] == "admin-users" ? '#1877F2' : '#606060'}`}></Users>Utilisateurs</Link></li>
                         <li className="text-gray-700 font-semibold relative"> <button onClick={() => { setShowTrans(!showTrans) }} className={`${href[3] == "admin-configs" ? 'text-primary' : ''} flex items-center gap-3`}><UserConfig f={`${href[3] == "admin-configs" ? '#1877F2' : '#606060'}`} ></UserConfig>Configurations</button>
                             <span className="duration-500 absolute right-5 top-0">

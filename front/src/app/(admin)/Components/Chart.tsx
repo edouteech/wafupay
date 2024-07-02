@@ -10,7 +10,7 @@ type ChartProp = {
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
-const CustomLineChart: React.FC<ChartProp> = ({types = 'Journalière', infos =  []}) => {
+const CustomLineChart: React.FC<ChartProp> = ({types = 'Journalière', infos}) => {
   const colors = {'Journalière' : '#4318ff', 'Hebdomadaire' : '#fe6927', 'Mensuelle' : '#355c66'}
   const LABELS = {'Journalière' : [0, 4, 8, 12, 16, 20, 24], 'Hebdomadaire' : ['lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi', 'dimanche'], 'Mensuelle' : ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']}
     const data: ChartData<'line'> = {
@@ -63,7 +63,7 @@ const CustomLineChart: React.FC<ChartProp> = ({types = 'Journalière', infos =  
 
   return (
     <div className="p-4 bg-white rounded-xl shadow-md">
-      <div className="flex items-center justify-between mb-4">
+      {/* <div className="flex items-center justify-between mb-4">
         <div>
           <h2 className="text-3xl font-bold">$682.5</h2>
           <p className="text-green-500">+2.45%</p>
@@ -71,7 +71,7 @@ const CustomLineChart: React.FC<ChartProp> = ({types = 'Journalière', infos =  
         <div className="bg-blue-100 text-blue-500 px-2 py-1 rounded-full">
           <span>📈</span>
         </div>
-      </div>
+      </div> */}
       <Line data={data} options={options} />
     </div>
   );
