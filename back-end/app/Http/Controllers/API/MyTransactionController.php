@@ -2,16 +2,17 @@
 
 namespace App\Http\Controllers\API;
 
-use App\Http\Resources\TransactionResource;
-use App\Http\Services\LoggerService;
-use App\Http\Services\PayDunyaService;
-use App\Http\Services\TransactionService;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
+use App\Http\Services\LoggerService;
+use Illuminate\Support\Facades\Auth;
+use App\Http\Services\PayDunyaService;
+use App\Http\Services\TransactionService;
+use App\Http\Resources\TransactionResource;
 
-class TransactionController extends BaseController
+class MyTransactionController extends BaseController
 {
-
+    
     public function __construct(
         private readonly PayDunyaService $payDunya,
         private readonly LoggerService $logger,
@@ -22,16 +23,10 @@ class TransactionController extends BaseController
     /**
      * Display a listing of the resource.
      */
-    public function index()
-    {
-        $transactions = TransactionResource::collection(Transaction::orderByDesc('id')->get());
-        return $this->handleResponse($transactions);
-    }
-
-    public function my_index()
+    public function index(Request $request)
     {
         $per_page = request()->query('per_page', 10);
-        $transactions = Transaction::where('user_id', Auth::user()->id)->orderBy('created_at', 'desc')->paginate($per_page);
+        $transactions = Transaction::where('user_id', $request->user()->id)->orderBy('created_at', 'desc')->paginate($per_page);
         return $this->handleResponse($transactions);
     }
 
@@ -139,7 +134,6 @@ class TransactionController extends BaseController
                 $transaction->amountWithoutFees,
             );
             if ($sendStatus['status'] == $this->payDunya::STATUS_OK) {
-
                 $transaction->update(['disburse_token' => $sendStatus['token']]);
             }
             return $sendStatus;
@@ -227,16 +221,8 @@ class TransactionController extends BaseController
         return $this->handleResponse(new TransactionResource($transaction));
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Transaction $transaction)
-    {
-        $transaction->delete();
-        return $this->handleResponse($transaction, 'Transaction deleted successfully.');
-    }
 
-    public function destroyByUser(Request $request, Transaction $transaction)
+    public function destroy(Request $request, Transaction $transaction)
     {
         if ($request->user()->id != $transaction->user_id) {
             return $this->handleError(

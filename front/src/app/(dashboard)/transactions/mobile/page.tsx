@@ -32,7 +32,7 @@ function Mobile() {
     let tok = localStorage.getItem('token')
     auth.headers.Authorization = `Bearer ${tok}`
     setAuth({ headers: { Authorization: `Bearer ${tok}` } })
-    axios.get(`${apiUrl}/list-providers`, { headers: { Authorization: `Bearer ${tok}` } }).then((resp) => {
+    axios.get(`${apiUrl}/wallet-providers`, { headers: { Authorization: `Bearer ${tok}` } }).then((resp) => {
       setMethods(resp.data.data)
       setMethodIn(findElementById(1, resp.data.data))
       setMethodOut(findElementById(2, resp.data.data))

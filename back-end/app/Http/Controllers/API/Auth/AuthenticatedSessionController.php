@@ -19,7 +19,7 @@ class AuthenticatedSessionController extends BaseController
      * @param Request $request The incoming request.
      * @return JsonResponse A JSON response containing the user's data and a token.
      */
-    public function me(Request $request): JsonResponse
+    public function profile(Request $request): JsonResponse
     {
         return $this->handleResponse(new UserResource($request->user()));
     }

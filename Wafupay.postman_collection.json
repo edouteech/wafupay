@@ -1,0 +1,806 @@
+{
+	"info": {
+		"_postman_id": "64a6b359-217a-4864-abab-d7438a4e6cfe",
+		"name": "Wafupay",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "5859991",
+		"_collection_link": "https://galactic-shadow-551641.postman.co/workspace/tocmanager~6897c4a6-34d8-488a-9e0c-b6a170c71f2f/collection/5859991-64a6b359-217a-4864-abab-d7438a4e6cfe?action=share&source=collection_link&creator=5859991"
+	},
+	"item": [
+		{
+			"name": "members",
+			"item": [
+				{
+					"name": "auth",
+					"item": [
+						{
+							"name": "register",
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "first_name",
+											"value": "Kabirou",
+											"type": "default"
+										},
+										{
+											"key": "last_name",
+											"value": "ALASSANE",
+											"type": "default"
+										},
+										{
+											"key": "email",
+											"value": "kabirou2001@gmail.com",
+											"type": "default"
+										},
+										{
+											"key": "phone_num",
+											"value": "+22995181019",
+											"type": "default"
+										},
+										{
+											"key": "country_id",
+											"value": "1",
+											"type": "default"
+										},
+										{
+											"key": "password",
+											"value": "Limit123#",
+											"type": "default"
+										},
+										{
+											"key": "confirm_password",
+											"value": "Limit123#",
+											"type": "default"
+										}
+									]
+								},
+								"url": "{{base_url}}token/register"
+							},
+							"response": []
+						},
+						{
+							"name": "verify email",
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "email",
+											"value": "kabirou2001@gmail.com",
+											"type": "text"
+										},
+										{
+											"key": "token",
+											"value": "LZMXHS7",
+											"type": "text"
+										}
+									]
+								},
+								"url": "{{base_url}}token/verify-email"
+							},
+							"response": []
+						},
+						{
+							"name": "resend email verification token",
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "email",
+											"value": "kabirou2001@gmail.com",
+											"type": "text"
+										}
+									]
+								},
+								"url": "{{base_url}}token/resend-email-token"
+							},
+							"response": []
+						},
+						{
+							"name": "login",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// Vérifie si la réponse est réussie et contient le champ 'token'",
+											"if (pm.response.code === 200) {",
+											"    var jsonResponse = pm.response.json();",
+											"    if (jsonResponse.success && jsonResponse.data && jsonResponse.data.token) {",
+											"        // Stocke le token dans une variable de collection",
+											"        pm.collectionVariables.set(\"token\", jsonResponse.data.token);",
+											"    }",
+											"}",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "password",
+											"value": "Limit123#",
+											"type": "default"
+										},
+										{
+											"key": "email",
+											"value": "exemple@exemple.com",
+											"type": "default"
+										},
+										{
+											"key": "phone_num",
+											"value": "+22996431150",
+											"type": "default",
+											"disabled": true
+										}
+									]
+								},
+								"url": "{{base_url}}token"
+							},
+							"response": []
+						},
+						{
+							"name": "login with google",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "email",
+											"value": "darkmood038@gmail.com",
+											"type": "default"
+										},
+										{
+											"key": "first_name",
+											"value": "Kabirou",
+											"type": "text"
+										},
+										{
+											"key": "last_name",
+											"value": "HASSANE",
+											"type": "text"
+										},
+										{
+											"key": "googleId",
+											"value": "test1234",
+											"type": "text"
+										}
+									]
+								},
+								"url": "{{base_url}}token/login-with-google"
+							},
+							"response": []
+						},
+						{
+							"name": "logout",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"url": "{{base_url}}token/revoke"
+							},
+							"response": []
+						},
+						{
+							"name": "password.forgot",
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "email",
+											"value": "darkmood038@gmail.com",
+											"type": "default"
+										}
+									]
+								},
+								"url": "{{base_url}}password/forgot"
+							},
+							"response": []
+						},
+						{
+							"name": "password.reset",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "otp",
+											"value": "22X23AH",
+											"type": "text"
+										},
+										{
+											"key": "email",
+											"value": "darkmood038@gmail.com",
+											"type": "text"
+										},
+										{
+											"key": "password",
+											"value": "helloworld",
+											"type": "text"
+										},
+										{
+											"key": "confirm_password",
+											"value": "helloworld",
+											"type": "text"
+										}
+									]
+								},
+								"url": "{{base_url}}password/reset"
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "transactions",
+					"item": [
+						{
+							"name": "process",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "payin_phone_number",
+											"value": "96398680",
+											"type": "default"
+										},
+										{
+											"key": "payin_wprovider_id",
+											"value": "2",
+											"type": "default"
+										},
+										{
+											"key": "payout_phone_number",
+											"value": "96398680",
+											"type": "default"
+										},
+										{
+											"key": "payout_wprovider_id",
+											"value": "2",
+											"type": "default"
+										},
+										{
+											"key": "amount",
+											"value": "500",
+											"type": "default"
+										},
+										{
+											"key": "sender_support_fee",
+											"value": "false",
+											"type": "default"
+										},
+										{
+											"key": "otp_code",
+											"value": "",
+											"type": "text",
+											"disabled": true
+										}
+									]
+								},
+								"url": "{{base_url}}transactions"
+							},
+							"response": []
+						},
+						{
+							"name": "calculate fees",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "payin_wprovider_id",
+											"value": "2",
+											"type": "default"
+										},
+										{
+											"key": "payout_wprovider_id",
+											"value": "2",
+											"type": "default"
+										},
+										{
+											"key": "amount",
+											"value": "640",
+											"type": "default"
+										},
+										{
+											"key": "sender_support_fee",
+											"value": "false",
+											"type": "default"
+										}
+									]
+								},
+								"url": "{{base_url}}calculate-transaction-fees"
+							},
+							"response": []
+						},
+						{
+							"name": "check status",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": "{{base_url}}check-transaction-status/TZimHzROMxWrZxnaFtgH/payin"
+							},
+							"response": []
+						},
+						{
+							"name": "resubmit what failed",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": "{{base_url}}refresh-transaction/r18TCYn8J6u06lGfAbS7"
+							},
+							"response": []
+						},
+						{
+							"name": "delete Your Transaction",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": "{{base_url}}delete-transaction/1"
+							},
+							"response": []
+						},
+						{
+							"name": "index transactions",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": "{{base_url}}transactions"
+							},
+							"response": []
+						},
+						{
+							"name": "show transactions",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": "{{base_url}}transactions/2"
+							},
+							"response": []
+						}
+					],
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"exec": [
+									""
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "user",
+					"item": [
+						{
+							"name": "profile",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": "{{base_url}}user/profile"
+							},
+							"response": []
+						},
+						{
+							"name": "update self profile",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": []
+								},
+								"url": "{{base_url}}user/update-profile"
+							},
+							"response": []
+						},
+						{
+							"name": "upload legal document for validating account",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "identity_card",
+											"type": "file",
+											"src": "/home/blakvghost/Pictures/Screenshots/Screenshot from 2024-05-26 12-23-46.png"
+										}
+									]
+								},
+								"url": "{{base_url}}submit-identity-card"
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "index countries",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{base_url}}countries"
+					},
+					"response": []
+				},
+				{
+					"name": "index providers",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{base_url}}wallet-providers"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "admin",
+			"item": [
+				{
+					"name": "wallet providers",
+					"item": [
+						{
+							"name": "all",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": "{{base_url}}wallet-providers"
+							},
+							"response": []
+						},
+						{
+							"name": "create",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"name\": \"MOOV TOGO\",\r\n  \"withdraw_mode\": \"moov-togo\",\r\n  \"sending_mode\": \"moov_togo\",\r\n  \"country_id\": \"3\",\r\n  \"fees\": [\r\n    {\r\n      \"payin_fee\": \"3.5\",\r\n      \"payout_fee\": \"2\",\r\n      \"min_amount\": \"500\",\r\n      \"max_amount\": \"500000\"\r\n    }\r\n  ]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "{{base_url}}wallet-providers"
+							},
+							"response": []
+						},
+						{
+							"name": "update",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": {
+										"token": "1|GoM9lBMGz1GbipUmehAGvF5VDWVmg8sTt0UNFhls20927ea2"
+									}
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"_method\": \"PUT\",\r\n    \"name\": \"MOOV TOGO\",\r\n    \"withdraw_mode\": \"moov-togo\",\r\n    \"sending_mode\": \"moov_togo\",\r\n    \"country_id\": \"3\",\r\n    \"fees\": [\r\n        {\r\n            \"payin_fee\": \"3.5\",\r\n            \"payout_fee\": \"2\",\r\n            \"min_amount\": \"500\",\r\n            \"max_amount\": \"500000\"\r\n        }\r\n    ]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "{{base_url}}wallet-providers/1"
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "users",
+					"item": [
+						{
+							"name": "all",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": "{{base_url}}admin/users"
+							},
+							"response": []
+						},
+						{
+							"name": "create",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "slug",
+											"value": "Togo",
+											"type": "default"
+										},
+										{
+											"key": "code",
+											"value": "TG",
+											"type": "default"
+										},
+										{
+											"key": "_method",
+											"value": "PUT",
+											"type": "default"
+										}
+									]
+								},
+								"url": "{{base_url}}countries/1"
+							},
+							"response": []
+						},
+						{
+							"name": "update",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": {
+										"token": "1|GoM9lBMGz1GbipUmehAGvF5VDWVmg8sTt0UNFhls20927ea2"
+									}
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "slug",
+											"value": "Togo",
+											"type": "default"
+										},
+										{
+											"key": "code",
+											"value": "TG",
+											"type": "default"
+										}
+									]
+								},
+								"url": "{{base_url}}countries"
+							},
+							"response": []
+						}
+					],
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"exec": [
+									""
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "countries",
+					"item": [
+						{
+							"name": "all",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": "{{base_url}}countries"
+							},
+							"response": []
+						},
+						{
+							"name": "create",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": {
+										"token": "1|GoM9lBMGz1GbipUmehAGvF5VDWVmg8sTt0UNFhls20927ea2"
+									}
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "slug",
+											"value": "Togo",
+											"type": "default"
+										},
+										{
+											"key": "code",
+											"value": "TG",
+											"type": "default"
+										},
+										{
+											"key": "_method",
+											"value": "PUT",
+											"type": "default"
+										}
+									]
+								},
+								"url": "{{base_url}}countries/1"
+							},
+							"response": []
+						},
+						{
+							"name": "update",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": {
+										"token": "1|GoM9lBMGz1GbipUmehAGvF5VDWVmg8sTt0UNFhls20927ea2"
+									}
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "slug",
+											"value": "Togo",
+											"type": "default"
+										},
+										{
+											"key": "code",
+											"value": "TG",
+											"type": "default"
+										}
+									]
+								},
+								"url": "{{base_url}}countries"
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "transactions",
+					"item": [
+						{
+							"name": "all",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": "{{base_url}}admin/transactions"
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "activate or desactivate user account",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "activate",
+									"value": "1",
+									"type": "default"
+								}
+							]
+						},
+						"url": "{{base_url}}activate-account/22"
+					},
+					"response": []
+				},
+				{
+					"name": "dashboard",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": {
+			"token": "{{token}}"
+		}
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "https://sruz5234.odns.fr/api/v1/",
+			"type": "string"
+		},
+		{
+			"key": "token",
+			"value": ""
+		}
+	]
+}

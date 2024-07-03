@@ -46,4 +46,11 @@ class Transaction extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function scopeSuccess($query)
+    {
+        return $this->where(['payin_status' => 'success', 'payout_status' => 'success']);
+        // return $query->where('payin_status', 'success')
+        //              .where('payout_status', 'success');
+    }
 }
