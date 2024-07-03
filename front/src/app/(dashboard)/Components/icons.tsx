@@ -90,7 +90,6 @@ export const UserConfig: React.FC<IconProps> = ({ f = '#374151', w = 27, h = 27,
 export const DocPaper: React.FC<IconProps> = ({ f = '#374151', w = 27, h = 32, className = "" }) => (
     <svg width={w} height={h} viewBox="0 0 27 32" fill={f} xmlns="http://www.w3.org/2000/svg">
         <path d="M20.8636 3.68182H27V31.9091H0V3.68182H6.13636V6.13636H20.8636V3.68182ZM4.90909 15.9545H22.0909V13.5H4.90909V15.9545ZM4.90909 25.7727H22.0909V23.3182H4.90909V25.7727ZM8.59091 3.68182V0H18.4091V3.68182H8.59091Z" />
-<<<<<<< HEAD
     </svg>
 );
 
@@ -123,8 +122,6 @@ export const Manymen: React.FC<IconProps> = ({ f = '#8280FF', w = 60, h = 62, cl
 export const Increase: React.FC<IconProps> = ({ f = '#00B69B', w = 22, h = 16, className = "" }) => (
     <svg width={w} height={h} viewBox="0 0 24 16" fill={f} xmlns="http://www.w3.org/2000/svg">
     <path d="M16.6999 0.952637L19.3263 3.67539L13.7295 9.4776L9.14193 4.72169L0.643494 13.5439L2.26061 15.2204L9.14193 8.0865L13.7295 12.8424L20.9549 5.36374L23.5812 8.0865V0.952637H16.6999Z"/>
-=======
->>>>>>> 29cb2afb8ea4300f477eafa0680a9e0a6d96f4ac
     </svg>
 );
 
