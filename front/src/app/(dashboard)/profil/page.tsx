@@ -1,5 +1,5 @@
 "use client"
-import Dashbord from "../Components/Dashbord"
+import Dashbord from "../Components/Dashbord";
 
 
 import { useSession } from "next-auth/react"
@@ -46,73 +46,80 @@ function Profil() {
         <>
 
             <Dashbord>
-            <h2 className="text-2xl font-bold text-black mb-6 text-center">Mes informations personnelles</h2>
+                <h2 className="text-2xl font-bold text-black mb-12 mt-12 text-center">Mes informations personnelles</h2>
 
-                <div className="max-w-lg mx-auto mt-10 p-6 bg-white rounded-lg shadow-md">
-                    <form>
-                        <div className="mb-4">
-                            <label className="block border-black-700 text-black text-sm font-bold mb-2" htmlFor="nom">
-                                Nom
-                            </label>
+                <div className="max-w-2xl mx-auto mt-10 p-1 bg-white rounded-2xl shadow-md">
+
+                    <div className="mb-4">
+                        <label className="flex items-center p-4 w-full border-b border-black text-gray-400 text-base font-bold mb-2">
+                            Prenom
                             <input
-                                className="p-5 w-full border-b border-black focus-visible:outline-none focus:border-b-2 focus:border-primary"
+                                className="p-4 w-full focus-visible:outline-none focus:border-b-2 focus:border-primary ml-2 text-black text-right"
                                 id="nom"
                                 type="text"
-                                value={data.first_name}
+                                value="Romaric"
                                 readOnly
-                                placeholder="Nom"
+                                placeholder=""
                             />
-                        </div>
-                        <div className="mb-4">
-                            <label className="block  border-black-700 text-black text-sm font-bold mb-2" htmlFor="prenom">
-                                Prénom
-                            </label>
+                        </label>
+                    </div>
+
+                    <div className="mb-4" >
+                        <label className="flex items-center p-4 w-full border-b border-black text-gray-400 text-base font-bold mb-2" htmlFor="prenom">
+                            Nom
+
                             <input
-                                className="p-5 w-full border-b border-black focus-visible:outline-none focus:border-b-2 focus:border-primary"
+                                className="p-4 w-full focus-visible:outline-none focus:border-b-2 focus:border-primary text-black text-right"
                                 id="prenom"
                                 type="text"
-                                value={data.last_name}
+                                value="Edoutech"
                                 readOnly
-                                placeholder="Prenom"
+                                placeholder=""
                             />
-                        </div>
-                        <div className="mb-4">
-                            <label className="block  border-black-700 text-black text-sm font-bold mb-2" htmlFor="email">
-                                Email
-                            </label>
+                        </label>
+                    </div>
+                    <div className="mb-4">
+                        <label className="flex items-center p-4 w-full border-b border-black text-gray-400 text-base font-bold mb-2" htmlFor="email">
+                            Email
+
                             <input
-                                className="p-5 w-full border-b border-black focus-visible:outline-none focus:border-b-2 focus:border-primary"
+                                className="p-4 w-full focus-visible:outline-none focus:border-b-2 focus:border-primary text-black text-right"
                                 id="email"
                                 type="email"
-                                value={data.email}
+                                value="test@test.com"
                                 readOnly
-                                placeholder="Email"
+                                placeholder=""
+
                             />
-                        </div>
-                        <div className="mb-4">
-                            <label className="block  border-black-700 text-black text-sm font-bold mb-2" htmlFor="phone">
-                                Phone
-                            </label>
-                            <div className="flex">
-                                <div className="flex items-center justify-center w-12 bg-gray-200 border border-gray-300 rounded-l-md">
+                        </label>
+                    </div>
+                    <div className="mb-4">
+                        <label className="flex items-center p-4 w-full border-black text-gray-400 text-base font-bold mb-2" htmlFor="phone">
+
+
+                           
+                                <div className="flex items-center justify-center w-10 ml-2 ">
                                     <img
-                                        src={data.country_id}
+                                        src="https://flagcdn.com/w20/bj.png"
                                         alt="Benin Flag"
-                                        className="w-6 h-6"
+                                        className="w-8 h-6"
+
                                     />
                                 </div>
                                 <input
-                                    className="shadow appearance-none border rounded-r w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                    className="p-3 w-full focus-visible:outline-none focus:border-b-2 focus:border-primary  text-black text-right "
                                     id="phone"
                                     type="text"
-                                    value={data.phone_number}
+                                    value="96 58 12 36"
                                     readOnly
-                                    placeholder="96 58 12 36"
-                                    
+                                    placeholder=""
+
                                 />
-                            </div>
-                        </div>
-                    </form>
+
+                            
+                        </label>
+                    </div>
+
                 </div>
             </Dashbord >
 
