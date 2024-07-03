@@ -35,7 +35,7 @@ function Parameters() {
         if (session) {
             let tok = session?.user.token
             setAuth({ headers: { Authorization: `Bearer ${tok}` } })
-            axios.get(`${apiUrl}/token/verify`, { headers: { Authorization: `Bearer ${tok}` } }).then((resp) => {
+            axios.get(`${apiUrl}/user/profile`, { headers: { Authorization: `Bearer ${tok}` } }).then((resp) => {
                 console.log(resp.data);
                 let use = resp.data.data
                 setUser(resp.data.data)

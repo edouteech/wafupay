@@ -54,7 +54,7 @@ export interface WProvider {
     created_at: string;
     updated_at: string;
     with_otp: string;
-    fees: Fee[];
+    transaction_fees: Fee[];
     country: Country;
 }
 

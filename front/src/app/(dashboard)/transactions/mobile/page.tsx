@@ -33,6 +33,8 @@ function Mobile() {
     auth.headers.Authorization = `Bearer ${tok}`
     setAuth({ headers: { Authorization: `Bearer ${tok}` } })
     axios.get(`${apiUrl}/wallet-providers`, { headers: { Authorization: `Bearer ${tok}` } }).then((resp) => {
+      console.log(resp.data.data);
+      
       setMethods(resp.data.data)
       setMethodIn(findElementById(1, resp.data.data))
       setMethodOut(findElementById(2, resp.data.data))
@@ -221,11 +223,11 @@ function Mobile() {
           <div className="my-6 text-sm font-bold">
             <div className="flex justify-between">
               <span>FRAIS A PRELEVER</span>
-              <span className="text-red-500">{Math.ceil(((parseFloat(methodIn?.fees[0].payin_fee ? methodIn?.fees[0].payin_fee : 'O') * trans.amount) + parseFloat(methodOut?.fees[0].payout_fee ? methodOut?.fees[0].payout_fee : 'O') * trans.amount) / 100)} FCFA</span>
+              <span className="text-red-500">{Math.ceil(((parseFloat(methodIn?.transaction_fees[0].payin_fee ? methodIn?.transaction_fees[0].payin_fee : 'O') * trans.amount) + parseFloat(methodOut?.transaction_fees[0].payout_fee ? methodOut?.transaction_fees[0].payout_fee : 'O') * trans.amount) / 100)} FCFA</span>
             </div>
             <div className="flex justify-between mt-2 bg-blue-200 p-2">
               <span className="text-gray-700">MONTANT TOTAL</span>
-              <span className="text-blue-500 font-bold">{trans.amount - Math.ceil(((parseFloat(methodIn?.fees[0].payin_fee ? methodIn?.fees[0].payin_fee : 'O') * trans.amount) + parseFloat(methodOut?.fees[0].payout_fee ? methodOut?.fees[0].payout_fee : 'O') * trans.amount) / 100)} FCFA</span>
+              <span className="text-blue-500 font-bold">{trans.amount - Math.ceil(((parseFloat(methodIn?.transaction_fees[0].payin_fee ? methodIn?.transaction_fees[0].payin_fee : 'O') * trans.amount) + parseFloat(methodOut?.transaction_fees[0].payout_fee ? methodOut?.transaction_fees[0].payout_fee : 'O') * trans.amount) / 100)} FCFA</span>
             </div>
           </div>
 

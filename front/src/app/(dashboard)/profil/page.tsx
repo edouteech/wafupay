@@ -44,7 +44,6 @@ function Profil() {
 
     return (
         <>
-
             <Dashbord>
                 <h2 className="text-2xl font-bold text-black mb-12 mt-12 text-center">Mes informations personnelles</h2>
 

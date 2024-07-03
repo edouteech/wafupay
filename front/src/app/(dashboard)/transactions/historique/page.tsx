@@ -6,6 +6,7 @@ import axios from "axios"
 import { Transaction } from "@/app/types/types"
 import { ChevronLeft, ChevronRight, Redo, RefreshCcw } from "lucide-react"
 import Link from "next/link"
+import { useSession } from "next-auth/react"
 
 function Historique() {
     //################################## CONSTANTES #############################//
@@ -19,6 +20,7 @@ function Historique() {
     const [pageCount, setPageCount] = useState<number[]>([])
     const [prev, setPrev] = useState('')
     const [next, setNext] = useState('')
+    const {data : session} = useSession()
 
     //################################## VARIABLES ##############################//
 
@@ -26,9 +28,11 @@ function Historique() {
 
     //################################## MOUNTED ################################//
     useEffect(() => {
-        let tok = localStorage.getItem('token')
-        setAuth({ headers: { Authorization: `Bearer ${tok}` } })
-        axios.get(`${apiUrl}/transactions`, { headers: { Authorization: `Bearer ${tok}` } }).then((resp) => {
+        if (!session) {
+            return
+        }
+        setAuth({ headers: { Authorization: `Bearer ${session?.user.token}` } })
+        axios.get(`${apiUrl}/transactions`, { headers: { Authorization: `Bearer ${session?.user.token}` } }).then((resp) => {
             setTrans(resp.data.data.data)
             let tab = []
             for (let i = 0; i < Math.ceil(resp.data.data.total / resp.data.data.per_page); i++) {
@@ -38,7 +42,7 @@ function Historique() {
             setPrev(resp.data.data.prev_page_url)
             setNext(resp.data.data.next_page_url)
         })
-    }, [])
+    }, [session])
 
     //################################## WATCHER #################################//
 

@@ -2,10 +2,11 @@
 import Dashbord from "../../Components/Dashboard"
 import { useRouter } from "next/navigation"
 import { use, useEffect, useState } from "react";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, Plus } from "lucide-react";
 import axios from "axios";
 import { Country } from "@/app/types/types";
 import Image from "next/image";
+import InputWithLabel from "@/app/(dashboard)/Components/InputLabel";
 
 function AdminDashboard() {
     //################################## CONSTANTES #############################//
@@ -14,6 +15,7 @@ function AdminDashboard() {
 
     //################################## VARIABLES ##############################//
     const [countries, setCountries] = useState<Country[]>([])
+    const [show, setShow] = useState(false)
 
 
     //################################## MOUNTED ################################//
@@ -39,33 +41,44 @@ function AdminDashboard() {
         <>
             <Dashbord>
                 <div className="w-3/4 mx-auto">
-                    <table className="text-base w-full">
-                        <thead className="bg-white rounded-2xl overflow-hidden text-left">
-                            <tr>
-
-                                <th className="p-3 pl-4 text-textGray font-normal rounded-l-2xl">Nom</th>
-                                <th className="p-3 pl-4 text-textGray font-normal">ISO</th>
-                                <th className="p-3 pl-4 text-textGray font-normal">ID</th>
-                                <th className="p-3 pl-4 text-textGray font-normal">NU</th>
-                                <th className="p-3 pl-4 text-textGray font-normal rounded-r-2xl">NT</th>
-                            </tr>
-                        </thead>
+                    <div className="flex justify-between items-center mt-8">
+                        <h2 className="font-bold text-black">Gestion des pays</h2>
+                        <button className="flex justify-between items-center gap-4 bg-primary text-white hover:scale-95 duration-300 rounded-xl p-3" onClick={()=>{setShow(!show)}}><Plus></Plus>Ajouter un pays</button>
+                    </div>
+                    <div className="table text-base w-full mt-8">
+                        <div className="thead bg-white rounded-2xl overflow-hidden text-left grid grid-cols-5 p-3 pl-4 text-textGray font-normal pr-4">
+                            <div className="th">Nom</div>
+                            <div className="th">ISO</div>
+                            <div className="th">ID</div>
+                            <div className="th">NU</div>
+                            <div className="th">NT</div>
+                        </div>
                         <span className="block mt-12"></span>
-                        <tbody className="bg-white p-3 rounded-2xl overflow-hidden w-full">
+                        <div className="tbody bg-white p-3 rounded-2xl overflow-hidden w-full">
                             {countries.map((country, i) => (
-                                <tr className="" key={i}>
-                                    <td className="p-3 pl-4 font-semibold">{country.slug}</td>
-                                    <td className="p-3 pl-4 td flex items-center gap-4">
+                                <div className=" grid grid-cols-5 items-center p-3 pl-4 text-textGray font-normal pr-4" key={i}>
+                                    <div className="font-semibold">{country.slug}</div>
+                                    <div className="flex items-center gap-4 justify-center px-4">
                                         {country.code}
                                         <Image src={require(`../../../../public/assets/images/${country.country_code}.png`)} width={19} height="12" className="h-[14px]" alt="Country Flag" />
-                                    </td>
-                                    <td className="p-3 pl-4">{country.country_code}</td>
-                                    <td className="p-3 pl-4"></td>
-                                    <td className="p-3 pl-4"></td>
-                                </tr>
+                                    </div>
+                                    <div className="">{country.country_code}</div>
+                                    <div className="">100</div>
+                                    <div className="">100</div>
+                                </div>
                             ))}
-                        </tbody>
-                    </table>
+                        </div>
+                    </div>
+                    {show && (
+                        <div className="fixed top-0 left-0 right-0 bottom-0 backdrop-blur flex items-center justify-center" role="button" onClick={()=>{setShow(!show)}}>
+                            <form action="" className="w-2/5 bg-white rounded-3xl p-8 shadow-lg z-[5]">
+                                <legend className="p-4 bg-primary text-white rounded-2xl font-bold uppercase text-center">Ajouter un pays</legend>
+                                <div className="mt-8">
+                                    <input type="text" className="" />
+                                </div>
+                            </form>
+                        </div>
+                    )}
                 </div>
             </Dashbord>
 

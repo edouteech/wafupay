@@ -22,7 +22,7 @@ const CustomLineChart: React.FC<ChartProp> = ({types = 'Journalière', infos}) =
         fill: 'start',
         backgroundColor: colors[types],
         borderColor: colors[types],
-        tension: 0.5,
+        tension: 0.4,
       },
     ],
   };

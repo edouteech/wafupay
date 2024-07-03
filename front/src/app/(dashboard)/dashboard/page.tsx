@@ -10,7 +10,7 @@ import dashList from '@/public/assets/images/dashListe.png'
 import { useSession } from "next-auth/react"
 import { headers } from "next/headers"
 import { url } from "inspector"
-import { Mobile, Payement, Manymen, Increase  } from "../Components/icons"
+import { Mobile, Payement, Manymen, Increase } from "../Components/icons"
 
 import Select from "../Components/Select"
 import React, { useEffect, useState } from 'react';
@@ -24,10 +24,10 @@ function Dashboard() {
     const auth = { headers: { Authorization: `Bearer ${session?.user.token}` } }
     //################################## VARIABLES ##############################//
 
-    const [transactions, setTransactions] = useState([]);
+    const [transactions, setTransactions] = useState<any[]>([]);
     const [totalTransactions, setTotalTransactions] = useState(0);
     const [numTransactions, setNumTransactions] = useState(0);
-    
+
     const [transactionCount, setTransactionCount] = useState(0);
 
     useEffect(() => {
@@ -44,21 +44,21 @@ function Dashboard() {
         };
 
         fetchTransactions();
-        
+
     }, []);
 
 
     useEffect(() => {
         // Fetch data from the JSON file in the public folder
         fetch('/transactions.json')
-          .then(response => response.json())
-          .then(data => {
-            setTransactions(data.transactions);
-            setTotalTransactions(data.totalTransactions);
-            setTransactionCount(data.transactionCount);
-          })
-          .catch(error => console.error('Error fetching data:', error));
-      }, []);
+            .then(response => response.json())
+            .then(data => {
+                setTransactions(data.transactions);
+                setTotalTransactions(data.totalTransactions);
+                setTransactionCount(data.transactionCount);
+            })
+            .catch(error => console.error('Error fetching data:', error));
+    }, []);
     //################################## MOUNTED ################################//
     // useEffect(()=>{
     //     if (session?.user) {
@@ -81,20 +81,17 @@ function Dashboard() {
         <>
             <Dashbord>
                 <div className="min-h-screen p-6 bg-gray-100">
-                    <div className="flex content-center gap-16 mb-28 h-56">
+                    <div className="flex items-center gap-16 mb-28 h-42 pr-20">
                         <div className="bg-blue-500 text-white text-center p-4 rounded-xl shadow-lg w-64 ml-32 ">
-                            <div className=" m-4">
-                                <div className="flex justify-center mb-7 mt-9 ">
+                            <div className="">
+                                <div className="flex justify-center mb-7 my-4 ">
                                     <Mobile></Mobile>
                                 </div>
                                 <span className="text-lg font-medium">Paiement mobile</span>
                             </div>
                         </div>
 
-                        {/* <div className="bg-white p-4 shadow-md rounded-md">
-                            <h2 className="text-xl font-semibold mb-2">Paiement mobile</h2>
-                        </div> */}
-                        <div className="bg-white p-3 shadow-md rounded-xl flex items-center justify-between h-2/4 w-3/5 ml-6 mt-16">
+                        <div className="bg-white p-3 shadow-md rounded-xl flex items-center justify-between h-2/4 w-3/5 ml-6">
                             <div>
                                 <p className="text-sm text-gray-500 ">Total des transactions</p>
 
@@ -109,27 +106,24 @@ function Dashboard() {
                             <div className="text-3xl text-gray-500">
                                 <i className="fas fa-user-friends"></i>
                             </div>
-                            <div >
+                            <div>
                                 <Manymen className="flex items-center justify-between" />
                             </div>
 
                         </div>
 
                     </div>
-                    <div className="flex content-center gap-16 mb-28 h-56">
+                    <div className="flex items-center gap-16 mb-28 h-42 pr-20">
                         <div className="flex flex-col items-center bg-white text-blue-600 p-4 rounded-xl shadow-lg w-64 ml-32">
-                            <div className=" m-4">
-                                <div className="flex justify-center mb-7">
+                            <div className="">
+                                <div className="flex justify-center mb-7 my-4">
                                     <Payement></Payement>
                                 </div>
                                 <div className="text-lg text-blue-600">Paiement par carte</div>
                             </div>
                         </div>
 
-                        {/* <div className="bg-white p-4 shadow-md rounded-md">
-                            <h2 className="text-xl font-semibold mb-2">Paiement par carte</h2>
-                        </div> */}
-                        <div className="bg-white p-3 shadow-md rounded-xl flex items-center justify-between h-2/4 w-3/5 ml-6 mt-16">
+                        <div className="bg-white p-3 shadow-md rounded-xl flex items-center justify-between h-2/4 w-3/5 ml-6">
                             <div>
                                 <p className="text-sm text-gray-500">Nbre de transactions</p>
                                 <h2 className="text-2xl font-bold p-3">{numTransactions}</h2>

@@ -32,7 +32,7 @@ function Dashbord({ children }: Props) {
     useEffect(()=>{
         if (session) {
             if (session.user.role != 'admin') {
-                router.push('/dashboard')
+                window.location.href = '/dashboard'
             }
         }
     },[session])
@@ -74,7 +74,7 @@ function Dashbord({ children }: Props) {
                         <Image alt="belle femme" src={userPic}></Image>
                     </div>
                 </div>
-                <div className="pl-60 pt-24 relative w-[100vW] h-[100vh] overflow-y-scroll text-textGray">
+                <div className="pl-64 pt-24 relative w-[100vW] h-[100vh] overflow-y-scroll text-textGray">
                     {children}
                 </div>
             </div >
