@@ -8,6 +8,7 @@ import { Country, User } from "@/app/types/types"
 
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import Image from "next/image";
 // import Dashboard from '../dashboard/page';
 
 
@@ -99,10 +100,11 @@ function Profil() {
 
                            
                                 <div className="flex items-center justify-center w-10 ml-2 ">
-                                    <img
-                                        src="https://flagcdn.com/w20/bj.png"
+                                    <Image
+                                        src={require('@/public/assets/images/+229.png')}
                                         alt="Benin Flag"
-                                        className="w-8 h-6"
+                                        width={60}
+                                        height={60}
 
                                     />
                                 </div>

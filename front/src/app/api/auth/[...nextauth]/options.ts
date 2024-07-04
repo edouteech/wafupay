@@ -12,44 +12,44 @@ const apiUrl = process.env.NEXT_PUBLIC_APIURL;
 export const options = {
   providers: [
     GoogleProvider({
-      profile : async (profile : any) => {
-        console.log("Profile Google:",profile);
+      profile: async (profile: any) => {
+        console.log("Profile Google:", profile);
 
         let userRole = "Google User"
         if (profile?.email == "kekeadjignonjeanpaul@gmail.com") {
           userRole = "admin";
         }
         try {
-          const resp = await axios.post(`${apiUrl}/token/login-with-google`,{"email" : profile?.email , "first_name" : profile.given_name , "last_name" : profile.family_name , "googleId" : profile.sub })
+          const resp = await axios.post(`${apiUrl}/token/login-with-google`, { "email": profile?.email, "first_name": profile.given_name, "last_name": profile.family_name, "googleId": profile.sub })
           if (resp) {
             const user = {
-                token : resp.data.data.token,
+              token: resp.data.data.token,
             }
-            return{
+            return {
               ...profile,
-              id : profile.sub,
-              token : user.token,
-              firstname : profile.given_name,
-              lastname :profile.family_name,
-              role : userRole
-          
+              id: profile.sub,
+              token: user.token,
+              firstname: profile.given_name,
+              lastname: profile.family_name,
+              role: userRole
+
             }
           }
         } catch (error) {
           console.error('API Request Error:', error);
         }
-        return{
+        return {
           ...profile,
-          id : profile.sub,
-          firstname : profile.given_name,
-          lastname :profile.family_name,
-          role : userRole
-      
+          id: profile.sub,
+          firstname: profile.given_name,
+          lastname: profile.family_name,
+          role: userRole
+
         }
-        
+
       },
-      clientId : process.env.GOOGLE_ID as string,
-      clientSecret : process.env.GOOGLE_Secret as string,
+      clientId: process.env.GOOGLE_ID as string,
+      clientSecret: process.env.GOOGLE_Secret as string,
     }),
 
     CredentialsProvider({
@@ -77,7 +77,7 @@ export const options = {
               lastname: resp.data.data.last_name,
               email: resp.data.data.email,
               phone_num: resp.data.data.phone_num,
-              role : resp.data.data.id_admin
+              role: resp.data.data
             };
             return user;
           }
@@ -121,22 +121,22 @@ export const options = {
           token.email = user.email;
           token.phone_num = user.phone_num;
 
-        if(user.role == 0){
-            user.role = 'user';
-        }else {
-          user.role = 'admin';
+          // if(user.role == '0'){
+          //     user.role = 'user';
+          // }else {
+          //   user.role = 'admin';
+          // }
+          token.role = user.role;
         }
-        token.role = user.role;
-        }
-       
+
       }
-      return token; 
+      return token;
     },
 
     async session({ session, token }: any) {
       session.user = {
-        google_token : token.token,
-        googleID : token.googleID,
+        google_token: token.token,
+        googleID: token.googleID,
         token: token.id,
         role: token.role,
         firstname: token.firstname,

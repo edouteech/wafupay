@@ -61,7 +61,7 @@ function AdminDashboard() {
                                     <div className="font-semibold">{country.slug}</div>
                                     <div className="flex items-center gap-4 justify-center px-4">
                                         {country.code}
-                                        <Image src={require(`../../../../public/assets/images/${country.country_code}.png`)} width={19} height="12" className="h-[14px]" alt="Country Flag" />
+                                        <Image src={require(`@/public/assets/images/${country.country_code}.png`)} width={19} height="12" className="h-[14px]" alt="Country Flag" />
                                     </div>
                                     <div className="">{country.country_code}</div>
                                     <div className="">100</div>

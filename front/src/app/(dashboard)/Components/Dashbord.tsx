@@ -10,6 +10,7 @@ import { Bell, Faq, Home, Logout, Params, TransCash, User } from "./icons";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import { signOut } from 'next-auth/react';
+import { useRouter, usePathname } from "next/navigation";
 
 
 type Props = {
@@ -20,12 +21,13 @@ function Dashbord({ children }: Props) {
 const [href, setHref] = useState<string[]>([])
 const [showTrans, setShowTrans] = useState(false)
 const apiUrl = process.env.NEXT_PUBLIC_APIURL
+const router = useRouter()
+const pathname = usePathname()
 const {data : session} = useSession()
 useEffect(()=>{
-    let ref = window.location.href.split('/')
-    setHref(ref)
-    console.log(window.location.href.substring(22, window.location.href.length))
-}, [window.location.href])
+    setHref(pathname.split('/'))
+    console.log(pathname.split('/'));
+}, [pathname])
 
 
 
@@ -43,18 +45,18 @@ const logout = ()=>{
                 <div className="absolute left-0 top-0 bottom-0 w-60 z-20">
                     <ul className="py-2 text-textGray bg-white px-8 flex-col flex gap-6 h-full border-r">
                     <Image alt="logo" className="w-[143px]" src={logo}></Image>
-                        <li><Link className={`${href[3] == "dashboard" || href[3] == "verify" ? 'text-primary' : ''} flex items-center gap-3`} href={'/dashboard'}><Home f={`${href[3] == "dashboard" || href[3] == "verify" ? '#1877F2' : '#606060'}`}></Home>Dashboard</Link></li>
-                        <li> <button onClick={()=>{setShowTrans(!showTrans)}} className={`${href[3] == "transactions" ? 'text-primary' : ''} flex items-center gap-3`}><TransCash f={`${href[3] == "transactions" ? '#1877F2' : '#606060'}`} ></TransCash>Transactions</button>
+                        <li><Link className={`${href[1] == "dashboard" || href[1] == "verify" ? 'text-primary' : ''} flex items-center gap-3`} href={'/dashboard'}><Home f={`${href[1] == "dashboard" || href[1] == "verify" ? '#1877F2' : '#606060'}`}></Home>Dashboard</Link></li>
+                        <li> <button onClick={()=>{setShowTrans(!showTrans)}} className={`${href[1] == "transactions" ? 'text-primary' : ''} flex items-center gap-3`}><TransCash f={`${href[1] == "transactions" ? '#1877F2' : '#606060'}`} ></TransCash>Transactions</button>
                         <ul className={`${showTrans ? 'h-24 mt-4' : 'h-0'} ml-8 text-sm flex flex-col gap-2 duration-500 overflow-hidden`}>
-                            <li className={`${href[3] == "transactions" && href[4] == 'mobile' ? 'text-primary' : ''} list-disc hover:text-primary`}><Link href={'/transactions/mobile'}>Transfert par mobile</Link></li>
-                            <li className={`${href[3] == "transactions" && href[4] == 'carte' ? 'text-primary' : ''} list-disc hover:text-primary`}><Link href={'/transactions/carte'}>Transfert par carte</Link></li>
-                            <li className={`${href[3] == "transactions" && href[4] == 'historique' ? 'text-primary' : ''} list-disc hover:text-primary`}><Link href={'/transactions/historique'}>Historique</Link></li>
+                            <li className={`${href[1] == "transactions" && href[2] == 'mobile' ? 'text-primary' : ''} list-disc hover:text-primary`}><Link href={'/transactions/mobile'}>Transfert par mobile</Link></li>
+                            <li className={`${href[1] == "transactions" && href[2] == 'carte' ? 'text-primary' : ''} list-disc hover:text-primary`}><Link href={'/transactions/carte'}>Transfert par carte</Link></li>
+                            <li className={`${href[1] == "transactions" && href[2] == 'historique' ? 'text-primary' : ''} list-disc hover:text-primary`}><Link href={'/transactions/historique'}>Historique</Link></li>
                         </ul>
                         </li>
-                        <li><Link className={`${href[3] == "profil" ? 'text-primary' : ''} flex items-center gap-3`} href={'/profil'}><User f={`${href[3] == "profil" ? '#1877F2' : '#606060'}`}></User>Profil</Link></li>
-                        <li><Link className={`${href[3] == "params" ? 'text-primary' : ''} flex items-center gap-3`} href={'/params'}><Params f={`${href[3] == "params" ? '#1877F2' : '#606060'}`}></Params>Paramètres</Link></li>
-                        <li><Link className={`${href[3] == "faq" ? 'text-primary' : ''} flex items-center gap-3`} href={'/faq'}><Faq f={`${href[3] == "faq" ? '#1877F2' : '#606060'}`}></Faq>FAQ</Link></li>
-                        <li className="absolute bottom-5 text-base"><button className={`${href[3] == "faq" ? 'text-primary' : ''} flex items-center gap-3`} onClick={()=>{logout()}}><Logout f={`${href[3] == "faq" ? '#1877F2' : '#606060'}`}></Logout>Déconnexion</button></li>
+                        <li><Link className={`${href[1] == "profil" ? 'text-primary' : ''} flex items-center gap-3`} href={'/profil'}><User f={`${href[1] == "profil" ? '#1877F2' : '#606060'}`}></User>Profil</Link></li>
+                        <li><Link className={`${href[1] == "params" ? 'text-primary' : ''} flex items-center gap-3`} href={'/params'}><Params f={`${href[1] == "params" ? '#1877F2' : '#606060'}`}></Params>Paramètres</Link></li>
+                        <li><Link className={`${href[1] == "faq" ? 'text-primary' : ''} flex items-center gap-3`} href={'/faq'}><Faq f={`${href[1] == "faq" ? '#1877F2' : '#606060'}`}></Faq>FAQ</Link></li>
+                        <li className="absolute bottom-5 text-base"><button className={`${href[1] == "faq" ? 'text-primary' : ''} flex items-center gap-3`} onClick={()=>{logout()}}><Logout f={`${href[1] == "faq" ? '#1877F2' : '#606060'}`}></Logout>Déconnexion</button></li>
                     </ul>
                 </div>
                 <div className="flex bg-white p-2 items-center absolute top-0 h-24 pl-56 w-full z-10">
