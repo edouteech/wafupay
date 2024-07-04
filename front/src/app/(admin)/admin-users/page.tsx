@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 "use client"
 import Dashbord from "../Components/Dashboard"
 import { useRouter } from "next/navigation"
@@ -106,7 +107,7 @@ function AdminDashboard() {
                             </thead>
                             <tbody className="text-base text-black">
                                 {admins.map((ad, i) => (
-                                    <tr className="text-left text-sm">
+                                    <tr className="text-left text-sm" key={i}>
                                         <td className="p-1 pl-4">{ad.first_name} {ad.last_name}</td>
                                         <td className="p-1 ">Admin</td>
                                         <td className="p-1 pl-6">{ad.created_at.substring(0, 10).split("-").reverse().join("-")}</td>

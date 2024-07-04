@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 "use client"
 import Image from "next/image"
 import logo from "@/public/assets/images/42d0a4cc6de6abf1334da470e3c56a69.png"

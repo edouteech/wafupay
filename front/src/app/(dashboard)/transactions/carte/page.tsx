@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 "use client"
 import Dashbord from "../../Components/Dashbord"
 import { useRouter } from "next/navigation"

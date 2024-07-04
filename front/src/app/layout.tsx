@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 import type { Metadata } from "next";
 import AuthProvider from "./context/AuthProvider";
 import { Inter } from "next/font/google";

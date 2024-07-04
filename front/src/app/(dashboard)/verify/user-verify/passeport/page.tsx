@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 "use client"
 import UploadButton from "@/app/(dashboard)/Components/uploadButton"
 import Dashbord from "../../../Components/Dashbord"

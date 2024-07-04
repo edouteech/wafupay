@@ -1,15 +1,15 @@
-
+/* eslint-disable react/no-unescaped-entities */
 import NavBar from "../Components/NavBar"
-import portable from "../../../../public/assets/images/portablesLanding.png"
-import paiment1 from "../../../../public/assets/images/handCash.png"
-import paiment2 from "../../../../public/assets/images/pcPortable.png"
-import paiment3 from "../../../../public/assets/images/arrowDollar.png"
-import aboutImg from "../../../../public/assets/images/damePhone.png"
-import tel1 from "../../../../public/assets/images/tel1.png"
-import tel2 from "../../../../public/assets/images/tel2.png"
-import tel3 from "../../../../public/assets/images/tel3.png"
-import arrowLeft from "../../../../public/assets/images/arrowLeft.png"
-import downloadIcon from "../../../../public/assets/images/downloadIcon.png"
+import portable from "@/public/assets/images/portablesLanding.png"
+import paiment1 from "@/public/assets/images/handCash.png"
+import paiment2 from "@/public/assets/images/pcPortable.png"
+import paiment3 from "@/public/assets/images/arrowDollar.png"
+import aboutImg from "@/public/assets/images/damePhone.png"
+import tel1 from "@/public/assets/images/tel1.png"
+import tel2 from "@/public/assets/images/tel2.png"
+import tel3 from "@/public/assets/images/tel3.png"
+import arrowLeft from "@/public/assets/images/arrowLeft.png"
+import downloadIcon from "@/public/assets/images/downloadIcon.png"
 
 import Image from "next/image"
 function Home() {

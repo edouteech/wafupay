@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 "use client"
 import { use, useEffect, useState } from "react"
 import Dashbord from "../../Components/Dashbord"
