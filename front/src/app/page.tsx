@@ -1,4 +1,4 @@
-
+/* eslint-disable react/no-unescaped-entities */
 import portable from "@/public/assets/images/portablesLanding.png"
 import paiment1 from "@/public/assets/images/handCash.png"
 import paiment2 from "@/public/assets/images/pcPortable.png"
