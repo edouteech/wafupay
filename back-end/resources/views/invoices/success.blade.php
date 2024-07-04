@@ -89,7 +89,7 @@
 <body>
     <div class="invoice">
         <div class="invoice-header">
-            <img src="{{ asset('logo.png') }}" alt="WafuPay Logo">
+            <Image src="{{ asset('logo.png') }}" alt="WafuPay Logo">
             <h2>Réçu N°: {{ $invoice_num }} </h2>
             <p>Adresse: 123 Main Street, Abomey-Calavi, Benin</p>
             <p>Tél: +123 456 789</p>
@@ -115,7 +115,7 @@
                         <span class="flex self-center">
                             <span><span class="bold">Méthode de paiement:</span>
                                 {{ $transaction->payin_wprovider->name }} </span>
-                            <img class="mx-2"
+                            <Image class="mx-2"
                                 src="{{ asset('storage/wproviders/' . $transaction->payin_wprovider->withdraw_mode . '.png') }}"
                                 alt="{{ $transaction->payin_wprovider->name }} Logo" style="max-width: 35px;">
                         </span>
@@ -129,7 +129,7 @@
                         <span class="flex self-center">
                             <span><span class="bold">Méthode de paiement:</span>
                                 {{ $transaction->payout_wprovider->name }} </span>
-                            <img class="mx-2"
+                            <Image class="mx-2"
                                 src="{{ asset('storage/wproviders/' . $transaction->payout_wprovider->withdraw_mode . '.png') }}"
                                 alt="{{ $transaction->payout_wprovider->name }} Logo" style="max-width: 35px;">
                         </span>

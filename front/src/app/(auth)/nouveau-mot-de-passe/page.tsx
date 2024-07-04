@@ -1,5 +1,5 @@
 "use client"
-import { useRouter } from "next/navigation"
+import { useRouter, usePathname } from "next/navigation"
 import { useEffect, useRef, useState } from "react";
 import { Eye, EyeOff, icons } from "lucide-react";
 import NavBar from "../Components/NavBar";
@@ -20,12 +20,13 @@ function NewPassword() {
     //################################## CONSTANTES #############################//
     const apiUrl = process.env.NEXT_PUBLIC_APIURL
     const router = useRouter()
+    const pathname = usePathname()
 
     //################################## VARIABLES ##############################//
     const [data, setData] = useState<{ password1: string, show1: boolean, password2: string, show2: boolean }>({ password1: '', show1: false, password2: '', show2: false })
     const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
     const [inputValues, setInputValues] = useState<string[]>(['', '', '', '', '', '', '']);
-    const email = window.location.href.split("=")[1]
+    const email = pathname.split("=")[1]
     const [sendLoader, setSendLoader] = useState(false)
     const [resendLoader, setResendLoader] = useState(true)
     const [timing, setTiming] = useState(60)

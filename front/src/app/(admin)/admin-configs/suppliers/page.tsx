@@ -85,7 +85,7 @@ function AdminDashboard() {
                                     <div className="font-semibold col-span-2">{prov.name}</div>
                                     <div className="flex items-center gap-4 justify-center px-4 font-bold">
                                         {prov.country_id.code}
-                                        <Image src={require(`../../../../public/assets/images/${prov.country_id.country_code}.png`)} width={19} height="12" className="h-[14px]" alt="Country Flag" />
+                                        <Image src={require(`@/public/assets/images/${prov.country_id.country_code}.png`)} width={19} height="12" className="h-[14px]" alt="Country Flag" />
                                     </div>
                                     <div className="">{prov.transaction_fees[0].payin_fee}</div>
                                     <div className="">{prov.transaction_fees[0].payout_fee}</div>

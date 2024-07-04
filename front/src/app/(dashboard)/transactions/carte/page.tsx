@@ -69,7 +69,7 @@ function Carte() {
                             <div className="mb-6">
                                 <label className="block text-gray-700 font-semibold mb-2">Vers :</label>
                                 <div className="flex items-center mb-3">
-                                    <img src="wave-logo.png" alt="Wave" className="w-10 h-10 mr-3" /> {/* Remplacez 'wave-logo.png' par le chemin correct */}
+                                    <Image src="wave-logo.png" alt="Wave" className="w-10 h-10 mr-3" /> {/* Remplacez 'wave-logo.png' par le chemin correct */}
                                     <input
                                         type="text"
                                         placeholder="Montant"
@@ -79,7 +79,7 @@ function Carte() {
                                 </div>
                                 <div className="flex items-center mb-3">
                                     <div className="flex items-center border border-gray-300 rounded-l p-2 bg-gray-100">
-                                        <img src="flag.png" alt="Flag" className="w-6 h-4 mr-2" /> {/* Remplacez 'flag.png' par le chemin correct */}
+                                        <Image src="flag.png" alt="Flag" className="w-6 h-4 mr-2" /> {/* Remplacez 'flag.png' par le chemin correct */}
                                         <span>+96</span>
                                     </div>
                                     <input

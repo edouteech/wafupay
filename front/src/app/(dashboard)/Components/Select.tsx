@@ -3,7 +3,7 @@
 import { Country, WProvider } from "@/app/types/types";
 import { useEffect, useState } from "react";
 import Image from 'next/image';
-import welcomeImage from '../../../public/assets/images/welcome.png'; // Assurez-vous que ce chemin est correct
+import welcomeImage from '@/public/assets/images/welcome.png'; // Assurez-vous que ce chemin est correct
 import { ChevronDown, ChevronRight, ChevronsRight } from "lucide-react";
 
 type SelectProp = {
@@ -58,7 +58,7 @@ const Select: React.FC<SelectProp> = ({ countries = [], providers = [], onChange
             <div className="relative text-base font-bold text-gray-700 w-28 z-[5]">
                 {country && (
                     <button className={"flex items-center gap-2 bg-white border border-gray-300 text-gray-700 pr-6 " + classes} onClick={() => { setShow(!show) }}>
-                        <Image src={require(`../../../public/assets/images/${country.country_code}.png`)} width={19} height="12" className="h-[14px]" alt="Country Flag" />
+                        <Image src={require(`@/public/assets/images/${country.country_code}.png`)} width={19} height="12" className="h-[14px]" alt="Country Flag" />
                         <span>{country.country_code}</span>
                         <span className="duration-500 absolute left-20">
                             {show ? <ChevronDown /> : <ChevronRight />}
@@ -70,7 +70,7 @@ const Select: React.FC<SelectProp> = ({ countries = [], providers = [], onChange
                 {countries.map((country, i) => (
                     <li className="text-base font-semibold text-black hover:bg-gray-200 p-1" key={i}>
                         <button className="flex items-center gap-2" onClick={() => { handleCountry(country) }}>
-                            <Image src={require(`../../../public/assets/images/${country.country_code}.png`)} width={19} height="12" className="h-[14px]" alt="Country Flag" />
+                            <Image src={require(`@/public/assets/images/${country.country_code}.png`)} width={19} height="12" className="h-[14px]" alt="Country Flag" />
                             <span>{country.slug}</span>
                         </button>
                     </li>
