@@ -8,6 +8,8 @@ use App\Http\Services\LoggerService;
 use App\Rules\ValidPhoneNumber;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use App\Models\Transaction;
 
 
 class AuthenticatedSessionController extends BaseController
@@ -83,5 +85,31 @@ class AuthenticatedSessionController extends BaseController
         }
 
         return $this->handleResponse([], 'User logged out!');
+    }
+
+    public function dashboard(){
+        $user = Auth::user();
+
+        //Récupération du montant total des transactions validés
+        $totalAmount = Transaction::where('user_id',$user->id)
+                                    ->where('payin_status', Transaction:: APPROVED_STATUS)
+                                    ->where('payout_status', Transaction:: APPROVED_STATUS)
+                                    ->sum('amount');
+
+        //Nombre total des transactions
+        $totalTransactions = Transaction::where('user_id',$user->id)->count();
+
+        //Les cinq dernières transactions de l'utilisateur
+        $lastTransactions = Transaction::where('user_id',$user->id)
+                                        ->orderBy('created_at', 'desc')
+                                        ->take(5)
+                                        ->get();
+
+
+    return response()->json([
+        'totalAmount' => $totalAmount,
+        'totalTransactions' => $totalTransactions,
+        'lastTransactions' => $lastTransactions,
+    ], 200);
     }
 }
