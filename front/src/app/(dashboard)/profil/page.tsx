@@ -30,7 +30,7 @@ function Profil() {
         if (session) {
             let tok = session?.user.token
             setAuth({ headers: { Authorization: `Bearer ${tok}` } })
-            axios.get(`${apiUrl}/token/verify`, { headers: { Authorization: `Bearer ${tok}` } }).then((resp) => {
+            axios.get(`${apiUrl}/user/profile`, { headers: { Authorization: `Bearer ${tok}` } }).then((resp) => {
                 console.log(resp.data);
                 let use = resp.data.data
                 setUser(resp.data.data)
@@ -58,7 +58,7 @@ function Profil() {
                                 className="p-4 w-full focus-visible:outline-none focus:border-b-2 focus:border-primary ml-2 text-black text-right"
                                 id="nom"
                                 type="text"
-                                value="Romaric"
+                                value={data.first_name}
                                 readOnly
                                 placeholder=""
                             />
@@ -73,7 +73,7 @@ function Profil() {
                                 className="p-4 w-full focus-visible:outline-none focus:border-b-2 focus:border-primary text-black text-right"
                                 id="prenom"
                                 type="text"
-                                value="Edoutech"
+                                value={data.last_name}
                                 readOnly
                                 placeholder=""
                             />
@@ -87,7 +87,7 @@ function Profil() {
                                 className="p-4 w-full focus-visible:outline-none focus:border-b-2 focus:border-primary text-black text-right"
                                 id="email"
                                 type="email"
-                                value="test@test.com"
+                                value={data.email}
                                 readOnly
                                 placeholder=""
 
@@ -112,7 +112,7 @@ function Profil() {
                                     className="p-3 w-full focus-visible:outline-none focus:border-b-2 focus:border-primary  text-black text-right "
                                     id="phone"
                                     type="text"
-                                    value="96 58 12 36"
+                                    value={data.phone_number}
                                     readOnly
                                     placeholder=""
 
