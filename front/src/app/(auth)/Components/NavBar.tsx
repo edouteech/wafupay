@@ -1,9 +1,11 @@
 
+"use client"
 import Image from "next/image"
 import logo from "@/public/assets/images/42d0a4cc6de6abf1334da470e3c56a69.png"
 import playstore from "@/public/assets/images/google-play.svg"
 import { Menu } from "lucide-react"
 import { useState } from "react"
+import Moov from "@/public/assets/images/Moov.png";
 
 function NavBar() {
 
