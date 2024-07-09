@@ -53,7 +53,7 @@ function Dashbord({ children }: Props) {
                     <div className="p-4 bg-primary">
                         <Image alt="logo" className="w-[143px] m-auto bg-white rounded p-2" src={logo}></Image>
                     </div>
-                    <ul className="py-2 text-textGray bg-white flex-col flex gap-6 h-full border-r border-primary px-2">
+                    <ul className="py-2 text-textGray bg-white flex-col flex gap-6 h-full border-r border-primary px-2 xs:hidden">
                         <li className="text-gray-700 font-semibold"><Link className={`${href[1] == "admin-dashboard" ? 'text-primary' : ''} flex items-center gap-3`} href={'/admin-dashboard'}><Home f={`${href[1] == "admin-dashboard" ? '#1877F2' : '#606060'}`}></Home>Tableau de bord</Link></li>
                         <li className="text-gray-700 font-semibold"><Link className={`${href[1] == "admin-users" ? 'text-primary' : ''} flex items-center gap-3`} href={'/admin-users'}><Users f={`${href[1] == "admin-users" ? '#1877F2' : '#606060'}`}></Users>Utilisateurs</Link></li>
                         <li className="text-gray-700 font-semibold relative"> <button onClick={() => { setShowTrans(!showTrans) }} className={`${href[1] == "admin-configs" ? 'text-primary' : ''} flex items-center gap-3`}><UserConfig f={`${href[1] == "admin-configs" ? '#1877F2' : '#606060'}`} ></UserConfig>Configurations</button>

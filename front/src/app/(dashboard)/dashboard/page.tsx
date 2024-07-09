@@ -2,15 +2,7 @@
 "use client"
 import Dashbord from "../Components/Dashbord"
 import { useRouter } from "next/navigation"
-import Image from "next/image"
-import dashm from '@/public/assets/images/dashm.png'
-import dashmSt from '@/public/assets/images/dashmSt.png'
-import dashc from '@/public/assets/images/dashc.png'
-import dashcSt from '@/public/assets/images/dashcSt.png'
-import dashList from '@/public/assets/images/dashListe.png'
 import { useSession } from "next-auth/react"
-import { headers } from "next/headers"
-import { url } from "inspector"
 import { Mobile, Payement, Manymen, Increase } from "../Components/icons"
 
 import Select from "../Components/Select"
@@ -31,34 +23,34 @@ function Dashboard() {
 
     const [transactionCount, setTransactionCount] = useState(0);
 
-    useEffect(() => {
-        // Remplacez cette URL par l'endpoint réel de votre API
-        const fetchTransactions = async () => {
-            try {
-                const response = await axios.get('https://api.exemple.com/transactions');
-                setTransactions(response.data.transactions);
-                setTotalTransactions(response.data.totalTransactions);
-                setNumTransactions(response.data.numTransactions);
-            } catch (error) {
-                console.error('Erreur de récupération des données:', error);
-            }
-        };
+    // useEffect(() => {
+    //     // Remplacez cette URL par l'endpoint réel de votre API
+    //     const fetchTransactions = async () => {
+    //         try {
+    //             const response = await axios.get('https://api.exemple.com/transactions');
+    //             setTransactions(response.data.transactions);
+    //             setTotalTransactions(response.data.totalTransactions);
+    //             setNumTransactions(response.data.numTransactions);
+    //         } catch (error) {
+    //             console.error('Erreur de récupération des données:', error);
+    //         }
+    //     };
 
-        fetchTransactions();
+    //     fetchTransactions();
 
-    }, []);
+    // }, []);
 
 
     useEffect(() => {
         // Fetch data from the JSON file in the public folder
-        fetch('/transactions.json')
-            .then(response => response.json())
-            .then(data => {
-                setTransactions(data.transactions);
-                setTotalTransactions(data.totalTransactions);
-                setTransactionCount(data.transactionCount);
-            })
-            .catch(error => console.error('Error fetching data:', error));
+        // fetch('/transactions.json')
+        //     .then(response => response.json())
+        //     .then(data => {
+        //         setTransactions(data.transactions);
+        //         setTotalTransactions(data.totalTransactions);
+        //         setTransactionCount(data.transactionCount);
+        //     })
+        //     .catch(error => console.error('Error fetching data:', error));
     }, []);
     //################################## MOUNTED ################################//
     // useEffect(()=>{
@@ -82,8 +74,8 @@ function Dashboard() {
         <>
             <Dashbord>
                 <div className="min-h-screen p-6 bg-gray-100">
-                    <div className="flex items-center gap-16 mb-28 h-42 pr-20">
-                        <div className="bg-blue-500 text-white text-center p-4 rounded-xl shadow-lg w-64 ml-32 ">
+                    <div className="flex items-center gap-16 mb-28 h-42 pr-20 xs:flex-col xs:p-0 xs:gap-4 xs:mb-8">
+                        <div className="bg-blue-500 text-white text-center p-4 rounded-xl shadow-lg w-64 ml-32 xs:m-0">
                             <div className="">
                                 <div className="flex justify-center mb-7 my-4 ">
                                     <Mobile></Mobile>
@@ -92,7 +84,7 @@ function Dashboard() {
                             </div>
                         </div>
 
-                        <div className="bg-white p-3 shadow-md rounded-xl flex items-center justify-between h-2/4 w-3/5 ml-6">
+                        <div className="bg-white p-3 shadow-md rounded-xl flex items-center justify-between h-2/4 w-3/5 ml-6 xs:w-full xs:m-0">
                             <div>
                                 <p className="text-sm text-gray-500 ">Total des transactions</p>
 
@@ -114,8 +106,8 @@ function Dashboard() {
                         </div>
 
                     </div>
-                    <div className="flex items-center gap-16 mb-28 h-42 pr-20">
-                        <div className="flex flex-col items-center bg-white text-blue-600 p-4 rounded-xl shadow-lg w-64 ml-32">
+                    <div className="flex items-center gap-16 mb-28 h-42 pr-20 xs:flex-col xs:p-0 xs:gap-4">
+                        <div className="flex flex-col items-center bg-white text-blue-600 p-4 rounded-xl shadow-lg w-64 ml-32 xs:m-0">
                             <div className="">
                                 <div className="flex justify-center mb-7 my-4">
                                     <Payement></Payement>
@@ -124,7 +116,7 @@ function Dashboard() {
                             </div>
                         </div>
 
-                        <div className="bg-white p-3 shadow-md rounded-xl flex items-center justify-between h-2/4 w-3/5 ml-6">
+                        <div className="bg-white p-3 shadow-md rounded-xl flex items-center justify-between h-2/4 w-3/5 ml-6 xs:w-full xs:m-0">
                             <div>
                                 <p className="text-sm text-gray-500">Nbre de transactions</p>
                                 <h2 className="text-2xl font-bold p-3">{numTransactions}</h2>
@@ -143,31 +135,29 @@ function Dashboard() {
                         </div>
 
                     </div>
-                    <div className="bg-white p-4 shadow-md rounded-md">
-                        <table className="min-w-full border-collapse block md:table">
-                            <thead className="block md:table-header-group">
-                                <tr className=" border-gray-300 block md:table-row text-blue-600 ">
-                                    <th className="block md:table-cell p-2">Nom</th>
-                                    <th className="block md:table-cell p-2">Transaction ID</th>
-                                    <th className="block md:table-cell p-2">Type</th>
-                                    <th className="block md:table-cell p-2">RD</th>
-                                    <th className="block md:table-cell p-2">ND</th>
-                                    <th className="block md:table-cell p-2">RA</th>
-                                    <th className="block md:table-cell p-2">ND</th>
-                                    <th className="block md:table-cell p-2">Montant</th>
+                    <div className="">
+                        <table className="min-w-full xs:w-auto bg-white shadow-md rounded-md ">
+                            <thead className="">
+                                <tr className=" border-gray-300 text-primary ">
+                                    <th className="p-4">Nom</th>
+                                    <th className="p-4">Type</th>
+                                    <th className="p-4">RD</th>
+                                    <th className="p-4">ND</th>
+                                    <th className="p-4">RA</th>
+                                    <th className="p-4">ND</th>
+                                    <th className="p-4">Montant</th>
                                 </tr>
                             </thead>
-                            <tbody className="block md:table-row-group">
+                            <tbody className="">
                                 {transactions.map((transaction, index) => (
-                                    <tr key={index} className="border border-gray-300 block md:table-row">
-                                        <td className="block md:table-cell p-2">{transaction.name}</td>
-                                        <td className="block md:table-cell p-2">{transaction.transactionId}</td>
-                                        <td className="block md:table-cell p-2">{transaction.type}</td>
-                                        <td className="block md:table-cell p-2">{transaction.rd}</td>
-                                        <td className="block md:table-cell p-2">{transaction.nd}</td>
-                                        <td className="block md:table-cell p-2">{transaction.ra}</td>
-                                        <td className="block md:table-cell p-2">{transaction.nd}</td>
-                                        <td className="block md:table-cell p-2 text-blue-500">
+                                    <tr key={index} className="border border-gray-300">
+                                        <td className="p-4">{transaction.name}</td>
+                                        <td className="p-4">{transaction.type}</td>
+                                        <td className="p-4">{transaction.rd}</td>
+                                        <td className="p-4">{transaction.nd}</td>
+                                        <td className="p-4">{transaction.ra}</td>
+                                        <td className="p-4">{transaction.nd}</td>
+                                        <td className="p-4 text-primary">
                                             {transaction.amount}
                                         </td>
                                     </tr>

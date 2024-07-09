@@ -1,5 +1,5 @@
 import axios from "axios";
-import { NextAuthOptions, User } from "next-auth";
+import { NextAuthOptions, SessionStrategy, User } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 import router from "next/router";
@@ -64,12 +64,12 @@ export const options = {
 
         let resp;
         try {
-          if (phone_num) {
-            resp = await axios.post(`${apiUrl}/token`, { "phone_num": phone_num ? phone_num : null, "password": password });
-          } else if (email) {
-            resp = await axios.post(`${apiUrl}/token`, { "email": email ? email : null, "password": password });
+          if (email) {
+            resp =  await axios.post(`${apiUrl}/token`, { "email" : email ? email : null, "password": password });
+          }else{
+            resp =  await axios.post(`${apiUrl}/token`, { "phone_num": phone_num ? phone_num : null, "password": password });
           }
-
+          
           if (resp && resp.data) {
             const user: any = {
               id: resp.data.data.token,
@@ -77,12 +77,13 @@ export const options = {
               lastname: resp.data.data.last_name,
               email: resp.data.data.email,
               phone_num: resp.data.data.phone_num,
-              role: resp.data.data
+              role: resp.data.data.is_admin
             };
             return user;
           }
         } catch (err: any) {
           console.error("Error registering user:", err);
+          // return {"email" : err};
           Swal.fire({
             icon: "error",
             title: "Mauvaise entrées",
@@ -99,7 +100,7 @@ export const options = {
   ],
 
   session: {
-    strategy: "jwt",
+    strategy: "jwt" as SessionStrategy,
   },
   pages: {
     signIn: "/login",
@@ -109,7 +110,7 @@ export const options = {
       if (user) {
         if (user.role) {
           token.googleID = user.id,
-          token.token = user.token
+            token.token = user.token
           token.role = user.role;
           token.firstname = user.firstname;
           token.lastname = user.lastname;
@@ -121,11 +122,11 @@ export const options = {
           token.email = user.email;
           token.phone_num = user.phone_num;
 
-          // if(user.role == '0'){
-          //     user.role = 'user';
-          // }else {
-          //   user.role = 'admin';
-          // }
+          if (user.role == '0') {
+            user.role = 'user';
+          } else {
+            user.role = 'admin';
+          }
           token.role = user.role;
         }
 
