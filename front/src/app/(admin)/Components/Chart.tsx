@@ -63,7 +63,7 @@ const CustomLineChart: React.FC<ChartProp> = ({types = 'Journalière', infos}) =
   };
 
   return (
-    <div className="p-4 bg-white rounded-xl shadow-md">
+    <div className="p-4 bg-white rounded-xl shadow-md min-h-100">
       {/* <div className="flex items-center justify-between mb-4">
         <div>
           <h2 className="text-3xl font-bold">$682.5</h2>

@@ -41,10 +41,10 @@ function AdminDashboard() {
     return (
         <>
             <Dashbord>
-                <div className="w-3/4 mx-auto">
+                <div className="w-3/4 mx-auto xs:w-full px-4">
                     <div className="flex justify-between items-center mt-8">
                         <h2 className="font-bold text-black">Gestion des pays</h2>
-                        <button className="flex justify-between items-center gap-4 bg-primary text-white hover:scale-95 duration-300 rounded-xl p-3" onClick={()=>{setShow(!show)}}><Plus></Plus>Ajouter un pays</button>
+                        <button className="flex justify-between items-center gap-4 bg-primary text-white hover:scale-95 duration-300 rounded-xl p-3" onClick={()=>{setShow(!show)}}><Plus></Plus><span className="xs:hidden">Ajouter un pays</span></button>
                     </div>
                     <div className="table text-base w-full mt-8">
                         <div className="thead bg-white rounded-2xl overflow-hidden text-left grid grid-cols-5 p-3 pl-4 text-textGray font-normal pr-4">
@@ -54,7 +54,7 @@ function AdminDashboard() {
                             <div className="th">NU</div>
                             <div className="th">NT</div>
                         </div>
-                        <span className="block mt-12"></span>
+                        <span className="block mt-8"></span>
                         <div className="tbody bg-white p-3 rounded-2xl overflow-hidden w-full">
                             {countries.map((country, i) => (
                                 <div className=" grid grid-cols-5 items-center p-3 pl-4 text-textGray font-normal pr-4" key={i}>

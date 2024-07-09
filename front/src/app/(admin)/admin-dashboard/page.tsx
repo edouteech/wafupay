@@ -33,9 +33,9 @@ function AdminDashboard() {
         setAuth({ headers: { Authorization: `Bearer ${session?.user.token}` } })
         axios.get(`${apiUrl}/admin/dashboard`, { headers: { Authorization: `Bearer ${session?.user.token}` } }).then((resp) => {
             let data = resp.data
-            setDaily(data.daily_transactions[0] ? data.daily_transactions : [0,0,0,0,0,0,0])
-            setWeekly(data.weekly_transactions[0] ? data.weekly_transactions : [0,0,0,0,0,0,0])
-            setMonthly(data.monthly_transactions[0] ? data.monthly_transactions : [0,0,0,0,0,0,0,0,0,0,0,0])
+            setDaily(data.daily_transactions[0] ? data.daily_transactions : [0, 0, 0, 0, 0, 0, 0])
+            setWeekly(data.weekly_transactions[0] ? data.weekly_transactions : [0, 0, 0, 0, 0, 0, 0])
+            setMonthly(data.monthly_transactions[0] ? data.monthly_transactions : [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
             setMarge(data.brut_margin)
             setTotalMontant(data.transactions_amount)
             setTotalTrans(data.transactions_count)
@@ -61,9 +61,9 @@ function AdminDashboard() {
     return (
         <>
             <Dashbord>
-                <div className="text-base m-4 ml-8">
-                    <div className="flex gap-8 mb-8">
-                        <div className="bg-white p-8 rounded-3xl basis-1/2">
+                <div className="text-base m-4 ml-8 xs:mt-0">
+                    <div className="flex gap-8 mb-8 xs:block">
+                        <div className="bg-white p-8 rounded-3xl basis-1/2 xs:mb-8">
                             <div className="flex justify-between">
                                 <div>
                                     <p className="mb-4">Total des transactions</p>
@@ -94,8 +94,8 @@ function AdminDashboard() {
                             </div>
                         </div>
                     </div>
-                    <div className="flex gap-8">
-                        <div className="bg-white p-8 rounded-3xl basis-1/3">
+                    <div className="flex gap-8 xs:block">
+                        <div className="bg-white p-8 rounded-3xl basis-1/3 xs:mb-8">
                             <div className="flex justify-between">
                                 <div>
                                     <p className="mb-4">Nbre de transactions</p>
@@ -110,7 +110,7 @@ function AdminDashboard() {
                                 <span>Up from yesterday</span>
                             </div>
                         </div>
-                        <div className="bg-white p-8 rounded-3xl basis-1/3">
+                        <div className="bg-white p-8 rounded-3xl basis-1/3 xs:mb-8">
                             <div className="flex justify-between">
                                 <div>
                                     <p className="mb-4">Partenaire</p>
@@ -142,7 +142,7 @@ function AdminDashboard() {
                         </div>
                     </div>
 
-                    <div className=" mt-8 text-base w-full px-16">
+                    <div className=" mt-8 text-base w-full px-16 xs:w-auto xs:pl-0">
                         <h2 className="text-center text-xl font-bold my-8 text-black">Transactions récentes</h2>
                         <table className="rounded-3xl bg-white overflow-hidden text-center w-full">
                             <thead className="text-secBlue border-b border-gray-300">
@@ -166,9 +166,9 @@ function AdminDashboard() {
                         </table>
                     </div>
 
-                    <div className=" mt-8 text-base w-full px-16">
-                        <h2 className="text-center text-xl font-bold my-8 text-black">Statistiques</h2>
-                        <div className="grid grid-cols-2 gap-4">
+                    <div className=" mt-8 text-base w-full px-16 xs:px-0 xs:mb-24">
+                        <h2 className="text-center text-xl font-bold my-8 xs:my-4 text-black">Statistiques</h2>
+                        <div className="grid grid-cols-2 gap-4 xs:block">
                             <div>
                                 <Chart types="Journalière" infos={daily}></Chart>
                                 <h3 className="text-center font-semibold text-black my-3 text-xl">Journalière</h3>
@@ -178,10 +178,10 @@ function AdminDashboard() {
                                 <h3 className="text-center font-semibold text-black my-3 text-xl">Hebdomadaire</h3>
                             </div>
                         </div>
-                            <div className="w-1/2 mx-auto mt-4">
-                                <Chart types="Mensuelle" infos={monthly}></Chart>
-                                <h3 className="text-center font-semibold text-black my-3 text-xl">Mensuelle</h3>
-                            </div>
+                        <div className="w-1/2 mx-auto mt-4 xs:w-full">
+                            <Chart types="Mensuelle" infos={monthly}></Chart>
+                            <h3 className="text-center font-semibold text-black my-3 text-xl">Mensuelle</h3>
+                        </div>
                     </div>
                 </div>
             </Dashbord>

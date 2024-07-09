@@ -141,13 +141,13 @@ function NewPassword() {
     return (
         <>
             <NavBar></NavBar>
-            <div className="flex mt-16 mx-32 gap-8 items-center ">
+            <div className="flex mt-16 mx-32 gap-8 items-center xs:block xs:mx-4 xs:mb-8">
                 <div className="basis-7/12">
                     <p className="font-bold text-black text-2xl mb-8 text-center">Bienvenue sur notre plateforme de transfert d'argent <span className="text-primary">sécurisé</span> et <span className="text-primary">rapide</span> dans la zone <span className="text-primary">UEMOA</span></p>
                     <Image alt="un joli cadenas" src={nPassword} className="relative top-[-70px]"></Image>
                 </div>
                 <div className="basis-5/12">
-                    <form action="" className="shadow-lg p-12 w-full rounded-3xl shadow-gray-400" onSubmit={(e) => { handleSubmit(e) }}>
+                    <form action="" className="shadow-lg p-12 xs:px-4 w-full rounded-3xl shadow-gray-400" onSubmit={(e) => { handleSubmit(e) }}>
                         <legend className="font-bold mb-8 text-center text-gray-700 text-xl">Mot de passe oublié</legend>
                         <div className="relative">
                             <InputLabel type={`${data.show1 ? 'text' : 'password'}`} id="lavel" label="Nouveau mot de passe" value={data.password1} onChange={(e) => { handleChange(e, 'password1') }}></InputLabel>

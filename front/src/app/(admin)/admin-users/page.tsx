@@ -90,13 +90,12 @@ function AdminDashboard() {
     //################################## HTML ####################################//
 
     return (
-        //  Ed0ut3ch
         <>
             <Dashbord>
                 <div>
-                    <div className="mx-32 my-12">
+                    <div className="mx-32 my-12 xs:mx-2 w-auto xs:my-0">
                         <h2 className="text-center text-[#8280FF] font-semibold mb-8">Liste des utilisateurs</h2>
-                        <table className="w-full">
+                        <table className="w-full min-w-full xs:w-auto">
                             <thead className="bg-white text-left text-base font-semibold">
                                 <tr>
                                     <th className="py-2">Nom et prénom(s)</th>
@@ -118,9 +117,9 @@ function AdminDashboard() {
                         </table>
                     </div>
 
-                    <div className="mx-8 mt-12 mb-24">
+                    <div className="mx-8 mt-12 mb-24 xs:mx-2">
                         <h2 className="text-center text-[#8280FF] font-semibold mb-8">Liste des utilisateurs</h2>
-                        <table className="w-full">
+                        <table className="w-full xs:w-auto">
                             <thead className="bg-white text-left text-base font-semibold">
                                 <tr>
                                     <th className="py-2">Nom et prénom(s)</th>

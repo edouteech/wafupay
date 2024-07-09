@@ -91,7 +91,7 @@ function AdminDashboard() {
         <>
             <Dashbord>
                 <div>
-                <h2 className="text-center text-[#7068B0] font-semibold mb-8 mt-16">Liste des transactions</h2>
+                <h2 className="text-center text-[#7068B0] font-semibold mb-8 mt-16 xs:px-4">Liste des transactions</h2>
                     <div className=" text-base w-full">
                         <table className="mx-auto rounded-3xl bg-white overflow-hidden text-center">
                             <thead className="text-secBlue border-b border-gray-300">

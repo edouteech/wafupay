@@ -72,7 +72,7 @@ function ForgetPassword() {
     return (
         <>
             <NavBar></NavBar>
-            <div className="flex mt-16 mx-32 gap-8 items-center ">
+            <div className="flex mt-16 mx-32 gap-8 items-center xs:block xs:mx-4 xs:mb-8">
                 <div className="basis-7/12">
                     <p className="font-bold text-black text-2xl mb-8 text-center">Bienvenue sur notre plateforme de transfert d'argent <span className="text-primary">sécurisé</span> et <span className="text-primary">rapide</span> dans la zone <span className="text-primary">UEMOA</span></p>
                     <Image alt="un joli cadenas" src={fPassword} className="relative top-[-70px]"></Image>

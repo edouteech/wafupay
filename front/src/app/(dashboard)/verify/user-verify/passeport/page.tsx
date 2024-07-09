@@ -58,7 +58,7 @@ function Passeport() {
                 <div>
                     <h2 className=" mt-8 mb-4 text-center text-2xl font-bold text-primary">Vérification d'identité</h2>
                     <h3 className=" mb-4 text-center text-1xl font-bold text-primary">Passeport</h3>
-                    <ul className="ml-16 mb-8 text-base">
+                    <ul className="ml-16 mb-8 text-base xs:mx-4">
                         <li>Document original en taille réelle, non édité</li>
                         <li>Émis par le gouvernement</li>
                         <li>Placer le document sur un fond uni</li>
@@ -71,7 +71,7 @@ function Passeport() {
 
                     <form className="w-full" onSubmit={(e)=>{submitCard(e)}}>
                         <legend className="text-base text-black text-center font-semibold">La taille réelle doit être comprise entre 10 Ko et 5 120 Ko au format jpeg ou png</legend>
-                        <div className="flex justify-evenly gap-8 mx-auto w-7/12 my-4">
+                        <div className="flex justify-evenly gap-8 mx-auto w-7/12 my-4 xs:p-4 xs:w-full">
                             <UploadButton text={`${pics[0] ? pics[0].name : 'téléchargez le passeport'}`} onUpload={(file:File)=>{getPics(file,0)}}></UploadButton>
                             {/* <UploadButton text={`${pics[1] ? pics[1].name : 'téléchargez la page arrière'}`} onUpload={(file:File)=>{getPics(file,1)}}></UploadButton> */}
                         </div>

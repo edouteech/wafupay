@@ -61,7 +61,7 @@ const Verify: React.FC = () => {
     return (
         <>
             <Dashbord>
-                <div className="flex gap-8 items-center absolute top-0 bottom-0 left-0 right-0 backdrop-blur-lg z-20 pl-56">
+                <div className="flex gap-8 items-center absolute top-0 bottom-0 left-0 right-0 backdrop-blur-lg z-20 pl-56 xs:pr-8 xs:block xs:px-4">
                     <div className="basis-1/2">
 
                         <Image alt="verify" src={verify}></Image>

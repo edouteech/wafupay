@@ -41,15 +41,15 @@ const UserVerifying: React.FC = () => {
     return (
         <>
             <Dashbord>
-                <div className="flex flex-col m-8 w-2/3 mx-auto gap-8 items-center text-center relative">
+                <div className="flex flex-col m-8 w-2/3 mx-auto gap-8 items-center text-center relative xs:w-full xs:mx-2">
                     <h2 className="font-bold text-primary text-2xl">Vérification d'identité</h2>
                     <p className="text-black font-bold">Utiliser un document valide émis par le gouvernement</p>
                     <p>Seuls les documents suivants listés ci-dessous seront acceptés, tout autre document sera rejeté</p>
 
-                    <div className="flex gap-4 absolute bottom-[-100px] left-0 right-0">
-                        <Link className="basis-full p-4 bg-gray-200 hover:bg-primary hover:text-white text-black text-left duration-500" href={'user-verify/permis-de-conduire'}>Permis de conduire</Link>
-                        <Link className="basis-full p-4 bg-gray-200 hover:bg-primary hover:text-white text-black text-left duration-500" href={'user-verify/passeport'}>Passeport</Link>
-                        <Link className="basis-full p-4 bg-gray-200 hover:bg-primary hover:text-white text-black text-left duration-500" href={'user-verify/carte-identite'}>Carte d'identité</Link>
+                    <div className="flex gap-4  bottom-[-100px] left-0 right-0 xs:flex-col">
+                        <Link className="basis-full xs:mb-8 p-4 bg-gray-200 hover:bg-primary hover:text-white text-black text-left duration-500" href={'user-verify/permis-de-conduire'}>Permis de conduire</Link>
+                        <Link className="basis-full xs:mb-8 p-4 bg-gray-200 hover:bg-primary hover:text-white text-black text-left duration-500" href={'user-verify/passeport'}>Passeport</Link>
+                        <Link className="basis-full xs:mb-8 p-4 bg-gray-200 hover:bg-primary hover:text-white text-black text-left duration-500" href={'user-verify/carte-identite'}>Carte d'identité</Link>
                     </div>
                 </div>
             </Dashbord>

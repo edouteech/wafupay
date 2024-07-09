@@ -66,10 +66,10 @@ function AdminDashboard() {
     return (
         <>
             <Dashbord>
-                <div className="w-3/4 mx-auto">
+                <div className="w-3/4 mx-auto xs:w-full xs:px-4">
                     <div className="flex justify-between items-center mt-8">
                         <h2 className="font-bold text-black">Gestion des fournisseurs</h2>
-                        <button className="flex justify-between items-center gap-4 bg-primary text-white hover:scale-95 duration-300 rounded-xl p-3" onClick={() => { setShow(!show) }}><Plus></Plus>Ajouter un fournisseur</button>
+                        <button className="flex justify-between items-center gap-4 bg-primary text-white hover:scale-95 duration-300 rounded-xl p-3" onClick={() => { setShow(!show) }}><Plus></Plus><span className="xs:hidden">Ajouter un fournisseur</span></button>
                     </div>
                     <div className="table text-base w-full mt-8">
                         <div className="text-[#8280FF] font-semibold thead bg-white rounded-2xl overflow-hidden text-left grid grid-cols-6 p-3 pl-4 text-textGray pr-4">
