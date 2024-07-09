@@ -1,9 +1,5 @@
-<<<<<<< HEAD
-/* eslint-disable react/no-unescaped-entities */
-=======
 "use client"
->>>>>>> d9dddd771e4cd8aa769db4807e6bff31fbd266f8
-import NavBar from "../Components/NavBar"
+import NavBar from "@/app/(auth)/Components/NavBar"
 import portable from "@/public/assets/images/portablesLanding.png"
 import paiment1 from "@/public/assets/images/handCash.png"
 import paiment2 from "@/public/assets/images/pcPortable.png"
@@ -13,9 +9,6 @@ import tel1 from "@/public/assets/images/tel1.png"
 import tel2 from "@/public/assets/images/tel2.png"
 import tel3 from "@/public/assets/images/tel3.png"
 import arrowLeft from "@/public/assets/images/arrowLeft.png"
-<<<<<<< HEAD
-import downloadIcon from "@/public/assets/images/downloadIcon.png"
-=======
 import uemoa from "@/public/assets/images/uemoa.png"
 import download from "@/public/assets/images/download.png"
 import afrique from "@/public/assets/images/afrique.png"
@@ -29,14 +22,13 @@ import tel from "@/public/assets/images/tel.png";
 import mail from "@/public/assets/images/mail.png";
 import React, { useState } from 'react';
 import { ChevronDown, ChevronUp } from "lucide-react"; // Remplacez par l'importation réelle de vos icônes
->>>>>>> d9dddd771e4cd8aa769db4807e6bff31fbd266f8
 
 import Image from "next/image"
 
 function Home() {
     const [openIndex, setOpenIndex] = useState(null);
 
-    const toggleAccordion = (index) => {
+    const toggleAccordion = (index:any) => {
         setOpenIndex(openIndex === index ? null : index);
     };
 
