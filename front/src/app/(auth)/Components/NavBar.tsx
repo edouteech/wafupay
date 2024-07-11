@@ -6,6 +6,7 @@ import playstore from "@/public/assets/images/google-play.svg"
 import { Menu } from "lucide-react"
 import { useState } from "react"
 import Moov from "@/public/assets/images/Moov.png";
+import Link from "next/link"
 
 function NavBar() {
 
@@ -13,30 +14,24 @@ function NavBar() {
 
     return (
         <>
-            <div className={`text-[19px] bg-primary text-white pl-48 pr-32 xs:p-0 relative`}>
-                <div className="flex items-center justify-between ">
+            <header className="bg-primary text-white px-4 py-2 xs:p-0">
+                <div className=" xs:items-start px-3 py-2 max-w-screen-xl sm:flex items-center justify-between mx-auto relative">
+                    <div className="flex bg-white p-2 rounded-xl items-center w-fit mn-3">
+                        <Link href="/"><Image alt="logo" className="w-[100px]" src={logo}></Image></Link>
+                    </div>
+                    <button className="xs:block hidden absolute top-1 right-1" onClick={() => { setIsOpen(!isOpen) }}><Menu width={50} height={50}></Menu></button>
+                    <ul  className={`${isOpen ? 'xs:block' : 'xs:hidden'} block py-2 flex gap-8 text-2xl list-none`}>
+                        <li className="mb-3"><Link href="/">Accueil</Link></li>
+                        <li className="mb-3"><Link href="/about">A propos</Link></li>
+                    </ul>
+                    <ul className={`${isOpen ? 'xs:block' : 'xs:hidden'} w-fit mr-2 flex gap-8 items-center justify-between gap-2 list-none`}>
+                        <li className="xs:mb-6"><Link className="border border-white p-2 xs:text-sm text-white rounded-lg" href="/login">Connexion</Link></li>
+                        <li className="xs:mb-6"><Link className="bg-white p-2 xs:text-sm text-primary rounded-lg" href="/register">Inscription</Link></li>
+                    </ul>
 
-                <div className="flex bg-white p-2 m-3 rounded-xl items-center">
-                    <Image alt="logo" className="w-[143px] xs:w-[100px]" src={logo}></Image>
                 </div>
-                <button className="xs:block hidden" onClick={() => { setIsOpen(!isOpen) }}><Menu width={50} height={50}></Menu></button>
-                <ul className="xs:hidden py-2 px-8 flex border-x-2 gap-8 border-gray-200">
-                    <li>Se connecter</li>
-                    <li>A propos</li>
-                    <li>Contact</li>
-                </ul>
-                <div className="xs:hidden flex items-center gap-4 bg-white p-2 xs:text-sm text-primary rounded-lg">
-                    <Image width={20} src={playstore} alt="logo playstore"></Image>
-                    Google Play
-                </div>
-                </div>
-                <ul className={`${isOpen ? 'h-36' : 'h-0'} duration-500 overflow-hidden bg-primary w-full text-right pr-4 border-t border-white absolute`}>
-                    <li className="mt-4">Se connecter</li>
-                    <li>A propos</li>
-                    <li>Contact</li>
-                    <li>Télécharger</li>
-                </ul>
-            </div>
+            </header>
+
         </>
     )
 }

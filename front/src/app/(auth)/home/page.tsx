@@ -25,6 +25,7 @@ import React, { useState } from 'react';
 import { ChevronDown, ChevronUp } from "lucide-react"; // Remplacez par l'importation réelle de vos icônes
 
 import Image from "next/image"
+import Link from "next/link"
 
 function Home() {
     const [openIndex, setOpenIndex] = useState(null);
@@ -61,53 +62,55 @@ function Home() {
     return (
         <>
             <NavBar></NavBar>
-            <div className="relative">
-                <article className="ml-4 sm:ml-48 mr-4 sm:mr-20 mt-16 flex flex-col sm:flex-row items-center justify-center gap-4">
-                    <div className="p-8 basis-full sm:basis-1/2 bg-white shadow-lg rounded-3xl shadow-gray-400">
-                        <h2 className="font-bold text-2xl sm:text-4xl text-black">
-                            Transfert d'argent rapide et sûre dans la zone <span className="text-primary">UEMOA.</span>
-                        </h2>
-                        <p className="text-lg sm:text-xl mt-4">
-                            Découvrez une façon simple et sécurisée d'envoyer et de recevoir de l'argent dans la zone UEMOA. Notre application vous permet de transférer de l'argent instantanément, où que vous soyez.
-                        </p>
-                        <div className="flex flex-col sm:flex-row items-center justify-between mt-8">
-                            <button className="hover:text-primary hover:bg-white hover:border-primary border font-bold bg-primary text-white p-4 rounded-full mt-4 sm:mt-0">
-                                Télécharger maintenant
-                            </button>
-                            <button className="hover:text-white hover:bg-primary font-bold text-primary border-primary border rounded-full p-4 mt-4 sm:mt-0">
-                                En savoir plus
-                            </button>
-                        </div>
+            <section className=" flex xs:flex-col flex-row items-center justify-center gap-4 px-4 py-8 max-w-screen-xl mx-auto">
+                <div className=" max-w-full w-[32rem] p-4 basis-full sm:basis-1/2 bg-white shadow-lg rounded-3xl shadow-gray-400">
+                    <h2 className="font-bold text-2xl sm:text-4xl text-black">
+                        Transfert d'argent rapide et sûre dans la zone <span className="text-primary">UEMOA.</span>
+                    </h2>
+                    <p className="text-lg sm:text-xl mt-4">
+                        Découvrez une façon simple et sécurisée d'envoyer et de recevoir de l'argent dans la zone UEMOA. Notre application vous permet de transférer de l'argent instantanément, où que vous soyez.
+                    </p>
+                    <div className="flex flex-col sm:flex-row items-center justify-between mt-8">
+                        <button className="hover:text-primary hover:bg-white hover:border-primary border font-bold bg-primary text-white p-4 rounded-full mt-4 sm:mt-0">
+                            Télécharger maintenant
+                        </button>
+                        <Link href="/about" className="hover:text-white hover:bg-primary font-bold text-primary border-primary border rounded-full p-4 mt-4 sm:mt-0">
+                            En savoir plus
+                        </Link>
                     </div>
-                    <div className="basis-full sm:basis-1/2">
-                        <Image className="w-full" src={portable} alt="des portables" />
-                    </div>
-                </article>
-                <div className="bg-thinBlue mt-16 w-full">
-                    <div className="pl-4 sm:pl-48 pr-4 sm:pr-32 flex flex-col sm:flex-row justify-between py-8">
-                        <section className="w-full sm:w-72 p-4 bg-primary rounded-3xl text-white mb-4 sm:mb-0">
+                </div>
+                <div className="basis-full sm:basis-1/2">
+                    <Image className="w-full" src={portable} alt="des portables" />
+                </div>
+            </section>
+            <section className="bg-thinBlue">
+                <div className=" mt-16  max-w-screen-xl mx-auto ">
+                    <div className="pl-4 pr-4 flex flex-col sm:flex-row justify-between py-8 gap-4">
+                        <div className="flex-1 p-4 bg-primary rounded-3xl text-white">
                             <div className="flex items-center gap-4">
                                 <Image src={paiment1} alt="svg" />
                                 <h4 className="font-semibold text-xl sm:text-2xl">Transferts rapides</h4>
                             </div>
                             <p className="mt-4">Envoyez de l'argent en quelques secondes seulement.</p>
-                        </section>
-                        <section className="w-full sm:w-72 p-4 bg-primary rounded-3xl text-white mb-4 sm:mb-0">
+                        </div>
+                        <div className="flex-1 p-4 bg-primary rounded-3xl text-white">
                             <div className="flex items-center gap-4">
                                 <Image src={paiment2} alt="svg" />
                                 <h4 className="font-semibold text-xl sm:text-2xl">Accessibilité</h4>
                             </div>
                             <p className="mt-4">Disponible 24h/24 et 7j/7, depuis votre téléphone ou votre ordinateur.</p>
-                        </section>
-                        <section className="w-full sm:w-72 p-4 bg-primary rounded-3xl text-white mb-4 sm:mb-0">
+                        </div>
+                        <div className="flex-1 p-4 bg-primary rounded-3xl text-white">
                             <div className="flex items-center gap-4">
                                 <Image src={paiment3} alt="svg" />
                                 <h4 className="font-semibold text-xl sm:text-2xl">Tarifs compétitifs</h4>
                             </div>
                             <p className="mt-4">Des frais de transaction minimes, sans surprises.</p>
-                        </section>
+                        </div>
                     </div>
                 </div>
+            </section>
+            <div className="">
                 <div className="flex flex-col sm:flex-row ml-4 sm:ml-16 mr-4 sm:mr-32 gap-8 mt-16">
                     <div className="basis-full sm:basis-1/2">
                         <Image src={aboutImg} alt="une dame qui sourit dans un téléphone" />
