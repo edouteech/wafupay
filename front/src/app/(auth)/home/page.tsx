@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 "use client"
 import NavBar from "@/app/(auth)/Components/NavBar"
 import portable from "@/public/assets/images/portablesLanding.png"

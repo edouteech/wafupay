@@ -1,4 +1,4 @@
-// /* eslint-disable react/no-unescaped-entities */
+/* eslint-disable react/no-unescaped-entities */
 // "use client"
 // import NavBar from "../Components/NavBar"
 // import Image from "next/image"
