@@ -117,6 +117,7 @@ class LoginController extends BaseController
             "id_card" => $user->id_card,
             "country_id" => $user->country_id,
             "is_verified" => $user->is_verified,
+            "is_admin" => $user->is_admin,
         ];
         // return $this->handleResponse(['token' => $token->plainTextToken], 'User logged-in!');
         return $this->handleResponse($data, 'User logged-in!');
