@@ -101,7 +101,7 @@ function Profil() {
                            
                                 <div className="flex items-center justify-center w-10 ml-2 ">
                                     <Image
-                                        src={require('@/public/assets/images/+229.png')}
+                                        src={require('@/public/assets/images/countries/+229.png')}
                                         alt="Benin Flag"
                                         width={60}
                                         height={60}
