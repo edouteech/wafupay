@@ -7,14 +7,16 @@ use Illuminate\Http\Request;
 use App\Http\Services\LoggerService;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Services\PayDunyaService;
+use App\Http\Services\FeexPayService;
 use App\Http\Services\TransactionService;
 use App\Http\Resources\TransactionResource;
 
 class MyTransactionController extends BaseController
 {
-    
+
     public function __construct(
         private readonly PayDunyaService $payDunya,
+        private readonly FeexPayService $feexpay,
         private readonly LoggerService $logger,
         private readonly TransactionService $process,
     ) {
@@ -234,5 +236,27 @@ class MyTransactionController extends BaseController
 
         $transaction->delete();
         return $this->handleResponse($transaction, 'Your transaction deleted successfully.');
+    }
+
+    //test du code de feexpay
+
+    public function paiementLocal(Request $request)
+    {
+        $amount = $request->input('amount');
+        $network = $request->input('network');
+        $fullname = $request->input('fullname');
+        $email = $request->input('email');
+        $phoneNumber = $request->input('phone');
+        $otp = "";
+        $callback_info = "http://localhost:3000/home";
+        $custom_id = "test_transactions";
+
+  // initiate payment
+        $response = $this->feexpay->initiateLocalPayment($amount, $phoneNumber, $network, $fullname, $email, $custom_id, $callback_info, $otp);
+
+    //get status
+        $status = $this->feexpay->getPaymentStatus($response);
+
+        return response()->json($status);
     }
 }
