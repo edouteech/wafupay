@@ -12,11 +12,20 @@ import uemoa from "@/public/assets/images/uemoa.png"
 import download from "@/public/assets/images/download.png"
 import afrique from "@/public/assets/images/afrique.png"
 
-import { ChevronDown, ChevronUp, Download } from "lucide-react"; // Remplacez par l'importation réelle de vos icônes
-import { useState } from 'react'
+import { ChevronDown, ChevronUp, Download, UserRoundPlus } from "lucide-react"; // Remplacez par l'importation réelle de vos icônes
+import React, { useState } from 'react'
 
 import Image from "next/image"
 import Link from "next/link"
+
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel"
+import Autoplay from "embla-carousel-autoplay"
 
 function Home() {
     const [openIndex, setOpenIndex] = useState(null);
@@ -26,8 +35,14 @@ function Home() {
     };
 
     const partners = [
-        { name: 'MTN' },
-        { name: 'Moov' },
+        { name: 'MTN', file: 'logo-mtn.png' },
+        { name: 'Moov', file: 'logo-moov.png' },
+        { name: 'Free Money', file: 'logo-free.png' },
+        { name: 'Expresso', file: 'logo-expresso.png' },
+        { name: 'Tmoney', file: 'logo-tmoney.png' },
+        { name: 'Wave', file: 'logo-wave.png' },
+        { name: 'Wizal', file: 'logo-wizal.png' },
+        { name: 'Mastercard', file: 'logo-mastercard.png' },
         // Ajoutez d'autres partenaires ici
     ];
 
@@ -50,6 +65,10 @@ function Home() {
         }
     ];
 
+    const plugin = React.useRef(
+        Autoplay({ delay: 2000, stopOnInteraction: true })
+    )
+
     return (
         <>
             <NavBar></NavBar>
@@ -63,10 +82,10 @@ function Home() {
                     </p>
                     <div className="flex flex-col sm:flex-row items-center justify-between mt-8">
                         <button className="hover:text-primary hover:bg-white hover:border-primary border font-bold bg-primary text-white p-4 rounded-full mt-4 sm:mt-0">
-                            Télécharger maintenant
+                            Télécharger L'application
                         </button>
-                        <Link href="/about" className="hover:text-white hover:bg-primary font-bold text-primary border-primary border rounded-full p-4 mt-4 sm:mt-0">
-                            En savoir plus
+                        <Link href="/register" className="hover:text-white hover:bg-primary font-bold text-primary border-primary border rounded-full p-4 mt-4 sm:mt-0">
+                            Créer un compte
                         </Link>
                     </div>
                 </div>
@@ -160,7 +179,9 @@ function Home() {
                         </div>
                     </article>
                     <div className="flex justify-center my-20">
-                        <Image src={download} alt="download" />
+                        <Link href="/about" className="font-bold text-white bg-primary border rounded-lg p-4 mt-4 sm:mt-0">
+                            Télécharger maintenant <Download className="inline ml-2" />
+                        </Link>
                     </div>
                 </div>
                 <div className="bg-cyan-500 p-8 flex flex-col items-center ">
@@ -180,12 +201,18 @@ function Home() {
                 <div className="mt-16 px-4 sm:px-16">
                     <div className="bg-white py-12">
                         <h2 className="text-center text-blue-600 font-bold text-xl sm:text-2xl mb-8">NOS PARTENAIRES</h2>
+                        <Carousel plugins={[ Autoplay({delay: 2000,}), ]}>
+                            <CarouselContent>
+                                {partners.map((partner) => (
+                                    // <div key={partner.name} className="flex items-center justify-center bg-white shadow-lg rounded-md p-4">
+                                    <CarouselItem className="basis-1/6">
+                                        <Image src={require(`../public/assets/images/partners/${partner.file}`)} alt={partner.name} className="w-full h-full object-contain" />
+                                    </CarouselItem>
+                                    // </div>
+                                ))}
+                            </CarouselContent>
+                        </Carousel>
                         <div className="flex flex-col sm:flex-row justify-center space-x-0 sm:space-x-8 space-y-4 sm:space-y-0">
-                            {partners.map((partner) => (
-                                <div key={partner.name} className="flex items-center justify-center bg-white shadow-lg rounded-md p-4">
-                                    <Image src={require(`../public/assets/images/${partner.name}.png`)} alt={partner.name} className="w-full h-full object-contain" />
-                                </div>
-                            ))}
                         </div>
                     </div>
                 </div>
@@ -217,7 +244,7 @@ function Home() {
                 </div>
                 <div className="flex justify-center my-28 ">
                     <Link href="/about" className="font-bold text-white bg-primary border rounded-lg p-4 mt-4 sm:mt-0">
-                        Télécharger <Download className="inline ml-2" />
+                        Créer un compte <UserRoundPlus className="inline ml-2" />
                     </Link>
                 </div>
                 <Footer ></Footer>

@@ -3,7 +3,7 @@
 import { useRouter } from 'next/navigation';
 import NavBar from "../Components/NavBar"
 import Image from "next/image"
-import signIn from "@/public/assets/images/signIn.png"
+import register from "@/public/assets/images/auth/register.png"
 import { useEffect, useState } from "react"
 import { EyeOff, Eye } from "lucide-react"
 import { strict } from "assert"
@@ -81,24 +81,24 @@ function Register() {
             <NavBar></NavBar>
 
             <div className="flex mt-16 mx-32 gap-8 xs:block xs:mx-0 xs:mt-4 xs:px-2">
-                <div>
+                <div className=''>
                     <p className="font-bold text-black text-2xl mb-8 text-center xs:text-xl">Bienvenue sur notre plateforme de transfert d'argent <span className="text-primary">sécurisé</span> et <span className="text-primary">rapide</span> dans la zone <span className="text-primary">UEMOA</span></p>
-                    <Image alt="bienvenue" src={signIn}></Image>
+                    <Image alt="bienvenue" src={register}></Image>
                 </div>
-                <div>
-                    <form action="" className="shadow-lg p-12 rounded-3xl shadow-gray-400 xs:p-2 xs:mt-8 xs:mb-20" onSubmit={(e) => { handleSubmit(e) }}>
+                <div className=''>
+                    <form action="" className="w-[470px] shadow-lg p-4 rounded-3xl shadow-gray-400 xs:p-2 xs:mt-8 xs:mb-20" onSubmit={(e) => { handleSubmit(e) }}>
                         <legend className="mb-8 text-black font-semibold text-2xl text-center">Créer un compte</legend>
                         <div className="relative mb-4">
                             <label htmlFor="last_name" className="font-semibold absolute top-[-10px] bg-white left-4 px-1 text-sm">Nom</label>
-                            <input type="text" placeholder="Nom" className="border p-4 rounded-2xl leading-tight xs:w-full focus:outline-none focus:border-blue-500" value={user.last_name} onChange={(e) => { handleInput(e, "last_name") }} />
+                            <input type="text" placeholder="Nom" className="border p-4 rounded-2xl leading-tight w-full focus:outline-none focus:border-blue-500" value={user.last_name} onChange={(e) => { handleInput(e, "last_name") }} />
                         </div>
                         <div className="relative mb-4">
                             <label htmlFor="first_name" className="font-semibold absolute top-[-10px] bg-white left-4 px-1 text-sm">Prénom</label>
-                            <input type="text" placeholder="Prénom" className="border p-4 rounded-2xl leading-tight xs:w-full focus:outline-none focus:border-blue-500" value={user.first_name} onChange={(e) => { handleInput(e, "first_name") }} />
+                            <input type="text" placeholder="Prénom" className="border p-4 rounded-2xl leading-tight w-full focus:outline-none focus:border-blue-500" value={user.first_name} onChange={(e) => { handleInput(e, "first_name") }} />
                         </div>
                         <div className="relative mb-4">
                             <label htmlFor="email" className="font-semibold absolute top-[-10px] bg-white left-4 px-1 text-sm">Adresse e-mail</label>
-                            <input type="text" placeholder="Entrer votre mail" className="border p-4 rounded-2xl leading-tight xs:w-full focus:outline-none focus:border-blue-500" value={user.email} onChange={(e) => { handleInput(e, "email") }} />
+                            <input type="text" placeholder="Entrer votre mail" className="border p-4 rounded-2xl leading-tight w-full focus:outline-none focus:border-blue-500" value={user.email} onChange={(e) => { handleInput(e, "email") }} />
                         </div>
                         <div className="flex items-center gap-2 justify-center">
                             <Select classes=" mb-4 p-4 rounded-2xl leading-tight focus:outline-none focus:border-blue-500" id={typeof (user.country_id) == 'string' ? parseInt(user.country_id) : user.country_id} countries={countries} onChange={(e: { target: { value: string; }; }) => { handleInput(e, 'country_id') }}></Select>
@@ -111,14 +111,14 @@ function Register() {
                             {!showPassword1 && (
                                 <>
                                     <label htmlFor="password1" className="font-semibold absolute top-[-10px] bg-white left-4 px-1 text-sm">Mot de passe</label>
-                                    <input type="password" placeholder="Entrer votre mot de passe" className="border p-4 rounded-2xl leading-tight xs:w-full focus:outline-none focus:border-blue-500" value={user.password} onChange={(e) => { handleInput(e, "password") }} />
+                                    <input type="password" placeholder="Entrer votre mot de passe" className="border p-4 rounded-2xl leading-tight w-full focus:outline-none focus:border-blue-500" value={user.password} onChange={(e) => { handleInput(e, "password") }} />
                                     <button><Eye onClick={() => { setShowPassword1(true) }} className="absolute top-4 right-5"></Eye></button>
                                 </>
                             )}
                             {showPassword1 && (
                                 <>
                                     <label htmlFor="password1" className="font-semibold absolute top-[-10px] bg-white left-4 px-1 text-sm">Mot de passe</label>
-                                    <input type="text" placeholder="Entrer votre mot de passe" className="border p-4 rounded-2xl leading-tight xs:w-full focus:outline-none focus:border-blue-500" value={user.password} onChange={(e) => { handleInput(e, "password") }} />
+                                    <input type="text" placeholder="Entrer votre mot de passe" className="border p-4 rounded-2xl leading-tight w-full focus:outline-none focus:border-blue-500" value={user.password} onChange={(e) => { handleInput(e, "password") }} />
                                     <button><EyeOff onClick={() => { setShowPassword1(false) }} className="absolute top-4 right-5"></EyeOff></button>
                                 </>
                             )}
@@ -127,7 +127,7 @@ function Register() {
                             {!showPassword2 && (
                                 <>
                                     <label htmlFor="password2" className="font-semibold absolute top-[-10px] bg-white left-4 px-1 text-sm">Confirmer votre mot de passe</label>
-                                    <input type="password" placeholder="Confirmer votre mot de passe" className="border p-4 rounded-2xl leading-tight xs:w-full focus:outline-none focus:border-blue-500" value={user.password2} onChange={(e) => { handleInput(e, "password2") }} />
+                                    <input type="password" placeholder="Confirmer votre mot de passe" className="border p-4 rounded-2xl leading-tight w-full focus:outline-none focus:border-blue-500" value={user.password2} onChange={(e) => { handleInput(e, "password2") }} />
                                     <button><Eye onClick={() => { setShowPassword2(true) }} className="absolute top-4 right-5"></Eye></button>
                                 </>
                             )}

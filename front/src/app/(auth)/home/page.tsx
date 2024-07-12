@@ -193,7 +193,7 @@ function Home() {
                         <div className="flex flex-col sm:flex-row justify-center space-x-0 sm:space-x-8 space-y-4 sm:space-y-0">
                             {partners.map((partner) => (
                                 <div key={partner.name} className="flex items-center justify-center bg-white shadow-lg rounded-md p-4">
-                                    <Image src={require(`../../../public/assets/images/${partner.name}.png`)} alt={partner.name} className="w-full h-full object-contain" />
+                                    <Image src={require(`../../../public/assets/images/partners/${partner.name}.png`)} alt={partner.name} className="w-full h-full object-contain" />
                                 </div>
                             ))}
                         </div>
