@@ -80,13 +80,13 @@ function Register() {
         <>
             <NavBar></NavBar>
 
-            <div className="flex mt-16 mx-32 gap-8 xs:block xs:mx-0 xs:mt-4 xs:px-2">
+            <div className="flex flex-col md:flex-row items-center justify-center mt-16 gap-8  px-4 max-w-screen-lg mx-auto">
                 <div className=''>
                     <p className="font-bold text-black text-2xl mb-8 text-center xs:text-xl">Bienvenue sur notre plateforme de transfert d'argent <span className="text-primary">sécurisé</span> et <span className="text-primary">rapide</span> dans la zone <span className="text-primary">UEMOA</span></p>
                     <Image alt="bienvenue" src={register}></Image>
                 </div>
                 <div className=''>
-                    <form action="" className="w-[470px] shadow-lg p-4 rounded-3xl shadow-gray-400 xs:p-2 xs:mt-8 xs:mb-20" onSubmit={(e) => { handleSubmit(e) }}>
+                    <form action="" className="md:w-[470px] w-full shadow-lg p-4 rounded-3xl shadow-gray-400 xs:p-2 xs:mt-8 xs:mb-20" onSubmit={(e) => { handleSubmit(e) }}>
                         <legend className="mb-8 text-black font-semibold text-2xl text-center">Créer un compte</legend>
                         <div className="relative mb-4">
                             <label htmlFor="last_name" className="font-semibold absolute top-[-10px] bg-white left-4 px-1 text-sm">Nom</label>
@@ -103,7 +103,7 @@ function Register() {
                         <div className="flex items-center gap-2 justify-center">
                             <Select classes=" mb-4 p-4 rounded-2xl leading-tight focus:outline-none focus:border-blue-500" id={typeof (user.country_id) == 'string' ? parseInt(user.country_id) : user.country_id} countries={countries} onChange={(e: { target: { value: string; }; }) => { handleInput(e, 'country_id') }}></Select>
                             <div className="relative mb-4 w-full">
-                                <label htmlFor="phone_num" className="font-semibold absolute top-[-10px] bg-white left-4 px-1 text-sm">Numéro de téléphone</label>
+                                <label htmlFor="phone_num" className="font-semibold absolute top-[-10px] bg-white left-4 px-1 text-sm">Téléphone</label>
                                 <input type="number" placeholder="Numéro de téléphone" className="w-full border p-4 rounded-2xl leading-tight focus:outline-none focus:border-blue-500" value={user.phone_num} onChange={(e) => { handleInput(e, "phone_num") }} />
                             </div>
                         </div>
@@ -126,14 +126,14 @@ function Register() {
                         <div className="relative mb-4">
                             {!showPassword2 && (
                                 <>
-                                    <label htmlFor="password2" className="font-semibold absolute top-[-10px] bg-white left-4 px-1 text-sm">Confirmer votre mot de passe</label>
+                                    <label htmlFor="password2" className="font-semibold absolute top-[-10px] bg-white left-4 px-1 text-sm">Confirmer mot de passe</label>
                                     <input type="password" placeholder="Confirmer votre mot de passe" className="border p-4 rounded-2xl leading-tight w-full focus:outline-none focus:border-blue-500" value={user.password2} onChange={(e) => { handleInput(e, "password2") }} />
                                     <button><Eye onClick={() => { setShowPassword2(true) }} className="absolute top-4 right-5"></Eye></button>
                                 </>
                             )}
                             {showPassword2 && (
                                 <>
-                                    <label htmlFor="password2" className="font-semibold absolute top-[-10px] bg-white left-4 px-1 text-sm">Confirmer votre mot de passe</label>
+                                    <label htmlFor="password2" className="font-semibold absolute top-[-10px] bg-white left-4 px-1 text-sm">Confirmer mot de passe</label>
                                     <input type="text" placeholder="Confirmer votre mot de passe" className="border p-4 rounded-2xl leading-tight xs:w-full focus:outline-none focus:border-blue-500" value={user.password2} onChange={(e) => { handleInput(e, "password2") }} />
                                     <button><EyeOff onClick={() => { setShowPassword2(false) }} className="absolute top-4 right-5"></EyeOff></button>
                                 </>
@@ -141,9 +141,11 @@ function Register() {
                         </div>
 
                         <div className="flex flex-col items-center gap-2">
-                            <button className="bg-primary rounded-lg text-white p-2 px-4"> S'inscrire </button>
+                            <button className="bg-primary rounded-lg text-white py-3 px-6"> S'inscrire </button>
                             <span className="text-black">ou</span>
-                            <Link href={'/login'} className="text-sm text-primary">Connexion</Link>
+                            <p>
+                            Déjà un inscrit ? veuillez vous <Link href={'/login'} className="text-sm text-primary">Connecter</Link>
+                            </p>
                         </div>
 
                     </form>
