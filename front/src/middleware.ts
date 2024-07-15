@@ -47,8 +47,8 @@ export default withAuth(
   }
 );
 
-// export const config = {
-//   matcher: [
-//     '/((?!login|register|home|mail-verification|mot-de-passe-oublier|nouveau-mot-de-passe).*)',
-//   ],
-// };
+export const config = {
+  matcher: [
+    '/((?!login|register|home|mail-verification|mot-de-passe-oublier|nouveau-mot-de-passe).*)',
+  ],
+};

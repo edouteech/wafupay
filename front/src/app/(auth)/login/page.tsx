@@ -188,7 +188,7 @@ function Register() {
                 phone_num,
                 password,
                 redirect: false,
-                callbackUrl: '/dashboard'
+                callbackUrl: '/admin-dashboard'
             });
             if (result?.status === 401) {
                 Swal.fire({
@@ -197,7 +197,7 @@ function Register() {
                     text: result?.error ? result?.error : ''
                 });
             } else {
-                router.push('/dashboard')
+                router.push('/admin-dashboard')
             }
         } catch (err:any) {
             Swal.fire({
