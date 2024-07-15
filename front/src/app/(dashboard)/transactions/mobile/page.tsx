@@ -24,7 +24,8 @@ function Mobile() {
   const [methodIn, setMethodIn] = useState<WProvider>()
   const [methodOut, setMethodOut] = useState<WProvider>()
   const [countries, setCountries] = useState<Country[]>([])
-  const [country, setCountry] = useState<Country>()
+  const [countryTo, setCountryTo] = useState<Country>()
+  const [countryFrom, setCountryFrom] = useState<Country>()
   const [trans, setTrans] = useState<{ to: { "country": number | string, "phone": string | number, "method": number | string }, from: { "country": number | string, "phone": string | number, "method": number | string }, amount: number, sender_support_fee: number }>({ from: { "country": 1, "phone": '', method: 2 }, to: { "country": 1, "phone": '', method: 1 }, amount: 0, sender_support_fee: 0 })
   const [showM, setShowM] = useState(false)
 
@@ -35,14 +36,17 @@ function Mobile() {
     setAuth({ headers: { Authorization: `Bearer ${tok}` } })
     axios.get(`${apiUrl}/wallet-providers`, { headers: { Authorization: `Bearer ${tok}` } }).then((resp) => {
       console.log(resp.data.data);
-      
+
       setMethods(resp.data.data)
-      setMethodIn(findElementById(1, resp.data.data))
-      setMethodOut(findElementById(2, resp.data.data))
-    })
-    axios.get(`${apiUrl}/countries`).then((resp) => {
-      setCountries(resp.data.data)
-      setCountry(resp.data.data[0])
+      let mI = findElementById(1, resp.data.data)
+      let mO = findElementById(2, resp.data.data)
+      setMethodIn(mI)
+      setMethodOut(mO)
+      axios.get(`${apiUrl}/countries`).then((resp) => {
+        setCountries(resp.data.data)
+        setCountryTo(findElementById(parseInt(mI.country_id), resp.data.data))
+        setCountryFrom(findElementById(parseInt(mO.country_id), resp.data.data))
+      })
     })
   }, [])
 
@@ -72,11 +76,19 @@ function Mobile() {
         let t = Object.assign({}, trans)
         t.to[f2] = e.target.value
         setTrans(t)
+        if (f2 == "method") {
+          let m = findElementById(typeof(e.target.value) == 'string' ? parseInt(e.target.value) : e.target.value, methods)
+          setCountryTo(findElementById(m ? parseInt(m.country_id) : 0, countries))
+        }
       } else {
         let t = Object.assign({}, trans)
         console.log(trans);
         t.from[f2] = e.target.value
         setTrans(t)
+        if (f2 == "method") {
+          let m = findElementById(typeof(e.target.value) == 'string' ? parseInt(e.target.value) : e.target.value, methods)
+          setCountryFrom(findElementById(m ? parseInt(m.country_id) : 0, countries))
+        }
       }
     }
 
@@ -165,10 +177,16 @@ function Mobile() {
                 <input type="text" placeholder="Montant" className="border-r w-3/4 block appearance-none bg-white border border-gray-300 w-full text-gray-700 absolute pl-32 p-4 rounded-2xl leading-tight focus:outline-none focus:border-blue-500" value={trans.amount} onChange={(e) => { handleChange(e, 'amount') }} />
                 <span className="p-2 z-[5] absolute right-5 border-l-2">FCFA</span>
               </div>
-              <div className="w-3/4 mx-auto">
+
+              <div className="w-3/4 mx-auto xs:w-full">
                 <label className="block mt-2">Numéro de téléphone</label>
                 <div className="flex items-center relative w-full mx-auto">
-                  <Select classes=" p-4 pr-7 rounded-2xl leading-tight focus:outline-none focus:border-blue-500" id={1} countries={countries} onChange={(e) => { handleChange(e, 'from.country') }}></Select>
+                  {countryFrom && (
+                    <div className={" p-4 rounded-2xl leading-tight focus:outline-none focus:border-blue-500 text-base font-bold text-gray-700 w-28 z-[5] flex items-center gap-2 bg-white border border-gray-300 text-gray-700 pr-6 "}>
+                      <Image src={require(`@/public/assets/images/${countryFrom.country_code}.png`)} width={19} height="12" className="h-[14px]" alt="Country Flag" />
+                      <span>{countryFrom.country_code}</span>
+                    </div>
+                  )}
                   <input type="text" placeholder="+96 96 96 96" className="border-r w-3/4 block appearance-none bg-white border border-gray-300 w-full text-gray-700 absolute pl-32 p-4 rounded-2xl leading-tight focus:outline-none focus:border-blue-500" value={trans.from.phone} onChange={(e) => { handleChange(e, 'from.phone') }} />
                 </div>
               </div>
@@ -196,10 +214,15 @@ function Mobile() {
               <input type="text" placeholder="Montant" className="border-r w-3/4 block appearance-none bg-white border border-gray-300 w-full text-gray-700 absolute pl-32 p-4 rounded-2xl leading-tight focus:outline-none focus:border-blue-500" value={trans.amount} readOnly />
               <span className="p-2 z-[5] absolute right-5 border-l-2">FCFA</span>
             </div>
-            <div className=" text-sm m-auto text-gray-700 w-3/4">
+            <div className=" text-sm m-auto text-gray-700 w-3/4 xs:w-full">
               <label className="block mt-2">Numéro de téléphone</label>
               <div className="flex items-center relative">
-                <Select id={1} classes=" p-4 pr-7 rounded-2xl leading-tight focus:outline-none focus:border-blue-500" countries={countries} onChange={(e)=>{handleChange(e, 'to.country')}}></Select>
+                {countryTo && (
+                  <div className={" p-4 rounded-2xl leading-tight focus:outline-none focus:border-blue-500 text-base font-bold text-gray-700 w-28 z-[5] flex items-center gap-2 bg-white border border-gray-300 text-gray-700 pr-6 "}>
+                    <Image src={require(`@/public/assets/images/${countryTo.country_code}.png`)} width={19} height="12" className="h-[14px]" alt="Country Flag" />
+                    <span>{countryTo.country_code}</span>
+                  </div>
+                )}
                 <input type="tel" placeholder="+90 90 25 25" className="border-r w-3/4 block appearance-none bg-white border border-gray-300 w-full text-gray-700 absolute pl-32 p-4 rounded-2xl leading-tight focus:outline-none focus:border-blue-500" value={trans.to.phone} onChange={(e) => { handleChange(e, 'to.phone') }} />
               </div>
             </div>

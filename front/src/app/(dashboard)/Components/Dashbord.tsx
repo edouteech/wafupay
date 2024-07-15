@@ -33,18 +33,30 @@ function Dashbord({ children }: Props) {
 
 
 
-    const logout = () => {
-        axios.post(`${apiUrl}/token/revoke`, { 'user': session?.user.token }, { headers: { Authorization: `Bearer ${session?.user.token}` } }).then((resp) => {
-            if (resp.status == 200) {
-                signOut()
-            }
-        })
-    }
+    const logout = async () => {
+        if (!session || !session.user || !session.user.token) {
+            console.error("Session or user token is not defined");
+            return;
+        }
+
+        axios.post(`${apiUrl}/token/revoke`, { 'user': session.user.token }, { headers: { Authorization: `Bearer ${session.user.token}` } })
+            .then((resp) => {
+                if (resp.status === 200) {
+                    signOut();
+                } else {
+                    console.error("Failed to revoke token: ", resp);
+                }
+            })
+            .catch((error) => {
+                console.error("An error occurred while revoking the token: ", error);
+            });
+    };
+
 
     return (
         <>
             <div className="relative text-[19px] bg-bodyBg text-white overflow-hidden h-[100vh] w-[100vw]">
-                <div className="absolute left-0 top-0 bottom-0 w-60 z-20">
+                <div className="absolute left-0 top-0 bottom-0 w-60 z-20 xs:bottom-auto">
                     <Image alt="logo" className="w-[143px] my-5" src={logo}></Image>
                     <ul className="py-2 text-textGray bg-white px-8 flex-col flex gap-6 h-full border-r xs:hidden">
                         <li className="mt-4"><Link className={`${href[1] == "dashboard" || href[1] == "verify" ? 'text-primary' : ''} flex items-center gap-3`} href={'/dashboard'}><Home f={`${href[1] == "dashboard" || href[1] == "verify" ? '#1877F2' : '#606060'}`}></Home>Dashboard</Link></li>
