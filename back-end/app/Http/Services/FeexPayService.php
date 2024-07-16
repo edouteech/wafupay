@@ -65,12 +65,12 @@ class FeexPayService
                 "motif" => $motif
             ];
 
-            Http::withHeaders(self::getHeaders())->post("https://api.feexpay.me/api/payouts/public/transfer/global", $data);
+            $response = Http::withHeaders(self::getHeaders())->post("https://api.feexpay.me/api/payouts/public/transfer/global", $data);
 
             return $response->json();
 
         } catch (\Throwable $th) {
-            return response()->json(['error' => 'Exception lors de la requête: ' . $e->getMessage()], 500);
+            return response()->json(['error' => 'Exception lors de la requête: ' . $th->getMessage()], 500);
         }
     }
 

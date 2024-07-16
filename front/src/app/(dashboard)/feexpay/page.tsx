@@ -77,7 +77,7 @@ export function Home() {
         <Dashbord>
          <div className="flex items-center justify-center min-h-screen">
             <div >
-               <form onSubmit={handleSubmit} className="flex flex-col m-4 p-3  border-black ">
+               <form onSubmit={handleSubmit} className="flex flex-col m-4 p-3">
 
                         <label htmlFor="amount">Amount</label>
                         <input 
