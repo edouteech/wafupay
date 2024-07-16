@@ -245,37 +245,40 @@ class MyTransactionController extends BaseController
         $user = $request->user();
 
         $amount = $request->input('amount');
-        $network = $request->input('network');
+        $operatorName = $request->input('network');
         $fullname =  $user->first_name . ' ' . $user->last_name;
-        $email =$fullname =  $user->email;
-        $phoneNumber = $request->input('phoneNumber');
+        $email =  $user->email;
+        $phoneNumber = $request->input('payin_PhoneNumber');
         $otp = "";
         $callback_info = "Redirection";
         $custom_id = "test_transactions";
 
       // initiate payment
-        $response = $this->feexpay->initiateLocalPayment($amount, $phoneNumber, $network, $fullname, $email, $custom_id, $callback_info, $otp);
+        $response = $this->feexpay->initiateLocalPayment($amount, $phoneNumber, $operatorName, $fullname, $email, $callback_info, $custom_id, $otp);
 
         //get status
         $status = $this->feexpay->getPaymentStatus($response);
 
-        if ($status["status"]  == "PENDING") {
+        // if ($status["status"]  == "PENDING") {
 
-        }
-        while ($status["status"]  == "PENDING") {
-            $status = $this->feexpay->getPaymentStatus($response);
-        }
+        // }
+        // while ($status["status"]  == "PENDING") {
+        //     $status = $this->feexpay->getPaymentStatus($response);
+        // }
 
-        if ($status["status"]  == "SUCCESSFUL") {
-            $phoneNumber = $request->input('payout_phone');
-            $amount = $request->input('amount');
-            $network = $request->input('network');
-            $motif = $request->input('motif');
+        // if ($status["status"]  == "SUCCESSFUL") {
 
-            $payout = $this->feexpay->initiatePayout($amount, $phoneNumber, $network, $motif);
+        //     $phoneNumber = $request->input('payout_PhoneNumber');
+        //     $amount = $request->input('amount');
+        //     $network = $request->input('network');
+        //     $motif = $request->input('motif');
 
-            return response()->json($payout);
-        }
+        //     $payout = $this->feexpay->initiatePayout($amount, $phoneNumber, $network, $motif);
+
+        //     return response()->json($payout);
+        // } else{
+        //     return response()->json("Request failed");
+        // }
             return response()->json($status);
     }
 }

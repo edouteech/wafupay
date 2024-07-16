@@ -30,22 +30,21 @@ class FeexPayService
             $shop,
             $api,
             $callback_url,
-            $mode,
             $error_url
         );
     }
 
-    public function initiateLocalPayment(string $amount, int $phone, string $network, string $fullname, string $email, string $custom_id, string $callback_info, string $otp="" )
+    public function initiateLocalPayment(string $amount, int $phoneNumber, string $operatorName, string $fullname, string $email, string $callback_info, string $custom_id, string $otp="" )
     {
 
         return $this->skeleton->paiementLocal(
             $amount,
-            $phone,
-            $network,
+            $phoneNumber,
+            $operatorName,
             $fullname,
             $email,
-            $custom_id,
             $callback_info,
+            $custom_id,
             $otp
         );
     }
