@@ -9,7 +9,7 @@ import Dashbord from "../Components/Dashbord"
 
 
 export function Home() {
-    const [amount , setAmount] = useState('');
+    const [amount , setAmount] = useState(0);
     const [network , setNetwork] = useState();
     const [payin_PhoneNumber , setPayinPhoneNumber] = useState('');
     const [payout_PhoneNumber , setPayoutPhoneNumber] = useState('');
@@ -25,6 +25,13 @@ export function Home() {
      
     const handleSubmit = async (e : any) => {
         e.preventDefault();
+        if (amount < 100) {
+            Swal.fire({
+                icon: "info",
+                title: "Montant invalide",
+                text: "Veuillez entrer un montant supérieur ou égale à 100 XOF",
+            });
+        }else{
         try {
             const resp = await axios.post(`${apiUrl}/feexpay`,{payin_PhoneNumber,payout_PhoneNumber,amount,network,motif},{ headers : { Authorization: `Bearer ${token}`}});
             console.log(resp);
@@ -51,6 +58,7 @@ export function Home() {
             console.error(error);
             
         }
+    }
     }
 
     const tooglePayout = () => {

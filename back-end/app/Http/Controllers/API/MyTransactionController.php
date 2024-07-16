@@ -259,9 +259,6 @@ class MyTransactionController extends BaseController
         //get status
         $status = $this->feexpay->getPaymentStatus($response);
 
-        if ($status["status"]  == "PENDING") {
-
-        }
         while ($status["status"]  == "PENDING") {
             $status = $this->feexpay->getPaymentStatus($response);
         }
@@ -276,8 +273,6 @@ class MyTransactionController extends BaseController
             $payout = $this->feexpay->initiatePayout($amount, $phoneNumber, $network, $motif);
 
             return response()->json($payout);
-        } else{
-            return response()->json("Request failed");
         }
             return response()->json($status);
     }
