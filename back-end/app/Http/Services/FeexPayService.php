@@ -10,6 +10,14 @@ class FeexPayService
 {
     protected $skeleton;
 
+    private static function getHeaders()
+    {
+        return [
+            'Content-Type' => 'application/json',
+            'Authorization' => 'Bearer ' . env('FEEXPAY_API_KEY'),
+        ];
+    }
+
     public function __construct()
     {
         $api = env('FEEXPAY_API_KEY');
@@ -46,4 +54,25 @@ class FeexPayService
     {
         return $this->skeleton->getPaiementStatus($transactionId);
     }
+
+    public function initiatePayout( string $amount, string $phoneNumber,string $network, string $motif){
+       $shop = env('FEEXPAY_SHOP_ID');
+        try {
+            $data = [
+                "amount" => $amount,
+                "phoneNumber" => $phoneNumber,
+                "network" => $network,
+                "shop" => $shop,
+                "motif" => $motif
+            ];
+
+            Http::withHeaders(self::getHeaders())->post("https://api.feexpay.me/api/payouts/public/transfer/global", $data);
+
+            return $response->json();
+
+        } catch (\Throwable $th) {
+            return response()->json(['error' => 'Exception lors de la requête: ' . $e->getMessage()], 500);
+        }
+    }
+
 }

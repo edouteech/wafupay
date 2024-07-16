@@ -24,6 +24,7 @@ const apiUrl = process.env.NEXT_PUBLIC_APIURL
 const router = useRouter()
 const pathname = usePathname()
 const {data : session} = useSession()
+const token = session?.user?.token ? session?.user?.token : session?.user?.google_token
 useEffect(()=>{
     setHref(pathname.split('/'))
     console.log(pathname.split('/'));
@@ -32,7 +33,7 @@ useEffect(()=>{
 
 
 const logout = ()=>{
-    axios.post(`${apiUrl}/token/revoke`, {'user' : session?.user.token}, {headers : {Authorization :`Bearer ${session?.user.token}`}}).then((resp)=>{
+    axios.post(`${apiUrl}/token/revoke`, {'user' :token}, {headers : {Authorization :`Bearer ${token}`}}).then((resp)=>{
         if (resp.status == 200) {
             signOut()
         }

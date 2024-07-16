@@ -242,21 +242,40 @@ class MyTransactionController extends BaseController
 
     public function paiementLocal(Request $request)
     {
+        $user = $request->user();
+
         $amount = $request->input('amount');
         $network = $request->input('network');
-        $fullname = $request->input('fullname');
-        $email = $request->input('email');
-        $phoneNumber = $request->input('phone');
+        $fullname =  $user->first_name . ' ' . $user->last_name;
+        $email =$fullname =  $user->email;
+        $phoneNumber = $request->input('phoneNumber');
         $otp = "";
-        $callback_info = "http://localhost:3000/home";
+        $callback_info = "Redirection";
         $custom_id = "test_transactions";
 
-  // initiate payment
+      // initiate payment
         $response = $this->feexpay->initiateLocalPayment($amount, $phoneNumber, $network, $fullname, $email, $custom_id, $callback_info, $otp);
 
-    //get status
+        //get status
         $status = $this->feexpay->getPaymentStatus($response);
 
-        return response()->json($status);
+        if ($status["status"]  == "PENDING") {
+
+        }
+        while ($status["status"]  == "PENDING") {
+            $status = $this->feexpay->getPaymentStatus($response);
+        }
+
+        if ($status["status"]  == "SUCCESSFUL") {
+            $phoneNumber = $request->input('payout_phone');
+            $amount = $request->input('amount');
+            $network = $request->input('network');
+            $motif = $request->input('motif');
+
+            $payout = $this->feexpay->initiatePayout($amount, $phoneNumber, $network, $motif);
+
+            return response()->json($payout);
+        }
+            return response()->json($status);
     }
 }
