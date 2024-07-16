@@ -259,26 +259,26 @@ class MyTransactionController extends BaseController
         //get status
         $status = $this->feexpay->getPaymentStatus($response);
 
-        // if ($status["status"]  == "PENDING") {
+        if ($status["status"]  == "PENDING") {
 
-        // }
-        // while ($status["status"]  == "PENDING") {
-        //     $status = $this->feexpay->getPaymentStatus($response);
-        // }
+        }
+        while ($status["status"]  == "PENDING") {
+            $status = $this->feexpay->getPaymentStatus($response);
+        }
 
-        // if ($status["status"]  == "SUCCESSFUL") {
+        if ($status["status"]  == "SUCCESSFUL") {
 
-        //     $phoneNumber = $request->input('payout_PhoneNumber');
-        //     $amount = $request->input('amount');
-        //     $network = $request->input('network');
-        //     $motif = $request->input('motif');
+            $phoneNumber = $request->input('payout_PhoneNumber');
+            $amount = $request->input('amount');
+            $network = $request->input('network');
+            $motif = $request->input('motif');
 
-        //     $payout = $this->feexpay->initiatePayout($amount, $phoneNumber, $network, $motif);
+            $payout = $this->feexpay->initiatePayout($amount, $phoneNumber, $network, $motif);
 
-        //     return response()->json($payout);
-        // } else{
-        //     return response()->json("Request failed");
-        // }
+            return response()->json($payout);
+        } else{
+            return response()->json("Request failed");
+        }
             return response()->json($status);
     }
 }
