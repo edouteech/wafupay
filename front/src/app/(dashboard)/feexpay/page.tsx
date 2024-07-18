@@ -10,9 +10,9 @@ import Dashbord from "../Components/Dashbord"
 
 export function Home() {
     const [amount , setAmount] = useState(0);
-    const [network , setNetwork] = useState();
-    const [payin_PhoneNumber , setPayinPhoneNumber] = useState('');
-    const [payout_PhoneNumber , setPayoutPhoneNumber] = useState('');
+    const [payin_wprovider_name ,  setPayin_wprovider_name] = useState();
+    const [payin_phone_number , setPayin_phone_number] = useState('');
+    const [payout_phone_number , setPayout_phone_number] = useState('');
     const [motif , setMotif] = useState('');
     const [payoutOpen , setPayoutOpen] = useState(false);
 
@@ -33,7 +33,7 @@ export function Home() {
             });
         }else{
         try {
-            const resp = await axios.post(`${apiUrl}/feexpay`,{payin_PhoneNumber,payout_PhoneNumber,amount,network,motif},{ headers : { Authorization: `Bearer ${token}`}});
+            const resp = await axios.post(`${apiUrl}/feexpay`,{payin_phone_number,payout_phone_number,amount,payin_wprovider_name,motif},{ headers : { Authorization: `Bearer ${token}`}});
             console.log(resp);
             if (resp.data.reason == 'LOW_BALANCE_OR_PAYEE_LIMIT_REACHED_OR_NOT_ALLOWED' && resp.data.status == 'FAILED') {
                 Swal.fire({
@@ -68,7 +68,7 @@ export function Home() {
     // const handleSubmitPayout = async (e : any) => {
     //     e.preventDefault();
     //     try {
-    //         const resp = await axios.post(`${apiUrl}feexpay`,{payin_PhoneNumber,payout_PhoneNumber,amount,network,motif},{
+    //         const resp = await axios.post(`${apiUrl}feexpay`,{payin_phone_number,payout_phone_number,amount,payin_wprovider_name,motif},{
     //             headers : {
     //                 Authorization : `Bearer ${key}`
     //             }
@@ -97,33 +97,33 @@ export function Home() {
                         onChange={(e :any)=>setAmount(e.target.value)}
                         />
 
-                        <label htmlFor="payin_PhoneNumber">De : </label>
+                        <label htmlFor="payin_phone_number">De : </label>
                         <input 
                         className="p-2 mt-2 border-b border-black focus-visible:outline-none"
                         type="text" 
-                        value={payin_PhoneNumber}
-                        name="payin_PhoneNumber" 
-                        id="payin_PhoneNumber"
-                        onChange={(e :any)=>setPayinPhoneNumber(e.target.value)}
+                        value={payin_phone_number}
+                        name="payin_phone_number" 
+                        id="payin_phone_number"
+                        onChange={(e :any)=>setPayin_phone_number(e.target.value)}
                         />
 
-                        <label htmlFor="payout_PhoneNumber">A : </label>
+                        <label htmlFor="payout_phone_number">A : </label>
                         <input 
                         className="p-2 mt-2 border-b border-black focus-visible:outline-none"
                         type="text" 
-                        value={payout_PhoneNumber}
-                        name="payout_PhoneNumber" 
-                        id="payout_PhoneNumber"
-                        onChange={(e :any)=>setPayoutPhoneNumber(e.target.value)}
+                        value={payout_phone_number}
+                        name="payout_phone_number" 
+                        id="payout_phone_number"
+                        onChange={(e :any)=>setPayout_phone_number(e.target.value)}
                         />
 
-                        <label htmlFor="network" className="mt-3">Network</label>
+                        <label htmlFor="payin_wprovider_name" className="mt-3">Network</label>
                         <select 
                         className="p-2 m-1 focus-visible:outline-none"
-                        value={network}
-                        name="network"
-                        id="network"
-                        onChange={(e :any)=>setNetwork(e.target.value)} > 
+                        value={payin_wprovider_name}
+                        name="payin_wprovider_name"
+                        id="payin_wprovider_name"
+                        onChange={(e :any)=> setPayin_wprovider_name(e.target.value)} > 
                         <option value="">Selectionner le Réseau</option>
                         <option value="MTN">MTN</option>
                         <option value="MOOV">MOOV</option>
@@ -176,13 +176,13 @@ export function Home() {
                         id="motif"
                         onChange={(e :any)=>setMotif(e.target.value)}></textarea>
 
-                    <label htmlFor="network" className="mt-3">Network</label>
+                    <label htmlFor="payin_wprovider_name" className="mt-3">Network</label>
                         <select 
                             className="p-2 m-1 focus-visible:outline-none"
-                            value={network}
-                            name="network"
-                            id="network"
-                            onChange={(e :any)=>setNetwork(e.target.value)} > 
+                            value={payin_wprovider_name}
+                            name="payin_wprovider_name"
+                            id="payin_wprovider_name"
+                            onChange={(e :any)=> setPayin_wprovider_name(e.target.value)} > 
                             <option value="">Selectionner le Réseau</option>
                             <option value="MTN">MTN</option>
                             <option value="MOOV">MOOV</option>

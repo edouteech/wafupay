@@ -244,11 +244,22 @@ class MyTransactionController extends BaseController
     {
         $user = $request->user();
 
-        $amount = $request->input('amount');
-        $operatorName = $request->input('network');
+        // if (!$user->is_active || !$user->is_verified) {
+        //     return $this->handleError(
+        //         __('validation.valid_sender_account'),
+        //         ['error' => 'Votre compte n\'est pas vérifié.'],
+        //     );
+        // }
+
+        //variables initialisation
+        // $payloads = $this->handleValidate($request->post(), $this->process->getRules());
+
+
+        $amount = $request->amount;
+        $operatorName = $request->payin_wprovider_name;
         $fullname =  $user->first_name . ' ' . $user->last_name;
         $email =  $user->email;
-        $phoneNumber = $request->input('payin_PhoneNumber');
+        $phoneNumber = $request->payin_phone_number;
         $otp = "";
         $callback_info = "Redirection";
         $custom_id = "test_transactions";
@@ -259,13 +270,33 @@ class MyTransactionController extends BaseController
         //get status
         $status = $this->feexpay->getPaymentStatus($response);
 
+        //create the transactions lane in db
+        if ($status["status"]  == "PENDING"){
+
+            unset($payloads['amount']);
+
+            Transaction::create([
+                ...$payloads,
+                'payin_status' => Transaction::PENDING_STATUS,
+                'payout_status' => Transaction::PENDING_STATUS,
+                'type' => $request->type ?? 'others',
+                'token' => $status['transactionId'],
+                'user_id' => $user->id,
+                'amount' => $status['amount'],
+                'amountWithoutFees' => $amount ,
+                'otp_code' => $request->input('otp_code', 1),
+            ]);
+
+            $this->logger->saveLog($request, $this->logger::TRANSFER);
+        }
+
         while ($status["status"]  == "PENDING") {
             $status = $this->feexpay->getPaymentStatus($response);
         }
 
         if ($status["status"]  == "SUCCESSFUL") {
 
-            $phoneNumber = $request->input('payout_PhoneNumber');
+            $phoneNumber = $request->payout_phone_number;
             $amount = $request->input('amount');
             $network = $request->input('network');
             $motif = $request->input('motif');
