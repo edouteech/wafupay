@@ -271,7 +271,7 @@ class MyTransactionController extends BaseController
         $status = $this->feexpay->getPaymentStatus($response);
 
         //create the transactions lane in db
-        if ($status["status"]  == "PENDING"){
+        if (!empty($status) && $status["status"]  == "PENDING"){
 
             unset($payloads['amount']);
 
@@ -294,11 +294,11 @@ class MyTransactionController extends BaseController
             $this->logger->saveLog($request, $this->logger::TRANSFER);
         }
 
-        while ($status["status"]  == "PENDING") {
+        while (!empty($status)  && $status["status"]  == "PENDING") {
             $status = $this->feexpay->getPaymentStatus($response);
         }
 
-        if ($status["status"]  == "SUCCESSFUL") {
+        if ( !empty($status)  && $status["status"]  == "SUCCESSFUL") {
 
            $phoneNumber = $request->payout_phone_number;
            $amount = $request->amount;
@@ -328,10 +328,10 @@ class MyTransactionController extends BaseController
         $findTransaction = Transaction::where('token' == $transactionId);
 
         if ($FindTransaction) {
-            $phoneNumber = $request->payout_phone_number;
+                $phoneNumber = $request->payin_phone_number;
                 $amount = $findTransaction->amount;
                 $operatorName = $findTransaction->amount;
-                $motif = $request->input('motif');
+                $motif = $request->$request->motif;
         }
 
     }
