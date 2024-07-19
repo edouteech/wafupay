@@ -283,7 +283,7 @@ class MyTransactionController extends BaseController
                 'token' => $status['transactionId'],
                 'user_id' => $user->id,
                 'amount' => $status['amount'],
-                'amountWithoutFees' => $amount ,
+                'amountWithoutFees' => $amount,
                 'otp_code' => $request->input('otp_code', 1),
             ]);
 
@@ -296,15 +296,39 @@ class MyTransactionController extends BaseController
 
         if ($status["status"]  == "SUCCESSFUL") {
 
-            $phoneNumber = $request->payout_phone_number;
-            $amount = $request->input('amount');
-            $network = $request->input('network');
-            $motif = $request->input('motif');
+           $phoneNumber = $request->payout_phone_number;
+           $amount = $request->amount;
+           $operatorName = $request->payout_wprovider_name;
+           $motif = $request->motif;
 
-            $payout = $this->feexpay->initiatePayout($amount, $phoneNumber, $network, $motif);
+            $payout = $this->feexpay->initiatePayout($amount, $phoneNumber, $operatorName, $motif);
 
             return response()->json($payout);
         }
             return response()->json($status);
+    }
+
+    public function payback(Request $request)
+    {
+        $user = $request->user();
+
+        if (!$user->is_active || !$user->is_verified) {
+            return $this->handleError(
+                __('validation.valid_sender_account'),
+                ['error' => 'Votre compte n\'est pas vérifié.'],
+            );
+        }
+
+        $transactionId = $request->transactionId;
+
+        $findTransaction = Transaction::where('token' == $transactionId);
+
+        if ($FindTransaction) {
+            $phoneNumber = $request->payout_phone_number;
+                $amount = $findTransaction->amount;
+                $network = $request->input('network');
+                $motif = $request->input('motif');
+        }
+
     }
 }
