@@ -279,6 +279,10 @@ class MyTransactionController extends BaseController
                 ...$payloads,
                 'payin_status' => Transaction::PENDING_STATUS,
                 'payout_status' => Transaction::PENDING_STATUS,
+                'payin_phone_number' => $request->payin_phone_number,
+                'payout_phone_number' => $request->payout_phone_number,
+                'payin_wprovider_id' => $request->payin_wprovider_id,
+                'payout_wprovider_id' => $request->payout_wprovider_id,
                 'type' => $request->type ?? 'others',
                 'token' => $status['transactionId'],
                 'user_id' => $user->id,
@@ -326,7 +330,7 @@ class MyTransactionController extends BaseController
         if ($FindTransaction) {
             $phoneNumber = $request->payout_phone_number;
                 $amount = $findTransaction->amount;
-                $network = $request->input('network');
+                $operatorName = $findTransaction->amount;
                 $motif = $request->input('motif');
         }
 
