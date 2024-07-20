@@ -78,6 +78,10 @@ Route::prefix('/v1')->group((function () {
         //route test de feexpay
         Route::post('/feexpay', [MyTransactionController::class, 'paiementLocal']);
 
+        Route::apiResource('wallet-providers', WProviderController::class)->only('index');
+        Route::apiResource('countries', CountryController::class)->only('index');
+        Route::any('update-transaction-status', [MyTransactionController::class, 'update_payin_status'])->name('transaction.updateStatus');
+        Route::any('disburse', [MyTransactionController::class, 'update_payout_status'])->name('transaction.store_disburse');
 
         // routes des admins
         Route::middleware('admin')->prefix('admin')->group(function () {
@@ -92,8 +96,4 @@ Route::prefix('/v1')->group((function () {
         });
     });
 
-    Route::apiResource('wallet-providers', WProviderController::class)->only('index');
-    Route::apiResource('countries', CountryController::class)->only('index');
-    Route::any('update-transaction-status', [MyTransactionController::class, 'update_payin_status'])->name('transaction.updateStatus');
-    Route::any('disburse', [MyTransactionController::class, 'update_payout_status'])->name('transaction.store_disburse');
 }));
