@@ -70,10 +70,14 @@ Route::prefix('/v1')->group((function () {
 
         // routes de transactions pour l'user
         Route::get('check-status/{token}/{type}', [MyTransactionController::class, 'check_status']);
-        Route::apiResource('transactions', MyTransactionController::class)->only('index', 'store', 'show');
+        Route::apiResource('transactions', MyTransactionController::class)->only('index', 'store', 'show',);
         Route::get('refresh-transaction/{payin_token}', [MyTransactionController::class, 'refresh_transaction'])->name('transaction.refresh');
         Route::post('calculate-transaction-fees', [MyTransactionController::class, 'calculate_fees'])->name('transaction.calculateFees');
         Route::delete('delete-transaction/{transaction}', [MyTransactionController::class, 'destroyByUser'])->name('transaction.destroyYours');
+
+        //route test de feexpay
+        Route::post('/feexpay', [MyTransactionController::class, 'paiementLocal']);
+
 
         // routes des admins
         Route::middleware('admin')->prefix('admin')->group(function () {

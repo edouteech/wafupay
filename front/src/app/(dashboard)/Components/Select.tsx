@@ -69,7 +69,7 @@ const Select: React.FC<SelectProp> = ({ countries = [], providers = [], onChange
             <ul className={`${show ? 'h-[275px] p-2' : 'h-0'} duration-500 overflow-hidden bg-white w-[200px] absolute z-[6]`}>
                 {countries.map((country, i) => (
                     <li className="text-base font-semibold text-black hover:bg-gray-200 p-1" key={i}>
-                        <button className="flex items-center gap-2" onClick={() => { handleCountry(country) }}>
+                        <button className="flex items-center gap-2" onClick={(e) => { handleCountry(country) }} value={country.id}>
                             <Image src={require(`@/public/assets/images/${country.country_code}.png`)} width={19} height="12" className="h-[14px]" alt="Country Flag" />
                             <span>{country.slug}</span>
                         </button>

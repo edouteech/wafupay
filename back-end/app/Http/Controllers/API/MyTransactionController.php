@@ -7,14 +7,16 @@ use Illuminate\Http\Request;
 use App\Http\Services\LoggerService;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Services\PayDunyaService;
+use App\Http\Services\FeexPayService;
 use App\Http\Services\TransactionService;
 use App\Http\Resources\TransactionResource;
 
 class MyTransactionController extends BaseController
 {
-    
+
     public function __construct(
         private readonly PayDunyaService $payDunya,
+        private readonly FeexPayService $feexpay,
         private readonly LoggerService $logger,
         private readonly TransactionService $process,
     ) {
@@ -234,5 +236,103 @@ class MyTransactionController extends BaseController
 
         $transaction->delete();
         return $this->handleResponse($transaction, 'Your transaction deleted successfully.');
+    }
+
+    //test du code de feexpay
+
+    public function paiementLocal(Request $request)
+    {
+        $user = $request->user();
+
+        // if (!$user->is_active || !$user->is_verified) {
+        //     return $this->handleError(
+        //         __('validation.valid_sender_account'),
+        //         ['error' => 'Votre compte n\'est pas vérifié.'],
+        //     );
+        // }
+
+        //variables initialisation
+        // $payloads = $this->handleValidate($request->post(), $this->process->getRules());
+
+
+        $amount = $request->amount;
+        $operatorName = $request->payin_wprovider_name;
+        $fullname =  $user->first_name . ' ' . $user->last_name;
+        $email =  $user->email;
+        $phoneNumber = $request->payin_phone_number;
+        $otp = "";
+        $callback_info = "Redirection";
+        $custom_id = "test_transactions";
+
+      // initiate payment
+        $response = $this->feexpay->initiateLocalPayment($amount, $phoneNumber, $operatorName, $fullname, $email, $callback_info, $custom_id, $otp);
+
+        //get status
+        $status = $this->feexpay->getPaymentStatus($response);
+
+        //create the transactions lane in db
+        if (!empty($status) && $status["status"]  == "PENDING"){
+
+            unset($payloads['amount']);
+
+            Transaction::create([
+                ...$payloads,
+                'payin_status' => Transaction::PENDING_STATUS,
+                'payout_status' => Transaction::PENDING_STATUS,
+                'payin_phone_number' => $request->payin_phone_number,
+                'payout_phone_number' => $request->payout_phone_number,
+                'payin_wprovider_id' => $request->payin_wprovider_id,
+                'payout_wprovider_id' => $request->payout_wprovider_id,
+                'type' => $request->type ?? 'others',
+                'token' => $status['transactionId'],
+                'user_id' => $user->id,
+                'amount' => $status['amount'],
+                'amountWithoutFees' => $amount,
+                'otp_code' => $request->input('otp_code', 1),
+            ]);
+
+            $this->logger->saveLog($request, $this->logger::TRANSFER);
+        }
+
+        while (!empty($status)  && $status["status"]  == "PENDING") {
+            $status = $this->feexpay->getPaymentStatus($response);
+        }
+
+        if ( !empty($status)  && $status["status"]  == "SUCCESSFUL") {
+
+           $phoneNumber = $request->payout_phone_number;
+           $amount = $request->amount;
+           $operatorName = $request->payout_wprovider_name;
+           $motif = $request->motif;
+
+            $payout = $this->feexpay->initiatePayout($amount, $phoneNumber, $operatorName, $motif);
+
+            return response()->json($payout);
+        }
+            return response()->json($status);
+    }
+
+    public function payback(Request $request)
+    {
+        $user = $request->user();
+
+        if (!$user->is_active || !$user->is_verified) {
+            return $this->handleError(
+                __('validation.valid_sender_account'),
+                ['error' => 'Votre compte n\'est pas vérifié.'],
+            );
+        }
+
+        $transactionId = $request->transactionId;
+
+        $findTransaction = Transaction::where('token' == $transactionId);
+
+        if ($FindTransaction) {
+                $phoneNumber = $request->payin_phone_number;
+                $amount = $findTransaction->amount;
+                $operatorName = $findTransaction->amount;
+                $motif = $request->$request->motif;
+        }
+
     }
 }
