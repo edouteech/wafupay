@@ -151,14 +151,7 @@ function Mobile() {
       "payin_wprovider_id": trans.from.method, 
       "payout_wprovider_id": trans.to.method, 
       "sender_support_fee": trans.sender_support_fee,
-    // "amount": trans.amount, 
-    // "payin_phone_number": trans.payin_phone_number, 
-    // "payout_phone_number": trans.payout_phone_number, 
-    // "payin_wprovider_id": trans.from.method, 
-    // "payout_wprovider_id": trans.to.method, 
-    // "sender_support_fee": trans.sender_support_fee, 
-    "payin_wprovider_name": trans.payin_wprovider_name,
-    // "payout_wprovider_name": trans.payout_wprovider_name,
+      "payin_wprovider_name": trans.from.provider.name,
       "motif": "1"
   } ,
      auth).then((resp) => {
