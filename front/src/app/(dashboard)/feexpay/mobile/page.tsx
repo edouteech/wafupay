@@ -158,13 +158,14 @@ function Mobile() {
       if (resp.status == 200) {
         setShowM(false)
         setTransRef(resp.data)
-        let myInterval = setInterval(() => {
-          let status = checkStatus(resp.data)
-          if (status == "SUCCESSFUL") {
-            clearInterval(myInterval);
-            setTransStatus(status)
-          }
-        }, 1000);
+        checkStatus(resp.data);
+        // let myInterval = setInterval(async () => {
+        //   let status = await checkStatus(resp.data);
+        //   if (status == "SUCCESSFUL") {
+        //       clearInterval(myInterval);
+        //       setTransStatus(status);
+        //   }
+        // }, 1000);
       }
 
     }).catch((err) => {
@@ -200,6 +201,13 @@ function Mobile() {
       console.log(resp)
       if (resp.status == 200) {
         setTransStatus(resp.data.status)
+        if (resp.data.status == "PENDING") {
+          setTimeout(() => {
+            checkStatus(transactionId);
+          }, 1000);
+        }else if (resp.data.status == "SUCCESSFUL") {
+          setTransStatus(resp.data.status);
+        }
       }
     })
   }

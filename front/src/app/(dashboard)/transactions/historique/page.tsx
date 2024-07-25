@@ -125,11 +125,11 @@ function Historique() {
                                     <tr key={i}>
                                         <td className="p-2">{formatDate(tran.created_at)}</td>
                                         <td className="p-2">
-                                            <span className="block text-xs">{tran.payin_wprovider?.name}</span>
+                                            {/* <span className="block text-xs">{tran.payin_wprovider?.name}</span> */}
                                             <strong className="block text-sm font-bold">{tran.payin_phone_number}</strong>
                                         </td>
                                         <td className="p-2">
-                                            <span className="block text-xs">{tran.payout_wprovider?.name}</span>
+                                            {/* <span className="block text-xs">{tran.payout_wprovider?.name}</span> */}
                                             <strong className="block text-sm font-bold">{tran.payout_phone_number}</strong>
                                         </td>
                                         {/* <td className="p-2">{parseInt(tran.amount) - parseInt(tran.amountWithoutFees)}</td> */}
