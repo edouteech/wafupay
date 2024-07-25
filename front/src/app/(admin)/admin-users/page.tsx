@@ -50,6 +50,10 @@ function AdminDashboard() {
 
 
     //################################## METHODS #################################//
+    const viewUser = (id: string) => {
+        console.log("user id is : ", id)
+    }
+
     const formatDate = (dateString: string) => {
         return new Date(dateString).toLocaleDateString('fr-FR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
     }
@@ -148,7 +152,7 @@ function AdminDashboard() {
                                         <td className="p-2">{user.email}</td>
                                         <td className={`${user.is_verified == "0" ? 'text-red-500' : 'text-green-500'} p-1`}>{user.is_verified == "0" ? 'Non vérifié' : "Vérifier"}</td>
                                         <td className="flex gap-2 p-1">
-                                            <Eye className="w-4 h-4 text-primary" onClick={() => { setUser(user) }}></Eye>
+                                            <Eye className="w-4 h-4 text-primary" onClick={() => { viewUser(user.id) }}></Eye>
                                             <PenLine className="w-4 h-4 text-cyan-500"></PenLine>
                                             <Trash className="w-4 h-4 text-red-500"></Trash>
                                         </td>
