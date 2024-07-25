@@ -62,7 +62,7 @@ function Dashbord({ children }: Props) {
                         <li className="mt-4"><Link className={`${href[1] == "dashboard" || href[1] == "verify" ? 'text-primary' : ''} flex items-center gap-3`} href={'/dashboard'}><Home f={`${href[1] == "dashboard" || href[1] == "verify" ? '#1877F2' : '#606060'}`}></Home>Dashboard</Link></li>
                         <li> <button onClick={() => { setShowTrans(!showTrans) }} className={`${href[1] == "transactions" ? 'text-primary' : ''} flex items-center gap-3`}><TransCash f={`${href[1] == "transactions" ? '#1877F2' : '#606060'}`} ></TransCash>Transactions</button>
                             <ul className={`${showTrans ? 'h-24 mt-4' : 'h-0'} ml-8 text-sm flex flex-col gap-2 duration-500 overflow-hidden`}>
-                                <li className={`${href[1] == "transactions" && href[2] == 'mobile' ? 'text-primary' : ''} list-disc hover:text-primary`}><Link href={'/transactions/mobile'}>Transfert par mobile</Link></li>
+                                <li className={`${href[1] == "transactions" && href[2] == 'mobile' ? 'text-primary' : ''} list-disc hover:text-primary`}><Link href={'/feexpay/mobile'}>Transfert par mobile</Link></li>
                                 <li className={`${href[1] == "transactions" && href[2] == 'carte' ? 'text-primary' : ''} list-disc hover:text-primary`}><Link href={'/transactions/carte'}>Transfert par carte</Link></li>
                                 <li className={`${href[1] == "transactions" && href[2] == 'historique' ? 'text-primary' : ''} list-disc hover:text-primary`}><Link href={'/transactions/historique'}>Historique</Link></li>
                             </ul>
