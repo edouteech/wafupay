@@ -149,22 +149,22 @@
 
 
 "use client"
-import NavBar from "../Components/NavBar"
-import Image from "next/image"
 import welcome from "@/public/assets/images/welcome.png"
-import { useState } from "react"
-import { EyeOff, Eye } from "lucide-react"
+import { Eye, EyeOff } from "lucide-react"
+import { signIn } from "next-auth/react"
+import Image from "next/image"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import axios from "axios"
+import { useState } from "react"
+import { FcGoogle } from "react-icons/fc"
 import Swal from "sweetalert2"
-import { signIn } from "next-auth/react"
+import NavBar from "../Components/NavBar"
 
 function Register() {
     const apiUrl = process.env.NEXT_PUBLIC_APIURL
 
     const [showPassword1, setShowPassword1] = useState(false)
-    const [useMail, setUseMail] = useState(false)
+    const [useMail, setUseMail] = useState(true)
     const [user, setUser] = useState<{ "mail": string, tel: string, "password": string }>({ "mail": "", "password": "", "tel": "" })
     const router = useRouter()
 
@@ -241,8 +241,25 @@ function Register() {
                     <Image alt="bienvenue" src={welcome}></Image>
                 </div>
                 <div className="xs:mt-4">
-                    <form className="shadow-lg p-12 xs:p-4 rounded-3xl shadow-gray-400" onSubmit={handleSubmit}>
+                    <form className="shadow-lg p-4 xs:p-4 rounded-3xl shadow-gray-400" onSubmit={handleSubmit}>
                         <legend className="mb-8 text-black font-semibold text-2xl text-center">Connexion</legend>
+                        <div className="flex justify-center mb-5">
+                            <button 
+                                className={"border border-blue-400 px-4 py-2 rounded-s " + (useMail ? "bg-blue-400 text-white" : "")} 
+                                type="button"
+                                onClick={() => { setUseMail(true); handleInput({ target: { value: "" } }, "tel") }}
+                            >
+                                Email
+                            </button>
+                            <button 
+                                className={"border border-blue-400 px-4 py-2 rounded-e " + (useMail ? "" : "bg-blue-400 text-white")} 
+                                type="button"
+                                onClick={() => { setUseMail(false); handleInput({ target: { value: "" } }, "mail") }}
+                            >
+                                Téléphone
+                            </button>
+                        </div>
+
                         {!useMail && (
                             <div className="relative mb-4">
                                 <label htmlFor="tel" className="font-semibold absolute top-[-10px] bg-white left-4 px-1 text-sm"> Téléphone</label>
@@ -272,16 +289,10 @@ function Register() {
                         </div>
                         <div className="flex flex-col items-center gap-4 text-black text-xs">
                             <button type="submit" className="bg-primary rounded-sm shadow-lg shadow-gray-300 text-white p-2 px-4"> Se connecter </button>
-                            {!useMail ? (
-                                <span>Se connecter avec <button type="button" className="text-primary" onClick={() => { setUseMail(true); handleInput({ target: { value: "" } }, "tel") }}> un email</button></span>
-                            ) : (
-                                <span>Se connecter avec <button type="button" className="text-primary" onClick={() => { setUseMail(false); handleInput({ target: { value: "" } }, "mail") }}> un téléphone</button></span>
-                            )}
-                            <button
-                                type="button"
-                                onClick={(e)=>{e.preventDefault();handleGoogle()}}
-                                className="px-4 py-2 text-white bg-primary rounded-lg hover:bg-blue-600">
-                                Connectez-vous avec Google
+                            {/*  */}
+                            <p>Connectez-vous autrement : </p>
+                            <button type="button" onClick={(e)=>{e.preventDefault();handleGoogle()}} className="p-1 text-white border border-blue-400 rounded-full hover:bg-blue-400 w-10 h-10 flex items-center justify-center">
+                                <FcGoogle className="text-primary" size={34} />
                             </button>
                             <span>Vous avez déjà un compte ? <Link href={'/register'} className="text-sm text-primary">Créer un compte</Link></span>
                             <Link href={'/mot-de-passe-oublier'} className="text-sm text-primary">Mot de passe oublier</Link>

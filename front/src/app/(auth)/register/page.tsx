@@ -103,7 +103,7 @@ function Register() {
                         <div className="flex items-center gap-2 justify-center">
                             <Select classes=" mb-4 p-4 rounded-2xl leading-tight focus:outline-none focus:border-blue-500" id={typeof (user.country_id) == 'string' ? parseInt(user.country_id) : user.country_id} countries={countries} onChange={(e: { target: { value: string; }; }) => { handleInput(e, 'country_id') }}></Select>
                             <div className="relative mb-4 w-full">
-                                <label htmlFor="phone_num" className="font-semibold absolute top-[-10px] bg-white left-4 px-1 text-sm">Numéro de téléphone</label>
+                                <label htmlFor="phone_num" className="font-semibold absolute top-[-10px] bg-white left-4 px-1 text-sm">Téléphone</label>
                                 <input type="number" placeholder="Numéro de téléphone" className="w-full border p-4 rounded-2xl leading-tight focus:outline-none focus:border-blue-500" value={user.phone_num} onChange={(e) => { handleInput(e, "phone_num") }} />
                             </div>
                         </div>
@@ -126,14 +126,14 @@ function Register() {
                         <div className="relative mb-4">
                             {!showPassword2 && (
                                 <>
-                                    <label htmlFor="password2" className="font-semibold absolute top-[-10px] bg-white left-4 px-1 text-sm">Confirmer votre mot de passe</label>
+                                    <label htmlFor="password2" className="font-semibold absolute top-[-10px] bg-white left-4 px-1 text-sm">Confirmer mot de passe</label>
                                     <input type="password" placeholder="Confirmer votre mot de passe" className="border p-4 rounded-2xl leading-tight xs:w-full focus:outline-none focus:border-blue-500" value={user.password2} onChange={(e) => { handleInput(e, "password2") }} />
                                     <button><Eye onClick={() => { setShowPassword2(true) }} className="absolute top-4 right-5"></Eye></button>
                                 </>
                             )}
                             {showPassword2 && (
                                 <>
-                                    <label htmlFor="password2" className="font-semibold absolute top-[-10px] bg-white left-4 px-1 text-sm">Confirmer votre mot de passe</label>
+                                    <label htmlFor="password2" className="font-semibold absolute top-[-10px] bg-white left-4 px-1 text-sm">Confirmer mot de passe</label>
                                     <input type="text" placeholder="Confirmer votre mot de passe" className="border p-4 rounded-2xl leading-tight xs:w-full focus:outline-none focus:border-blue-500" value={user.password2} onChange={(e) => { handleInput(e, "password2") }} />
                                     <button><EyeOff onClick={() => { setShowPassword2(false) }} className="absolute top-4 right-5"></EyeOff></button>
                                 </>

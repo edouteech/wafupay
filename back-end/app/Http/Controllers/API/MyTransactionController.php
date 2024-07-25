@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Models\WProvider;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use App\Http\Services\LoggerService;
 use Illuminate\Support\Facades\Auth;
-use App\Http\Services\PayDunyaService;
 use App\Http\Services\FeexPayService;
+use App\Http\Services\PayDunyaService;
 use App\Http\Services\TransactionService;
 use App\Http\Resources\TransactionResource;
 
@@ -28,7 +30,7 @@ class MyTransactionController extends BaseController
     public function index(Request $request)
     {
         $per_page = request()->query('per_page', 10);
-        $transactions = Transaction::where('user_id', $request->user()->id)->orderBy('created_at', 'desc')->paginate($per_page);
+        $transactions = Transaction::with("payin_wprovider:id,name", "payout_wprovider:id,name")->where('user_id', $request->user()->id)->orderBy('created_at', 'desc')->paginate($per_page);
         return $this->handleResponse($transactions);
     }
 
@@ -252,14 +254,14 @@ class MyTransactionController extends BaseController
         // }
 
         //variables initialisation
-        // $payloads = $this->handleValidate($request->post(), $this->process->getRules());
+        $payloads = $this->handleValidate($request->post(), $this->process->getRules());
 
 
         $amount = $request->amount;
-        $operatorName = $request->payin_wprovider_name;
+        $operatorName = WProvider::find($request->payin_wprovider_id)->name;
         $fullname =  $user->first_name . ' ' . $user->last_name;
         $email =  $user->email;
-        $phoneNumber = $request->payin_phone_number;
+        $phoneNumber = '229' . $request->payin_phone_number;
         $otp = "";
         $callback_info = "Redirection";
         $custom_id = "test_transactions";
@@ -268,7 +270,7 @@ class MyTransactionController extends BaseController
         $response = $this->feexpay->initiateLocalPayment($amount, $phoneNumber, $operatorName, $fullname, $email, $callback_info, $custom_id, $otp);
 
         //get status
-        $status = $this->feexpay->getPaymentStatus($response);
+        // $status = $this->feexpay->getPaymentStatus($response);
 
         //create the transactions lane in db
         if (!empty($status) && $status["status"]  == "PENDING"){
@@ -284,7 +286,7 @@ class MyTransactionController extends BaseController
                 'payin_wprovider_id' => $request->payin_wprovider_id,
                 'payout_wprovider_id' => $request->payout_wprovider_id,
                 'type' => $request->type ?? 'others',
-                'token' => $status['transactionId'],
+                'token' => null,
                 'user_id' => $user->id,
                 'amount' => $status['amount'],
                 'amountWithoutFees' => $amount,
@@ -292,10 +294,6 @@ class MyTransactionController extends BaseController
             ]);
 
             $this->logger->saveLog($request, $this->logger::TRANSFER);
-        }
-
-        while (!empty($status)  && $status["status"]  == "PENDING") {
-            $status = $this->feexpay->getPaymentStatus($response);
         }
 
         if ( !empty($status)  && $status["status"]  == "SUCCESSFUL") {
@@ -309,7 +307,7 @@ class MyTransactionController extends BaseController
 
             return response()->json($payout);
         }
-            return response()->json($status);
+        return response()->json($response);
     }
 
     public function payback(Request $request)
@@ -334,5 +332,11 @@ class MyTransactionController extends BaseController
                 $motif = $request->$request->motif;
         }
 
+    }
+
+    public function feexpay_status($reference){
+        $status = $this->feexpay->getPaymentStatus($reference);
+        // $transaction = Transaction::where('token', $reference)->firstOrFail();
+        return response()->json($status);
     }
 }

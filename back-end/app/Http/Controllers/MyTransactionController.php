@@ -11,7 +11,7 @@ use App\Models\Transaction;
 use App\Http\Controllers\API\BaseController;
 
 class MyTransactionController extends Controller
-{
+{with("payin_wprovider", "payout_wprovider","user")->
 
     public function __construct(
         private readonly PayDunyaService $payDunya,
@@ -25,7 +25,8 @@ class MyTransactionController extends Controller
      */
     public function index()
     {
-        $transactions = TransactionResource::collection(Transaction::orderByDesc('id')->get());
+        // $transactions = TransactionResource::collection(Transaction::orderByDesc('id')->get());
+        $transactions = Transaction::orderByDesc('id')->paginate(10);
         return $this->handleResponse($transactions);
     }
     public function getTrans()

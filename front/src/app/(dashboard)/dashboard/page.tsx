@@ -8,37 +8,55 @@ import { Mobile, Payement, Manymen, Increase } from "../Components/icons"
 import Select from "../Components/Select"
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import Link from "next/link";
 
 function Dashboard() {
     //################################## CONSTANTES #############################//
     const apiUrl = process.env.NEXT_PUBLIC_APIURL
     const router = useRouter()
     const { data: session } = useSession()
-    const auth = { headers: { Authorization: `Bearer ${session?.user.token}` } }
+    const [auth, setAuth] = useState({ headers: { Authorization: '' } })
+    // const auth = { headers: { Authorization: `Bearer ${session?.user.token}` } }
     //################################## VARIABLES ##############################//
 
+    // const {data : session} = useSession()
     const [transactions, setTransactions] = useState<any[]>([]);
     const [totalTransactions, setTotalTransactions] = useState(0);
     const [numTransactions, setNumTransactions] = useState(0);
 
     const [transactionCount, setTransactionCount] = useState(0);
 
+    useEffect(() => {
+        if (!session) {
+            return
+        }
+        setAuth({ headers: { Authorization: `Bearer ${session?.user.token}` } })
+        axios.get(`${apiUrl}/transactions`, { headers: { Authorization: `Bearer ${session?.user.token}` } }).then((response) => {
+            setTransactions(response.data.data.data)
+            setTotalTransactions(response.data.data.totalTransactions);
+            setNumTransactions(response.data.data.numTransactions);
+        })
+    }, [session])
     // useEffect(() => {
     //     // Remplacez cette URL par l'endpoint réel de votre API
     //     const fetchTransactions = async () => {
-    //         try {
-    //             const response = await axios.get('https://api.exemple.com/transactions');
-    //             setTransactions(response.data.transactions);
-    //             setTotalTransactions(response.data.totalTransactions);
-    //             setNumTransactions(response.data.numTransactions);
-    //         } catch (error) {
-    //             console.error('Erreur de récupération des données:', error);
+    //         if ( auth && auth.headers ) {
+
+    //             try {
+    //                 const response = await axios.get(`${apiUrl}/transactions`, auth);
+    //                 console.log(response.data);
+    //                 setTransactions(response.data.transactions);
+    //                 setTotalTransactions(response.data.totalTransactions);
+    //                 setNumTransactions(response.data.numTransactions);
+    //             } catch (error) {
+    //                 console.error('Erreur de récupération des données:', error);
+    //             }
     //         }
     //     };
 
     //     fetchTransactions();
 
-    // }, []);
+    // }, [auth]);
 
 
     useEffect(() => {
@@ -148,12 +166,33 @@ function Dashboard() {
                                     <th className="p-4">Montant</th>
                                 </tr>
                             </thead>
+                            {/* {
+	"0": {
+		"id": 54,
+		"user_id": 4,
+		"": "+1.765.513.3548",
+		"payin_wprovider_id": 7,
+		"payin_status": "failed",
+		"payout_phone_number": "+1.401.899.6588",
+		"payout_wprovider_id": 8,
+		"payout_status": "success",
+		"amount": 44177.52,
+		"amountWithoutFees": 42410.42,
+		"type": "others",
+		"token": "f90b80d4-bf79-349e-80d1-42659699d671",
+		"disburse_token": "180fb6aa-9e9a-34b0-a905-251e208ccfd0",
+		"otp_code": "206856",
+		"deleted_at": null,
+		"created_at": "2024-06-19T19:06:51.000000Z",
+		"updated_at": "2024-06-19T19:06:51.000000Z"
+	}
+} */}
                             <tbody className="">
                                 {transactions.map((transaction, index) => (
                                     <tr key={index} className="border border-gray-300">
                                         <td className="p-4">{transaction.name}</td>
                                         <td className="p-4">{transaction.type}</td>
-                                        <td className="p-4">{transaction.rd}</td>
+                                        <td className="p-4">{transaction.payin_phone_number}</td>
                                         <td className="p-4">{transaction.nd}</td>
                                         <td className="p-4">{transaction.ra}</td>
                                         <td className="p-4">{transaction.nd}</td>
@@ -164,9 +203,9 @@ function Dashboard() {
                                 ))}
                             </tbody>
                         </table>
-                        <button className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-md">
+                        <Link href="/transactions/historique" className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-md mx-auto block w-fit">
                             Voir plus
-                        </button>
+                        </Link>
                     </div>
                 </div>
 

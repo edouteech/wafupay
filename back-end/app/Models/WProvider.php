@@ -35,11 +35,12 @@ class WProvider extends Model
     public function getFee(float | string $amount)
     {
         return array_filter(
-            array(...$this->transaction_fees),
-            function ($fee) use ($amount) {
-                return ($fee['min_amount'] <= $amount) &&  ($amount <= $fee['max_amount']);
-            }
-        )[0] ??
+                array(...$this->transaction_fees),
+                function ($fee) use ($amount) {
+                    // return ($fee['min_amount'] <= $amount) &&  ($amount <= $fee['max_amount']);
+                    return true;
+                }
+            )[0] ??
             throw new ValidationException(json_encode([
                 'status' => 403,
                 'message' => "Le solde que vous essayez d'envoyer est trop inferieur ou trop grande, nous supportons de 500 à 500 000 FCFA pour ce gestionnaire de portefeuil"

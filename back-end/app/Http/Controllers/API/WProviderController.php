@@ -16,9 +16,9 @@ class WProviderController extends BaseController
         'country_id' => 'required|exists:countries,id',
         'logo' => 'extensions:jpg,jpeg,png,bmp,gif,svg,webp|file|max:2048',
         'fees' => 'required|array',
-        'fees.*.payin_fee' => 'required|numeric|max:100|min:0',
-        'fees.*.payout_fee' => 'required|numeric|max:100|min:0',
-        'fees.*.min_amount' => 'required|numeric|min:500',
+        'fees.*.payin_fee' => 'required|numeric',
+        'fees.*.payout_fee' => 'required|numeric',
+        'fees.*.min_amount' => 'required|numeric|min:10',
         'fees.*.max_amount' => 'required|numeric|max:500000',
     ];
 

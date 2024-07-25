@@ -97,8 +97,8 @@ function Profil() {
                     <div className="mb-4">
                         <label className="flex items-center p-4 w-full border-black text-gray-400 text-base font-bold mb-2" htmlFor="phone">
 
-
-                           
+                            Téléphone
+{/*                            
                                 <div className="flex items-center justify-center w-10 ml-2 ">
                                     <Image
                                         src={require('@/public/assets/images/+229.png')}
@@ -107,7 +107,7 @@ function Profil() {
                                         height={60}
 
                                     />
-                                </div>
+                                </div> */}
                                 <input
                                     className="p-3 w-full focus-visible:outline-none focus:border-b-2 focus:border-primary  text-black text-right "
                                     id="phone"

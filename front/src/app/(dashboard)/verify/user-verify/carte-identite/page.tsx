@@ -6,22 +6,20 @@ import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import axios from "axios"
 import { headers } from "next/headers"
+import { useSession } from "next-auth/react"
 
 function CarteId() {
     //################################## CONSTANTES #############################//
     const apiUrl = process.env.NEXT_PUBLIC_APIURL
     const router = useRouter();
-
-    //################################## VARIABLES ##############################//
-    const [pics, setPics] = useState<File[]>([])
     const [auth, setAuth] = useState({headers : {Authorization : ''}})
+    const {data : session} = useSession()
+    const [pics, setPics] = useState<File[]>([])
 
     //################################## MOUNTED ################################//
     useEffect(() => {
-        let tok = localStorage.getItem('token')
-        auth.headers.Authorization = `Bearer ${tok}`
-        setAuth({ headers: { Authorization: `Bearer ${tok}` } })
-    }, [])
+        setAuth({ headers: { Authorization: `Bearer ${session?.user.token}` } })
+    }, [session])
 
 
     //################################## WATCHER #################################//

@@ -10,10 +10,11 @@ import Link from "next/link"
 import { useSession } from "next-auth/react"
 
 function Historique() {
-    //################################## CONSTANTES #############################//
+    //############################### CONSTANTES / STATES #############################//
     const apiUrl = process.env.NEXT_PUBLIC_APIURL
     const router = useRouter()
     const [auth, setAuth] = useState({ headers: { Authorization: '' } })
+    const {data : session} = useSession()
     const [searchTerm, setSearchTerm] = useState('')
     const [searchBy, setSearchBy] = useState('')
     const [trans, setTrans] = useState<Transaction[]>([])
@@ -21,7 +22,6 @@ function Historique() {
     const [pageCount, setPageCount] = useState<number[]>([])
     const [prev, setPrev] = useState('')
     const [next, setNext] = useState('')
-    const {data : session} = useSession()
 
     //################################## VARIABLES ##############################//
 
@@ -33,15 +33,15 @@ function Historique() {
             return
         }
         setAuth({ headers: { Authorization: `Bearer ${session?.user.token}` } })
-        axios.get(`${apiUrl}/transactions`, { headers: { Authorization: `Bearer ${session?.user.token}` } }).then((resp) => {
-            setTrans(resp.data.data.data)
+        axios.get(`${apiUrl}/transactions`, { headers: { Authorization: `Bearer ${session?.user.token}` } }).then((response) => {
+            setTrans(response.data.data.data)
             let tab = []
-            for (let i = 0; i < Math.ceil(resp.data.data.total / resp.data.data.per_page); i++) {
+            for (let i = 0; i < Math.ceil(response.data.data.total / response.data.data.per_page); i++) {
                 tab[i] = i + 1
             }
             setPageCount(tab)
-            setPrev(resp.data.data.prev_page_url)
-            setNext(resp.data.data.next_page_url)
+            setPrev(response.data.data.prev_page_url)
+            setNext(response.data.data.next_page_url)
         })
     }, [session])
 
@@ -52,55 +52,52 @@ function Historique() {
     //################################## METHODS #################################//
 
     const formatDate = (dateString: string) => {
-        return new Date(dateString).toLocaleDateString('fr-FR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+        return new Date(dateString).toLocaleDateString('fr-FR', {year: 'numeric', month: 'long', day: 'numeric' });
     }
 
     const getState = (tran: Transaction, i: number) => {
 
-        axios.get(`${apiUrl}/check-status/${tran.token}/payin`, auth).then((resp) => {
+        axios.get(`${apiUrl}/check-status/${tran.token}/payin`, auth).then((response) => {
             let tab = trans.slice()
-            tab[i].payin_status = resp.data.data.status
-            tab[i].payout_status = resp.data.data.status
+            tab[i].payin_status = response.data.data.status
+            tab[i].payout_status = response.data.data.status
             setTrans(tab)
         })
         setTrans(trans)
     }
 
     const changePage = (page:number) =>{
-        axios.get(`${apiUrl}/transactions?page=${page}`, auth).then((resp) => {
-            setTrans(resp.data.data.data)
+        axios.get(`${apiUrl}/transactions?page=${page}`, auth).then((response) => {
+            setTrans(response.data.data.data)
             let tab = []
-            for (let i = 0; i < Math.ceil(resp.data.data.total / resp.data.data.per_page); i++) {
+            for (let i = 0; i < Math.ceil(response.data.data.total / response.data.data.per_page); i++) {
                 tab[i] = i + 1
             }
             setPage(page)
             setPageCount(tab)
-            setPrev(resp.data.data.prev_page_url)
-            setNext(resp.data.data.next_page_url)
+            setPrev(response.data.data.prev_page_url)
+            setNext(response.data.data.next_page_url)
         })
     }
 
     const prevOrNext = (link : string) =>{
         if (link) {
-            axios.get(`${link}`, auth).then((resp) => {
-                setTrans(resp.data.data.data)
+            axios.get(`${link}`, auth).then((response) => {
+                setTrans(response.data.data.data)
                 let tab = []
-                for (let i = 0; i < Math.ceil(resp.data.data.total / resp.data.data.per_page); i++) {
+                for (let i = 0; i < Math.ceil(response.data.data.total / response.data.data.per_page); i++) {
                     tab[i] = i + 1
                 }
-                setPage(resp.data.data.current_page)
+                setPage(response.data.data.current_page)
                 setPageCount(tab)
-                setPrev(resp.data.data.prev_page_url)
-                setNext(resp.data.data.next_page_url)
+                setPrev(response.data.data.prev_page_url)
+                setNext(response.data.data.next_page_url)
             })
         }else{
             return;
         }
     }
 
-    // const getData = () =>{
-        
-    // }
 
     //################################## HTML ####################################//
 
@@ -109,33 +106,42 @@ function Historique() {
             <Dashbord>
                 <div className="p-16 mb-8">
                     <h1 className="font-bold text-gray-700 mb-4">
-                        Recherche et filtrage des transactions
+                        Historique des transactions
                     </h1>
                     <div className=" mt-8 text-base w-full">
                         <table className="rounded-3xl bg-white overflow-hidden text-center">
                             <thead className="text-secBlue border-b border-gray-300">
                                 <th className="p-2 ">Date</th>
-                                <th className="p-2 ">Tel Envoyeur</th>
-                                <th className="p-2 ">Tel Receveur</th>
-                                <th className="p-2 ">Frais appliqué</th>
+                                <th className="p-2 ">Envoyeur</th>
+                                <th className="p-2 ">Receveur</th>
+                                {/* <th className="p-2 ">Frais appliqué</th> */}
                                 <th className="p-2 ">Montant</th>
-                                <th className="p-2 ">Statut envoyeur</th>
-                                <th className="p-2 ">Statut Receveur</th>
+                                <th className="p-2 ">Envoi</th>
+                                <th className="p-2 ">Recept.</th>
                                 <th className="p-2 ">Action</th>
                             </thead>
                             <tbody>
                                 {trans.map((tran, i) => (
                                     <tr key={i}>
                                         <td className="p-2">{formatDate(tran.created_at)}</td>
-                                        <td className="p-2">{tran.payin_phone_number}</td>
-                                        <td className="p-2">{tran.payout_phone_number}</td>
-                                        <td className="p-2">{parseInt(tran.amount) - parseInt(tran.amountWithoutFees)}</td>
-                                        <td className="p-2 text-primary">{tran.amount}</td>
-                                        <td className="">
-                                            <span className={`${tran.payin_status == 'pending' ? 'bg-yellow-500' : tran.payin_status == 'success' ? 'bg-green-500' : tran.payin_status == 'failed' ? 'bg-red-500' : ''} p-2 text-white rounded`}>{`${tran.payin_status == 'pending' ? 'en cours' : tran.payin_status == 'succes' ? 'effectué' : tran.payin_status == 'failed' ? 'échoué' : ''}`}</span>
+                                        <td className="p-2">
+                                            <span className="block text-xs">{tran.payin_wprovider?.name}</span>
+                                            <strong className="block text-sm font-bold">{tran.payin_phone_number}</strong>
+                                        </td>
+                                        <td className="p-2">
+                                            <span className="block text-xs">{tran.payout_wprovider?.name}</span>
+                                            <strong className="block text-sm font-bold">{tran.payout_phone_number}</strong>
+                                        </td>
+                                        {/* <td className="p-2">{parseInt(tran.amount) - parseInt(tran.amountWithoutFees)}</td> */}
+                                        <td className="p-2 ">
+                                            <strong className="text-primary font-bold">{tran.amount} F</strong>
+                                            <span className="font-light text-xs text-red-500"> / ({parseInt(tran.amount) - parseInt(tran.amountWithoutFees)} F)</span>
                                         </td>
                                         <td className="">
-                                            <span className={`${tran.payout_status == 'pending' ? 'bg-yellow-500' : tran.payout_status == 'success' ? 'bg-green-500' : tran.payout_status == 'failed' ? 'bg-red-500' : ''} p-2 text-white rounded`}>{`${tran.payout_status == 'pending' ? 'en cours' : tran.payout_status == 'succes' ? 'effectué' : tran.payout_status == 'failed' ? 'échoué' : ''}`}</span>
+                                            <span className={`${tran.payin_status == 'pending' ? 'bg-yellow-500' : tran.payin_status == 'success' ? 'bg-green-500' : tran.payin_status == 'failed' ? 'bg-red-500' : ''} p-2 text-white rounded`}>{`${tran.payin_status == 'pending' ? 'en cours' : tran.payin_status == 'success' ? 'effectué' : tran.payin_status == 'failed' ? 'échoué' : ''}`}</span>
+                                        </td>
+                                        <td className="">
+                                            <span className={`${tran.payout_status == 'pending' ? 'bg-yellow-500' : tran.payout_status == 'success' ? 'bg-green-500' : tran.payout_status == 'failed' ? 'bg-red-500' : ''} p-2 text-white rounded`}>{`${tran.payout_status == 'pending' ? 'en cours' : tran.payout_status == 'success' ? 'effectué' : tran.payout_status == 'failed' ? 'échoué' : ''}`}</span>
                                         </td>
                                         <td>
                                             <div className="relative group">

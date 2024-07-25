@@ -12,14 +12,22 @@ import Swal from "sweetalert2"
 import Link from "next/link"
 import Select from "../../Components/Select"
 import { count } from "console"
+import { useSession } from "next-auth/react"
 
 function Mobile() {
-  //################################## CONSTANTES #############################//
-  const apiUrl = process.env.NEXT_PUBLIC_APIURL
-  const router = useRouter()
-  const [auth, setAuth] = useState({ headers: { Authorization: '' } })
 
-  //################################## VARIABLES ##############################//
+    //############################### CONSTANTES / STATES #############################//
+    const apiUrl = process.env.NEXT_PUBLIC_APIURL
+    const router = useRouter()
+    const [auth, setAuth] = useState({ headers: { Authorization: '' } })
+    const {data : session} = useSession()
+    
+  // //################################## CONSTANTES #############################//
+  // const apiUrl = process.env.NEXT_PUBLIC_APIURL
+  // const router = useRouter()
+  // const [auth, setAuth] = useState({ headers: { Authorization: '' } })
+
+  // //################################## VARIABLES ##############################//
   const [methods, setMethods] = useState<WProvider[]>([]);
   const [methodIn, setMethodIn] = useState<WProvider>()
   const [methodOut, setMethodOut] = useState<WProvider>()
@@ -30,25 +38,33 @@ function Mobile() {
   const [showM, setShowM] = useState(false)
 
   //################################## MOUNTED ################################//
-  useEffect(() => {
-    let tok = localStorage.getItem('token')
-    auth.headers.Authorization = `Bearer ${tok}`
-    setAuth({ headers: { Authorization: `Bearer ${tok}` } })
-    axios.get(`${apiUrl}/wallet-providers`, { headers: { Authorization: `Bearer ${tok}` } }).then((resp) => {
-      console.log(resp.data.data);
 
-      setMethods(resp.data.data)
-      let mI = findElementById(1, resp.data.data)
-      let mO = findElementById(2, resp.data.data)
+//   useEffect(() => {
+//     if (!session) { return }
+//     setAuth({ headers: { Authorization: `Bearer ${session?.user.token}` } })
+//     axios.get(`${apiUrl}/transactions`, { headers: { Authorization: `Bearer ${session?.user.token}` } }).then((response) => {
+        
+//     })
+    
+// }, [session])
+  useEffect(() => {
+    if (!session) { return }
+    setAuth({ headers: { Authorization: `Bearer ${session?.user.token}` } })
+    axios.get(`${apiUrl}/wallet-providers`, auth).then((response) => {
+        
+      setMethods(response.data.data)
+      let mI = findElementById(1, response.data.data)
+      let mO = findElementById(2, response.data.data)
       setMethodIn(mI)
       setMethodOut(mO)
-      axios.get(`${apiUrl}/countries`).then((resp) => {
-        setCountries(resp.data.data)
-        setCountryTo(findElementById(parseInt(mI.country_id), resp.data.data))
-        setCountryFrom(findElementById(parseInt(mO.country_id), resp.data.data))
+      axios.get(`${apiUrl}/countries`, auth).then((response) => {
+        setCountries(response.data.data)
+        setCountryTo(findElementById(parseInt(mI.country_id), response.data.data))
+        setCountryFrom(findElementById(parseInt(mO.country_id), response.data.data))
       })
     })
-  }, [])
+    
+  }, [session])
 
   const handleChange = (e: { target: { value: string | number } }, field: string) => {
     let fields = field.split(".")
@@ -102,8 +118,8 @@ function Mobile() {
   const handleSubmit = () => {
     console.log(auth);
 
-    axios.post(`${apiUrl}/transactions`, { "amount": trans.amount, "payin_phone_number": trans.from.phone, "payout_phone_number": trans.to.phone, "payin_wprovider_id": trans.from.method, "payout_wprovider_id": trans.to.method, "sender_support_fee": trans.sender_support_fee }, auth).then((resp) => {
-      if (resp.data.data.status == 200) {
+    axios.post(`${apiUrl}/transactions`, { "amount": trans.amount, "payin_phone_number": trans.from.phone, "payout_phone_number": trans.to.phone, "payin_wprovider_id": trans.from.method, "payout_wprovider_id": trans.to.method, "sender_support_fee": trans.sender_support_fee }, auth).then((response) => {
+      if (response.data.data.status == 200) {
         router.push('/transactions/historique')
       }
 

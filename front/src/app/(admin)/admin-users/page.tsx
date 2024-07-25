@@ -94,23 +94,27 @@ function AdminDashboard() {
             <Dashbord>
                 <div>
                     <div className="mx-32 my-12 xs:mx-2 w-auto xs:my-0">
-                        <h2 className="text-center text-[#8280FF] font-semibold mb-8">Liste des utilisateurs</h2>
+                        <h2 className="text-center text-[#8280FF] font-semibold mb-8">Liste des Admin</h2>
                         <table className="w-full min-w-full xs:w-auto">
                             <thead className="bg-white text-left text-base font-semibold">
                                 <tr>
+                                    <th className="py-2">Date</th>
                                     <th className="py-2">Nom et prénom(s)</th>
                                     <th className="py-2">Statut</th>
-                                    <th className="py-2">Date de création</th>
                                     <th className="py-2">Actions</th>
                                 </tr>
                             </thead>
                             <tbody className="text-base text-black">
                                 {admins.map((ad, i) => (
                                     <tr className="text-left text-sm" key={i}>
+                                        <td className="p-1 pl-6">{ad.created_at.substring(0, 10).split("-").reverse().join("-")}</td>
                                         <td className="p-1 pl-4">{ad.first_name} {ad.last_name}</td>
                                         <td className="p-1 ">Admin</td>
-                                        <td className="p-1 pl-6">{ad.created_at.substring(0, 10).split("-").reverse().join("-")}</td>
-                                        <td className="flex gap-2 p-1"><PenLine className="w-4 h-4"></PenLine><Trash className="w-4 h-4"></Trash></td>
+                                        <td className="flex gap-2 p-1">
+                                            <Eye className="w-4 h-4"></Eye>
+                                            <PenLine className="w-4 h-4"></PenLine>
+                                            <Trash className="w-4 h-4"></Trash>
+                                        </td>
                                     </tr>
                                 ))}
                             </tbody>
@@ -119,31 +123,35 @@ function AdminDashboard() {
 
                     <div className="mx-8 mt-12 mb-24 xs:mx-2">
                         <h2 className="text-center text-[#8280FF] font-semibold mb-8">Liste des utilisateurs</h2>
-                        <table className="w-full xs:w-auto">
+                        <table className="w-full xs:w-auto border">
                             <thead className="bg-white text-left text-base font-semibold">
                                 <tr>
-                                    <th className="py-2">Nom et prénom(s)</th>
-                                    <th className="py-2">Téléphone</th>
-                                    <th className="py-2 pl-12">Email</th>
-                                    <th className="p-1 pl-4">Statut</th>
-                                    <th className="py-2">Date de création</th>
-                                    <th className="py-2">Actions</th>
+                                    <th className="p-2">Date</th>
+                                    <th className="p-2">Nom et prénom(s)</th>
+                                    <th className="p-2">Téléphone</th>
+                                    <th className="p-2">Email</th>
+                                    <th className="p-2">Statut</th>
+                                    <th className="p-2">Actions</th>
                                 </tr>
                             </thead>
                             <tbody className="text-base text-black">
-                                {users.map((us, i) => (
+                                {users.map((user, i) => (
                                     <tr className="text-left text-sm" key={i}>
-                                        <td className="p-1 pl-4">{us.first_name} {us.last_name}</td>
-                                        <td className="p-1 flex items-center gap-2">
-                                            {us.phone_num && (
-                                                <span>({us.phone_num.substring(0, 4)})</span>
+                                        <td className="p-2">{user.created_at.substring(0, 10).split("-").reverse().join("-")}</td>
+                                        <td className="p-2">{user.first_name} {user.last_name}</td>
+                                        <td className="p-2flex items-center gap-2">
+                                            {user.phone_num && (
+                                                <span>({user.phone_num.substring(0, 4)})</span>
                                             )}
-                                            {us.phone_num ? us.phone_num.substring(4, us.phone_num.length) : ""}
+                                            {user.phone_num ? user.phone_num.substring(4, user.phone_num.length) : ""}
                                         </td>
-                                        <td className="p-1 pl-8">{us.email}</td>
-                                        <td className={`${us.is_verified == "0" ? 'text-red-500' : 'text-green-500'} p-1`}>{us.is_verified == "0" ? 'Non vérifié' : "Vérifier"}</td>
-                                        <td className="p-1 pl-6">{us.created_at.substring(0, 10).split("-").reverse().join("-")}</td>
-                                        <td className="flex gap-2 p-1"><PenLine className="w-4 h-4"></PenLine><Trash className="w-4 h-4"></Trash></td>
+                                        <td className="p-2">{user.email}</td>
+                                        <td className={`${user.is_verified == "0" ? 'text-red-500' : 'text-green-500'} p-1`}>{user.is_verified == "0" ? 'Non vérifié' : "Vérifier"}</td>
+                                        <td className="flex gap-2 p-1">
+                                            <Eye className="w-4 h-4 text-primary" onClick={() => { setUser(user) }}></Eye>
+                                            <PenLine className="w-4 h-4 text-cyan-500"></PenLine>
+                                            <Trash className="w-4 h-4 text-red-500"></Trash>
+                                        </td>
                                     </tr>
                                 ))}
                             </tbody>

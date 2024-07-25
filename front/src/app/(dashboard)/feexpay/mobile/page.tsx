@@ -34,6 +34,8 @@ function Mobile() {
   const [payout_wprovider_name ,  setPayout_wprovider_name] = useState('');
   const [payout_phone_number , setPayout_phone_number] = useState('');
   const [motif , setMotif] = useState('');
+  const [transRef , setTransRef] = useState('');
+  const [transStatus , setTransStatus] = useState('');
   
   
   //################################## MOUNTED ################################//
@@ -142,22 +144,34 @@ function Mobile() {
 
 
   const handleSubmit = async () => {
-    console.log(auth);
-
     await axios.post(`${apiUrl}/feexpay`, {
-    "amount": trans.amount, 
-    payin_phone_number, 
-    payout_phone_number, 
-    "payin_wprovider_id": trans.from.method, 
-    "payout_wprovider_id": trans.to.method, 
-    "sender_support_fee": trans.sender_support_fee, 
-    payin_wprovider_name,
-    payout_wprovider_name,
-    motif
+      "amount": trans.amount, 
+      "payin_phone_number": trans.from.phone, 
+      "payout_phone_number": trans.to.phone, 
+      "payin_wprovider_id": trans.from.method, 
+      "payout_wprovider_id": trans.to.method, 
+      "sender_support_fee": trans.sender_support_fee,
+    // "amount": trans.amount, 
+    // "payin_phone_number": trans.payin_phone_number, 
+    // "payout_phone_number": trans.payout_phone_number, 
+    // "payin_wprovider_id": trans.from.method, 
+    // "payout_wprovider_id": trans.to.method, 
+    // "sender_support_fee": trans.sender_support_fee, 
+    "payin_wprovider_name": trans.payin_wprovider_name,
+    // "payout_wprovider_name": trans.payout_wprovider_name,
+      "motif": "1"
   } ,
      auth).then((resp) => {
-      if (resp.data.data.status == 200) {
-        router.push('/transactions/historique')
+      if (resp.status == 200) {
+        setShowM(false)
+        setTransRef(resp.data)
+        let myInterval = setInterval(() => {
+          let status = checkStatus(resp.data)
+          if (status == "SUCCESSFUL") {
+            clearInterval(myInterval);
+            setTransStatus(status)
+          }
+        }, 1000);
       }
 
     }).catch((err) => {
@@ -187,7 +201,15 @@ function Mobile() {
   }
 
   //################################## WATCHER #################################//
-
+  const checkStatus = async (transactionId: string) => {
+    console.log("execute checkStatus")
+    await axios.get(`${apiUrl}/feexpay/${transactionId}`, auth).then((resp) => {
+      console.log(resp)
+      if (resp.status == 200) {
+        setTransStatus(resp.data.status)
+      }
+    })
+  }
 
 
   //################################## METHODS #################################//
@@ -309,7 +331,6 @@ function Mobile() {
 
         <div className="text-base w-1/2 mx-auto rounded-2xl overflow-hidden mt-8">
           {showM && (
-
             <div className="fixed inset-0 flex items-center justify-center backdrop-blur-sm z-50">
               <div className="bg-white rounded-lg p-6 max-w-sm w-full shadow-lg">
                 <div className="text-center">
@@ -321,6 +342,54 @@ function Mobile() {
                 <div className="flex justify-center">
                   <button className="px-4 py-2 mt-4 bg-primary text-white rounded-md text-base" onClick={() => { handleSubmit() }} > Approuver </button>
                   <button className="px-4 py-2 mt-4 bg-red-500 text-white rounded-md text-base ml-4" onClick={() => { setShowM(false) }}> Rejeter </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {(transStatus == 'PENDING') && (
+            <div className="fixed inset-0 flex items-center justify-center backdrop-blur-sm z-50">
+              <div className="bg-white rounded-lg p-6 max-w-sm w-full shadow-lg">
+                <div className="text-center">
+                  <p className="text-lg">
+                    Transaction en cours de traitement
+                  </p>
+
+                </div>
+                <div className="flex justify-center">
+                  <button className="px-4 py-2 mt-4 bg-red-500 text-white rounded-md text-base ml-4" onClick={() => { setShowM(false) }}> Fermer </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {(transStatus == 'FAILED') && (
+            <div className="fixed inset-0 flex items-center justify-center backdrop-blur-sm z-50">
+              <div className="bg-white rounded-lg p-6 max-w-sm w-full shadow-lg">
+                <div className="text-center">
+                  <p className="text-lg">
+                    Transaction a échoué
+                  </p>
+
+                </div>
+                <div className="flex justify-center">
+                  <button className="px-4 py-2 mt-4 bg-red-500 text-white rounded-md text-base ml-4" onClick={() => { setShowM(false) }}> Fermer </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {(transStatus == 'SUCCESSFUL') && (
+            <div className="fixed inset-0 flex items-center justify-center backdrop-blur-sm z-50">
+              <div className="bg-white rounded-lg p-6 max-w-sm w-full shadow-lg">
+                <div className="text-center">
+                  <p className="text-lg">
+                    Transaction a été traitée avec succès
+                  </p>
+
+                </div>
+                <div className="flex justify-center">
+                  <button className="px-4 py-2 mt-4 bg-red-500 text-white rounded-md text-base ml-4" onClick={() => { setShowM(false) }}> Fermer </button>
                 </div>
               </div>
             </div>
