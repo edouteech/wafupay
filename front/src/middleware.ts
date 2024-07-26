@@ -50,7 +50,6 @@ export default withAuth(
 
 export const config = {
   matcher: [
-    '/',
-    '/((?!about|login|register|home|mail-verification|mot-de-passe-oublier|nouveau-mot-de-passe).*)',
+    '/((?!about|login|register|home|mail-verification|mot-de-passe-oublier|nouveau-mot-de-passe|$).*)',
   ],
 };
