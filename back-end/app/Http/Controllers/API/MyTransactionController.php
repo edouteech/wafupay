@@ -267,47 +267,39 @@ class MyTransactionController extends BaseController
         $custom_id = "test_transactions";
 
       // initiate payment
-        $response = $this->feexpay->initiateLocalPayment($amount, $phoneNumber, $operatorName, $fullname, $email, $callback_info, $custom_id, $otp);
+        $token_feexpay = $this->feexpay->initiateLocalPayment($amount, $phoneNumber, $operatorName, $fullname, $email, $callback_info, $custom_id, $otp);
 
         //get status
-        // $status = $this->feexpay->getPaymentStatus($response);
+        $status = $this->feexpay->getPaymentStatus($token_feexpay);
 
-        //create the transactions lane in db
-        if (!empty($status) && $status["status"]  == "PENDING"){
+        Transaction::create([
+            ...$payloads,
+            'payin_status' => Transaction::PENDING_STATUS,
+            'payout_status' => Transaction::PENDING_STATUS,
+            'payin_phone_number' => $request->payin_phone_number,
+            'payout_phone_number' => $request->payout_phone_number,
+            'payin_wprovider_id' => $request->payin_wprovider_id,
+            'payout_wprovider_id' => $request->payout_wprovider_id,
+            'type' => $request->type ?? 'others',
+            'token' => $token_feexpay,
+            'user_id' => $user->id,
+            'amount' => $status['amount'],
+            'amountWithoutFees' => $amount,
+            'otp_code' => $request->input('otp_code', 1),
+        ]);
 
-            unset($payloads['amount']);
+        // if ( !empty($status)  && $status["status"]  == "SUCCESSFUL") {
 
-            Transaction::create([
-                ...$payloads,
-                'payin_status' => Transaction::PENDING_STATUS,
-                'payout_status' => Transaction::PENDING_STATUS,
-                'payin_phone_number' => $request->payin_phone_number,
-                'payout_phone_number' => $request->payout_phone_number,
-                'payin_wprovider_id' => $request->payin_wprovider_id,
-                'payout_wprovider_id' => $request->payout_wprovider_id,
-                'type' => $request->type ?? 'others',
-                'token' => null,
-                'user_id' => $user->id,
-                'amount' => $status['amount'],
-                'amountWithoutFees' => $amount,
-                'otp_code' => $request->input('otp_code', 1),
-            ]);
+        //    $phoneNumber = $request->payout_phone_number;
+        //    $amount = $request->amount;
+        //    $operatorName = $request->payout_wprovider_name;
+        //    $motif = $request->motif;
 
-            $this->logger->saveLog($request, $this->logger::TRANSFER);
-        }
+        //     $payout = $this->feexpay->initiatePayout($amount, $phoneNumber, $operatorName, $motif);
 
-        if ( !empty($status)  && $status["status"]  == "SUCCESSFUL") {
-
-           $phoneNumber = $request->payout_phone_number;
-           $amount = $request->amount;
-           $operatorName = $request->payout_wprovider_name;
-           $motif = $request->motif;
-
-            $payout = $this->feexpay->initiatePayout($amount, $phoneNumber, $operatorName, $motif);
-
-            return response()->json($payout);
-        }
-        return response()->json($response);
+        //     return response()->json($payout);
+        // }
+        return response()->json($token_feexpay);
     }
 
     public function payback(Request $request)
@@ -334,9 +326,34 @@ class MyTransactionController extends BaseController
 
     }
 
-    public function feexpay_status($reference){
+    public function feexpayStatus($reference){
         $status = $this->feexpay->getPaymentStatus($reference);
-        // $transaction = Transaction::where('token', $reference)->firstOrFail();
+        $transaction = Transaction::where('token', $reference)->first();
+        if($transaction && $status['status'] == 'FAILED'){
+            $transaction->update(['payin_status' => "failed",'payout_status' => "failed"]);
+        }
+        if($transaction && $status['status'] == 'SUCCESSFUL'){
+            $transaction->update(['payin_status' => "success"]);
+            
+            $payout = $this->feexpay->initiatePayout(
+                $transaction->amountWithoutFees,
+                '229' . $transaction->payout_phone_number,
+                $transaction->payout_wprovider->name,
+                "payout"
+                // $amount, $phoneNumber, $operatorName, $motif
+            );
+            
+            // if($payout['reference']){
+                $transaction->update(['disburse_token' => $payout['reference']]);
+            // }
+            if (isset($payout['status']) && $payout['status'] == 'SUCCESSFUL') {
+                $transaction->update(['payout_status' => "success"]);
+            }else{
+                $transaction->update(['payout_status' => "failed"]);
+            }
+            return response()->json($payout);
+        }
+        
         return response()->json($status);
     }
 }

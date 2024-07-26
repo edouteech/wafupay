@@ -144,7 +144,7 @@ function Mobile() {
 
 
   const handleSubmit = async () => {
-    await axios.post(`${apiUrl}/feexpay`, {
+    await axios.post(`${apiUrl}/feexpay/paiment-local`, {
       "amount": trans.amount, 
       "payin_phone_number": trans.from.phone, 
       "payout_phone_number": trans.to.phone, 
@@ -159,13 +159,6 @@ function Mobile() {
         setShowM(false)
         setTransRef(resp.data)
         checkStatus(resp.data);
-        // let myInterval = setInterval(async () => {
-        //   let status = await checkStatus(resp.data);
-        //   if (status == "SUCCESSFUL") {
-        //       clearInterval(myInterval);
-        //       setTransStatus(status);
-        //   }
-        // }, 1000);
       }
 
     }).catch((err) => {

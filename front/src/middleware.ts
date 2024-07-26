@@ -9,6 +9,7 @@ export default withAuth(
       '/login',
       '/register',
       '/',
+      '/about',
       '/mail-verification',
       '/mot-de-passe-oublier',
       '/nouveau-mot-de-passe',

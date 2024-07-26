@@ -76,8 +76,8 @@ Route::prefix('/v1')->group((function () {
         Route::delete('delete-transaction/{transaction}', [MyTransactionController::class, 'destroyByUser'])->name('transaction.destroyYours');
 
         //route test de feexpay
-        Route::post('/feexpay', [MyTransactionController::class, 'paiementLocal']);
-        Route::get('/feexpay/{transactionId}', [MyTransactionController::class, 'feexpay_status']);
+        Route::post('/feexpay/paiment-local', [MyTransactionController::class, 'paiementLocal']);
+        Route::get('/feexpay/{transactionId}', [MyTransactionController::class, 'feexpayStatus']);
 
         Route::apiResource('wallet-providers', WProviderController::class)->only('index');
         Route::any('update-transaction-status', [MyTransactionController::class, 'update_payin_status'])->name('transaction.updateStatus');
