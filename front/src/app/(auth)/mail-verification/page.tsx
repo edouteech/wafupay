@@ -9,18 +9,21 @@ import { useRouter, usePathname } from "next/navigation"
 import Swal from "sweetalert2"
 import ButtonLoader from "../Components/buttonLoader"
 import { error } from "console"
+import { useSearchParams } from 'next/navigation';
 
 function MailVarification() {
     //################################## CONSTANTES #############################//
     const apiUrl = process.env.NEXT_PUBLIC_APIURL
     const router = useRouter()
+    const searchParams = useSearchParams();
+    const email = searchParams.get('email');
     const pathname = usePathname()
 
     //################################## VARIABLES ##############################//
 
     const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
     const [inputValues, setInputValues] = useState<string[]>(['', '', '', '', '', '', '']);
-    const email = pathname.split("=")[1]
+    // const email = pathname.split("=")[1]
     const [sendLoader, setSendLoader] = useState(false)
     const [resendLoader, setResendLoader] = useState(true)
     const [timing, setTiming] = useState(60)
@@ -135,7 +138,7 @@ function MailVarification() {
                 <form className="flex flex-col gap-4 shadow-lg p-8 rounded-2xl   " onSubmit={(e) => { handleSubmit(e) }}>
                     <p className="font-bold my-4">Entrer le code envoyer à votre e-mail</p>
                     <div className="border-2 flex gap-4 p-4 rounded-xl">
-                        {[...Array(7)].map((_, index) => (
+                        {[...Array(6)].map((_, index) => (
                             <input
                                 key={index}
                                 type="text"

@@ -33,7 +33,7 @@ class TwoFactorService extends BaseController
             new ResetPasswordEmail($secret, $this->getFullname($user), '15')
         );
 
-        return $this->handleResponse([], "Un message contenant le code de vérification a été envoyé à votre adresse email");
+        return $this->handleResponse([$user], "Un message contenant le code de vérification a été envoyé à votre adresse email");
     }
 
     public function send2FAToken(?User $user): JsonResponse
@@ -45,7 +45,7 @@ class TwoFactorService extends BaseController
             new TwoFactor($secret, $this->getFullname($user))
         );
 
-        return $this->handleResponse([], "Votre code d'authentication à deux facteur est envoyé à votre adresse email");
+        return $this->handleResponse([$user], "Votre code d'authentication à deux facteur est envoyé à votre adresse email");
     }
 
     public function sendEmailVerificationToken(?User $user): JsonResponse
@@ -57,7 +57,7 @@ class TwoFactorService extends BaseController
             new EmailVerification($secret, $this->getFullname($user))
         );
 
-        return $this->handleResponse([], "Vérifier votre boite email pour vérifier votre adresse email avec le code OTP récu");
+        return $this->handleResponse([$user], "Vérifier votre boite email pour vérifier votre adresse email avec le code OTP récu");
     }
 
     public function create_and_store_token(?User $user, string $type = OtpCode::TwoFactor): string
@@ -71,7 +71,9 @@ class TwoFactorService extends BaseController
 
     public function generateToken(): string
     {
-        return $this->app->createSecret(32);
+        // return $this->app->createSecret(32);
+        $secret = $this->app->createSecret(32);
+        return $this->app->getCode($secret);
     }
 
     public function verifyToken(string $token, string $secret): bool

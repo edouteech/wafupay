@@ -26,7 +26,7 @@ function Register() {
     const [user, setUser] = useState<{ "first_name": string, "last_name": string, "email": string, "phone_num": number | string, "password": string, "password2": string, "country_id": string | number }>({ "first_name": "", "last_name": "", "email": "", "phone_num": "", "password": "", "password2": "", "country_id": 1 })
     const [countries, setCountries] = useState<Country[]>([])
     const [country, setCountry] = useState<Country>()
-
+    const [formError, setFormError] = useState<string[]>([])
 
 
     //################################## MOUNTED ################################//
@@ -63,11 +63,17 @@ function Register() {
         axios.post(`${apiUrl}/token/register`, { "first_name": user.first_name, "last_name": user.last_name, "email": user.email, "password": user.password, "confirm_password": user.password2, "phone_num": country?.country_code + "" + user.phone_num, "country_id": user.country_id })
             .then((resp) => {
                 if (resp.status == 200) {
+                    console.log("response : ", resp.data.data)
                     router.push(`/mail-verification?mail=${resp.data.data[0].email}`)
                 }
             })
             .catch((err) => {
-                console.error('Error registering user:', err);
+                console.log(err)
+                
+                // console.error('Error registering user:', err);
+                // let status = err.response.status
+                // let data = err.response.data
+                // setFormError(data)
             });
     };
 
@@ -91,6 +97,7 @@ function Register() {
                         <div className="relative mb-4">
                             <label htmlFor="last_name" className="font-semibold absolute top-[-10px] bg-white left-4 px-1 text-sm">Nom</label>
                             <input type="text" placeholder="Nom" className="border p-4 rounded-2xl leading-tight xs:w-full focus:outline-none focus:border-blue-500" value={user.last_name} onChange={(e) => { handleInput(e, "last_name") }} />
+                            {/* {formError.includes('last_name') && <span className="text-red-500 text-xs"></span>} */}
                         </div>
                         <div className="relative mb-4">
                             <label htmlFor="first_name" className="font-semibold absolute top-[-10px] bg-white left-4 px-1 text-sm">Prénom</label>
@@ -98,7 +105,7 @@ function Register() {
                         </div>
                         <div className="relative mb-4">
                             <label htmlFor="email" className="font-semibold absolute top-[-10px] bg-white left-4 px-1 text-sm">Adresse e-mail</label>
-                            <input type="text" placeholder="Entrer votre mail" className="border p-4 rounded-2xl leading-tight xs:w-full focus:outline-none focus:border-blue-500" value={user.email} onChange={(e) => { handleInput(e, "email") }} />
+                            <input type="email" placeholder="Entrer votre mail" className="border p-4 rounded-2xl leading-tight xs:w-full focus:outline-none focus:border-blue-500" value={user.email} onChange={(e) => { handleInput(e, "email") }} />
                         </div>
                         <div className="flex items-center gap-2 justify-center">
                             <Select classes=" mb-4 p-4 rounded-2xl leading-tight focus:outline-none focus:border-blue-500" id={typeof (user.country_id) == 'string' ? parseInt(user.country_id) : user.country_id} countries={countries} onChange={(e: { target: { value: string; }; }) => { handleInput(e, 'country_id') }}></Select>
