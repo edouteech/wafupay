@@ -3,7 +3,7 @@
 import NavBar from "../Components/NavBar"
 import Image from "next/image"
 import mailVerif from "@/public/assets/images/mailVerif.png"
-import { useEffect, useRef, useState, Suspense } from "react"
+import { useEffect, useRef, useState } from "react"
 import axios from "axios"
 import { useRouter, usePathname } from "next/navigation"
 import Swal from "sweetalert2"
@@ -127,7 +127,7 @@ function MailVarification() {
     //################################## HTML ####################################//
 
     return (
-        <Suspense fallback={<div>Loading...</div>}>
+        <>
             <NavBar></NavBar>
 
             <div className="flex mt-16 mx-32 gap-8 items-center xs:block xs:mx-4 xs:mb-8">
@@ -167,7 +167,7 @@ function MailVarification() {
                     )}
                 </form>
             </div>
-        </Suspense>
+        </>
     )
 }
 
