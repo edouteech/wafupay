@@ -40,7 +40,6 @@ function Dashbord({ children }: Props) {
     // },[session])
 
     const logout = () => {
-        console.log(session)
         axios.post(`${apiUrl}/token/revoke`, { headers: { Authorization: `Bearer ${session?.user.token}` } }).then((resp) => {
             if (resp.status == 200) {
                 signOut()

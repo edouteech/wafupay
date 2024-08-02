@@ -46,6 +46,8 @@ function MailVarification() {
 
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
+        console.log("code : ", inputValues)
+        
         const { value } = e.target;
         if (value.length === 1 && index < inputRefs.current.length - 1) {
             inputRefs.current[index + 1]?.focus();
@@ -76,7 +78,7 @@ function MailVarification() {
         setSendLoader(true)
         axios.post(`${apiUrl}/token/verify-email`, { "token": inputValues.join(""), "email": email })
             .then((resp) => {
-                console.log(resp.status);
+                // console.log(resp.status);
                 setSendLoader(false)
                 if (resp.status == 403) {
                     Swal.fire({

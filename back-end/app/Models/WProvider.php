@@ -22,10 +22,10 @@ class WProvider extends Model
         'with_otp',
     ];
 
-    public function transaction_fees(): HasMany
-    {
-        return $this->hasMany(TransactionFees::class);
-    }
+    // public function transaction_fees(): HasMany
+    // {
+    //     return $this->hasMany(TransactionFees::class);
+    // }
 
     public function country(): BelongsTo
     {

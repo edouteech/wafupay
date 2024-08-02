@@ -5,6 +5,8 @@ import { getToken } from 'next-auth/jwt';
 export default withAuth(
   async function middleware(req) {
     const token = await getToken({ req });
+    console.log("token : ", token);
+    
     const publicRoutes = [
       '/login',
       '/register',
@@ -31,6 +33,16 @@ export default withAuth(
     // Rediriger vers la page de connexion si le token n'est pas présent
     if (!token) {
       return NextResponse.redirect(new URL('/login', req.url));
+    }
+
+    // Rediriger les utilisateurs non-admins essayant d'accéder aux routes admin
+    if (!req.nextUrl.pathname.includes('/verify') && token.is_verified == 0) {
+      return NextResponse.redirect(new URL('/verify', req.url));
+    }
+
+    // Rediriger les utilisateurs non-admins essayant d'accéder aux routes admin
+    if (req.nextUrl.pathname.includes('/verify') && token.is_verified == 1) {
+      return NextResponse.redirect(new URL('/dashboard', req.url));
     }
 
     // Rediriger les utilisateurs non-admins essayant d'accéder aux routes admin

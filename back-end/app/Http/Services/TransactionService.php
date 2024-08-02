@@ -14,9 +14,9 @@ use Illuminate\Support\Facades\Storage;
 class TransactionService
 {
     private array $rules = [
-        'payin_phone_number' => 'required|min_digits:8|numeric|max_digits:10',
+        'payin_phone_number' => 'required|numeric',
         'payin_wprovider_id' => ['required', 'exists:w_providers,id'],
-        'payout_phone_number' => 'required|min_digits:8|numeric|max_digits:10',
+        'payout_phone_number' => 'required|numeric',
         'payout_wprovider_id' => ['required', 'exists:w_providers,id'],
         'amount' => 'required|numeric|min:10',
         'sender_support_fee' => 'required',
@@ -38,8 +38,7 @@ class TransactionService
         $payinProvider = WProvider::find($request->payin_wprovider_id);
         $payoutProvider = WProvider::find($request->payout_wprovider_id);
 
-        $totalFees = $payinProvider->getFee($amountWithoutFees)->payin_fee +
-            $payoutProvider->getFee($amountWithoutFees)->payout_fee;
+        $totalFees = $payinProvider->payin_fee + $payoutProvider->payout_fee;
 
         $amountWithFees = (($amountWithoutFees * $totalFees) / 100) + $amountWithoutFees;
 

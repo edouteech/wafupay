@@ -261,7 +261,7 @@ class MyTransactionController extends BaseController
         $operatorName = WProvider::find($request->payin_wprovider_id)->name;
         $fullname =  $user->first_name . ' ' . $user->last_name;
         $email =  $user->email;
-        $phoneNumber = '229' . $request->payin_phone_number;
+        $phoneNumber = str_replace('+', '', $request->payin_phone_number);
         $otp = "";
         $callback_info = "Redirection";
         $custom_id = "test_transactions";
@@ -337,7 +337,8 @@ class MyTransactionController extends BaseController
             
             $payout = $this->feexpay->initiatePayout(
                 $transaction->amountWithoutFees,
-                '229' . $transaction->payout_phone_number,
+                // '229' . $transaction->payout_phone_number,
+                str_replace('+', '', $request->payin_phone_number),
                 $transaction->payout_wprovider->name,
                 "payout"
                 // $amount, $phoneNumber, $operatorName, $motif

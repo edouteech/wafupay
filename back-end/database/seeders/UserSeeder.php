@@ -26,8 +26,6 @@ class UserSeeder extends Seeder
                 'password' => Hash::make('Limit123#'),
                 'avatar' => null,
                 'id_card' => 'user',
-                'created_at' => now(),
-                'updated_at' => now(),
             ]);
         }
     }

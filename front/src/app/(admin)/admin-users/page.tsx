@@ -12,12 +12,14 @@ import Image from "next/image";
 function AdminDashboard() {
     //################################## CONSTANTES #############################//
     const apiUrl = process.env.NEXT_PUBLIC_APIURL
+    const rootUrl = process.env.NEXT_PUBLIC_ROOTURL
     const router = useRouter()
     const { data: session } = useSession()
     //################################## VARIABLES ##############################//
     const [auth, setAuth] = useState({ headers: { Authorization: '' } })
     const [admins, setAdmins] = useState<any[]>([])
     const [users, setUsers] = useState<any[]>([])
+    const [curentUser, setCurrentUser] = useState<any>({})
     const [page, setPage] = useState<number>(1)
     const [pageCount, setPageCount] = useState<number[]>([])
     const [prev, setPrev] = useState('')
@@ -51,7 +53,16 @@ function AdminDashboard() {
 
     //################################## METHODS #################################//
     const viewUser = (id: string) => {
-        console.log("user id is : ", id)
+        axios.get(`${apiUrl}/admin/users/${id}`, { headers: { Authorization: `Bearer ${session.user?.token}` } }).then((response) => {
+            let infos = response.data.data
+            setCurrentUser(infos)
+            console.log("response ", response)
+        })
+    }
+    const handleVerified = (id: string) => {
+        axios.post(`${apiUrl}/admin/activate-account/${id}`, {activate: true}, { headers: { Authorization: `Bearer ${session.user?.token}` } }).then((response) => {
+            console.log("response ", response)
+        })
     }
 
     const formatDate = (dateString: string) => {
@@ -174,6 +185,50 @@ function AdminDashboard() {
                             </button>
                         </div>
                     </div>
+
+                    {curentUser.id && (
+                        <div className="fixed inset-0 flex items-center justify-center backdrop-blur-sm z-50">
+                            <div className="bg-white rounded-lg p-6 max-w-3xl w-full shadow-lg">
+                                <div className="text-center">
+                                    <h2 className="text-3xl font-bold mb-3 text-primary">
+                                        Details de l'utilisateur
+                                    </h2>
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div className="">
+                                            <div className="flex gap-2 mb-1">
+                                                <h5 className="font-bold ">Nom et prénom :</h5>
+                                                <p className="italic font-light">{curentUser.first_name} {curentUser.last_name}</p>
+                                            </div>
+                                            <div className="flex gap-2 mb-1">
+                                                <h5 className="font-bold ">Email :</h5>
+                                                <p className="italic font-light">{curentUser.email}</p>
+                                            </div>
+                                            <div className="flex gap-2 mb-1">
+                                                <h5 className="font-bold ">Téléphone :</h5>
+                                                <p className="italic font-light">{curentUser.phone_num}</p>
+                                            </div>
+                                            <div className="flex gap-2 mb-1">
+                                                <h5 className="font-bold ">Pays :</h5>
+                                                <p className="italic font-light">{curentUser.country.slug}</p>
+                                            </div>
+                                            <div className="flex gap-2 mb-1">
+                                                <h5 className="font-bold ">Date :</h5>
+                                                <p className="italic font-light">{formatDate(curentUser.created_at)}</p>
+                                            </div>
+                                        </div>
+                                        <div className="">
+                                            <h5 className="font-bold">Pièce d'identité</h5>
+                                            <Image src={`${rootUrl}/storage/${curentUser.id_card}`} alt="avatar" width={200} height={200} />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="flex justify-center">
+                                    <button className="px-4 py-2 mt-4 bg-green-500 text-white rounded-md text-base ml-4" onClick={() => { handleVerified(curentUser.id) }}> Valider le compte </button>
+                                    <button className="px-4 py-2 mt-4 bg-red-500 text-white rounded-md text-base ml-4" onClick={() => { setCurrentUser({}) }}> Fermer </button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
                 </div>
             </Dashbord>
 

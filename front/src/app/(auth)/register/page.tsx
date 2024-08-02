@@ -64,7 +64,7 @@ function Register() {
             .then((resp) => {
                 if (resp.status == 200) {
                     console.log("response : ", resp.data.data)
-                    router.push(`/mail-verification?mail=${resp.data.data[0].email}`)
+                    router.push(`/mail-verification?email=${resp.data.data[0].email}`)
                 }
             })
             .catch((err) => {

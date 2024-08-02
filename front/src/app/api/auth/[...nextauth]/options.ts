@@ -1,4 +1,5 @@
 import axios from "axios";
+import { log } from "console";
 import { NextAuthOptions, SessionStrategy, User } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
@@ -61,7 +62,7 @@ export const options = {
         const phone_num = credentials?.phone_num
         const email = credentials?.email
         const password = credentials?.password
-
+        
         let resp;
         try {
           if (email) {
@@ -69,15 +70,17 @@ export const options = {
           }else{
             resp =  await axios.post(`${apiUrl}/token`, { "phone_num": phone_num ? phone_num : null, "password": password });
           }
+          let infos = resp.data?.data
           
-          if (resp && resp.data) {
+          if (infos) {
             const user: any = {
-              id: resp.data.data.token,
-              firstname: resp.data.data.first_name,
-              lastname: resp.data.data.last_name,
-              email: resp.data.data.email,
-              phone_num: resp.data.data.phone_num,
-              role: resp.data.data.is_admin
+              id: infos.token,
+              firstname: infos.first_name,
+              lastname: infos.last_name,
+              email: infos.email,
+              phone_num: infos.phone_num,
+              role: infos.is_admin,
+              is_verified: infos.is_verified
             };
             return user;
           }
@@ -121,6 +124,8 @@ export const options = {
           token.firstname = user.firstname;
           token.email = user.email;
           token.phone_num = user.phone_num;
+          token.phone_num = user.phone_num;
+          token.is_verified = user.is_verified
 
           if (user.role == '0') {
             user.role = 'user';

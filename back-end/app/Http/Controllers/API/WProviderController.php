@@ -27,7 +27,7 @@ class WProviderController extends BaseController
      */
     public function index()
     {
-        $providers = WProvider::with('transaction_fees')->orderByDesc('id')->get();
+        $providers = WProvider::with('country')->orderByDesc('id')->get();
         return $this->handleResponse( $providers,
             'wallet providers and their associated transaction fees retrieved successfully'
         );
@@ -52,15 +52,15 @@ class WProviderController extends BaseController
 
             $feesData = $request->input('fees');
 
-            foreach ($feesData as $fee) {
-                $wProvider->transaction_fees()->create([
-                    'payin_fee' => $fee['payin_fee'],
-                    'payout_fee' => $fee['payout_fee'],
-                    'min_amount' => $fee['min_amount'],
-                    'max_amount' => $fee['max_amount'],
-                    'user_id' => $request->user()->id,
-                ]);
-            }
+            // foreach ($feesData as $fee) {
+            //     $wProvider->transaction_fees()->create([
+            //         'payin_fee' => $fee['payin_fee'],
+            //         'payout_fee' => $fee['payout_fee'],
+            //         'min_amount' => $fee['min_amount'],
+            //         'max_amount' => $fee['max_amount'],
+            //         'user_id' => $request->user()->id,
+            //     ]);
+            // }
 
             return $this->handleResponse(
                 new WProviderResource($wProvider),
@@ -112,16 +112,16 @@ class WProviderController extends BaseController
 
         $feesData = $request->input('fees', []);
 
-        foreach ($feesData as $fee) {
-            $transactionFee = $wProvider->transaction_fees()->first();
+        // foreach ($feesData as $fee) {
+        //     $transactionFee = $wProvider->transaction_fees()->first();
 
-            $transactionFee->update([
-                'payin_fee' => $fee['payin_fee'],
-                'payout_fee' => $fee['payout_fee'],
-                'min_amount' => $fee['min_amount'],
-                'max_amount' => $fee['max_amount'],
-            ]);
-        }
+        //     $transactionFee->update([
+        //         'payin_fee' => $fee['payin_fee'],
+        //         'payout_fee' => $fee['payout_fee'],
+        //         'min_amount' => $fee['min_amount'],
+        //         'max_amount' => $fee['max_amount'],
+        //     ]);
+        // }
 
         return $this->handleResponse(
             new WProviderResource($wProvider),

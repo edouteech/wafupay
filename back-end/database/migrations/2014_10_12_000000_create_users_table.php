@@ -24,6 +24,7 @@ return new class extends Migration
             $table->string('password');
             $table->string('avatar')->nullable();
             $table->string('id_card')->default('admin');
+            $table->boolean('is_2fa_active')->default(false);
             $table->rememberToken();
             $table->timestamps();
         });

@@ -13,10 +13,12 @@ return new class extends Migration
     {
         Schema::create('w_providers', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('withdraw_mode')
-                ->comment("The name of the means of payment point when sending");
+            $table->string('name')->unique();
+            $table->string('withdraw_mode')->comment("The name of the means of payment point when sending");
             $table->string('sending_mode');
+            $table->boolean('with_otp')->default(false);
+            $table->float('payin_fee');
+            $table->float('payout_fee');
             $table->string('logo')->nullable();
             $table->foreignId('country_id')->constrained();
             $table->softDeletes();
