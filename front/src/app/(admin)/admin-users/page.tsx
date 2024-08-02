@@ -53,14 +53,14 @@ function AdminDashboard() {
 
     //################################## METHODS #################################//
     const viewUser = (id: string) => {
-        axios.get(`${apiUrl}/admin/users/${id}`, { headers: { Authorization: `Bearer ${session.user?.token}` } }).then((response) => {
+        axios.get(`${apiUrl}/admin/users/${id}`, { headers: { Authorization: `Bearer ${session?.user?.token}` } }).then((response) => {
             let infos = response.data.data
             setCurrentUser(infos)
             console.log("response ", response)
         })
     }
     const handleVerified = (id: string) => {
-        axios.post(`${apiUrl}/admin/activate-account/${id}`, {activate: true}, { headers: { Authorization: `Bearer ${session.user?.token}` } }).then((response) => {
+        axios.post(`${apiUrl}/admin/activate-account/${id}`, {activate: true}, { headers: { Authorization: `Bearer ${session?.user?.token}` } }).then((response) => {
             console.log("response ", response)
         })
     }
