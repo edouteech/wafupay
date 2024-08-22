@@ -5,13 +5,20 @@ import { getToken } from 'next-auth/jwt';
 export default withAuth(
   async function middleware(req) {
     const token = await getToken({ req });
-    console.log("token : ", token);
     
     const publicRoutes = [
       '/login',
       '/register',
       '/',
       '/about',
+      '/mail-verification',
+      '/mot-de-passe-oublier',
+      '/nouveau-mot-de-passe',
+    ];
+
+    const authRoutes = [
+      '/login',
+      '/register',
       '/mail-verification',
       '/mot-de-passe-oublier',
       '/nouveau-mot-de-passe',
@@ -24,6 +31,11 @@ export default withAuth(
       '/admin-configs/suppliers',
       '/admin-transactions',
     ]; 
+
+    // Rediriger les utilisateurs connecté vers leur tableau de bord
+    if (authRoutes.includes(req.nextUrl.pathname)) {
+      return NextResponse.redirect(new URL('/dashboard', req.url));
+    }
 
     // Permettre l'accès aux routes publiques
     if (publicRoutes.includes(req.nextUrl.pathname)) {
@@ -40,7 +52,7 @@ export default withAuth(
       return NextResponse.redirect(new URL('/verify', req.url));
     }
 
-    // Rediriger les utilisateurs non-admins essayant d'accéder aux routes admin
+    // Rediriger les utilisateurs deja vérifiés vers leur tableau de bord
     if (req.nextUrl.pathname.includes('/verify') && token.is_verified == 1) {
       return NextResponse.redirect(new URL('/dashboard', req.url));
     }
@@ -62,6 +74,7 @@ export default withAuth(
 
 export const config = {
   matcher: [
-    '/((?!about|login|register|home|mail-verification|mot-de-passe-oublier|nouveau-mot-de-passe|$).*)',
+    // '/((?!about|login|register|home|mail-verification|mot-de-passe-oublier|nouveau-mot-de-passe|$).*)',
+    '/((?!about|home|$).*)',
   ],
 };

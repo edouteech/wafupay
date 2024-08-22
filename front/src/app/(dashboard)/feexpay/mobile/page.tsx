@@ -28,6 +28,7 @@ function Mobile() {
   const [country, setCountry] = useState<Country>()
   const [trans, setTrans] = useState<{ to: { "country": number | string, "phone": string | number, "method": number | string, "provider" :{"name" : string}}, from: { "country": number | string, "phone": string | number, "method": number | string,"provider" :{"name" : string} }, amount: number, sender_support_fee: number }>({ from: { "country": 1, "phone": '', method: 2, "provider" : {name : ''} }, to: { "country": 1, "phone": '', method: 1, "provider" :{name : ''} }, amount: 0, sender_support_fee: 0 })
   const [showM, setShowM] = useState(false)
+  const [showStatus, setShowStatus] = useState(false)
   const {data : session } = useSession()
   const [payin , setPayin] = useState({name : "", country_code : "", id: "", fee: 0});
   const [payin_phone_number , setPayin_phone_number] = useState('');
@@ -35,7 +36,7 @@ function Mobile() {
   const [payout_phone_number , setPayout_phone_number] = useState('');
   const [amount , setAmount] = useState(0);
   const [sender_support_fee , setSender_support_fee] = useState(false);
-  const [totalFee , setTotalFee] = useState('');
+  const [totalFee , setTotalFee] = useState(0);
   const [motif , setMotif] = useState('1');
   const [transRef , setTransRef] = useState('');
   const [transStatus , setTransStatus] = useState('');
@@ -94,6 +95,7 @@ function Mobile() {
      auth).then((response) => {
       if (response.status == 200) {
         setShowM(false)
+        setShowStatus(true)
         setTransRef(response.data)
         checkStatus(response.data);
       }
@@ -323,7 +325,7 @@ function Mobile() {
             </div>
           )}
 
-          {(transStatus == 'PENDING') && (
+          {(transStatus == 'PENDING' && showStatus ) && (
             <div className="fixed inset-0 flex items-center justify-center backdrop-blur-sm z-50">
               <div className="bg-white rounded-lg p-6 max-w-sm w-full shadow-lg">
                 <div className="text-center">
@@ -333,13 +335,13 @@ function Mobile() {
 
                 </div>
                 <div className="flex justify-center">
-                  <button className="px-4 py-2 mt-4 bg-red-500 text-white rounded-md text-base ml-4" onClick={() => { setShowM(false) }}> Fermer </button>
+                  <button className="px-4 py-2 mt-4 bg-red-500 text-white rounded-md text-base ml-4" onClick={() => {   setShowStatus(false) }}> Fermer </button>
                 </div>
               </div>
             </div>
           )}
 
-          {(transStatus == 'FAILED') && (
+          {(transStatus == 'FAILED' && showStatus ) && (
             <div className="fixed inset-0 flex items-center justify-center backdrop-blur-sm z-50">
               <div className="bg-white rounded-lg p-6 max-w-sm w-full shadow-lg">
                 <div className="text-center">
@@ -349,13 +351,13 @@ function Mobile() {
 
                 </div>
                 <div className="flex justify-center">
-                  <button className="px-4 py-2 mt-4 bg-red-500 text-white rounded-md text-base ml-4" onClick={() => { setShowM(false) }}> Fermer </button>
+                  <button className="px-4 py-2 mt-4 bg-red-500 text-white rounded-md text-base ml-4" onClick={() => { setShowStatus(false) }}> Fermer </button>
                 </div>
               </div>
             </div>
           )}
 
-          {(transStatus == 'SUCCESSFUL') && (
+          {(transStatus == 'SUCCESSFUL' && showStatus ) && (
             <div className="fixed inset-0 flex items-center justify-center backdrop-blur-sm z-50">
               <div className="bg-white rounded-lg p-6 max-w-sm w-full shadow-lg">
                 <div className="text-center">
@@ -365,7 +367,7 @@ function Mobile() {
 
                 </div>
                 <div className="flex justify-center">
-                  <button className="px-4 py-2 mt-4 bg-red-500 text-white rounded-md text-base ml-4" onClick={() => { setShowM(false) }}> Fermer </button>
+                  <button className="px-4 py-2 mt-4 bg-red-500 text-white rounded-md text-base ml-4" onClick={() => { setShowStatus(false) }}> Fermer </button>
                 </div>
               </div>
             </div>

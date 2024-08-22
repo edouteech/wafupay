@@ -109,7 +109,7 @@ function Historique() {
                         Historique des transactions
                     </h1>
                     <div className=" mt-8 text-base w-full">
-                        <table className="rounded-3xl bg-white overflow-hidden text-center">
+                        <table className="rounded-3xl bg-white overflow-hidden text-center w-full">
                             <thead className="text-secBlue border-b border-gray-300">
                                 <th className="p-2 ">Date</th>
                                 <th className="p-2 ">Envoyeur</th>
@@ -138,10 +138,10 @@ function Historique() {
                                             <span className="font-light text-xs text-red-500"> / ({parseInt(tran.amount) - parseInt(tran.amountWithoutFees)} F)</span>
                                         </td>
                                         <td className="">
-                                            <span className={`${tran.payin_status == 'pending' ? 'bg-yellow-500' : tran.payin_status == 'success' ? 'bg-green-500' : tran.payin_status == 'failed' ? 'bg-red-500' : ''} p-2 text-white rounded`}>{`${tran.payin_status == 'pending' ? 'en cours' : tran.payin_status == 'success' ? 'effectué' : tran.payin_status == 'failed' ? 'échoué' : ''}`}</span>
+                                            <span className={`${tran.payin_status == 'pending' ? 'bg-yellow-500' : tran.payin_status == 'success' ? 'bg-green-500' : tran.payin_status == 'failed' ? 'bg-red-500' : ''} px-2 py-0 text-white rounded`}>{`${tran.payin_status == 'pending' ? 'en cours' : tran.payin_status == 'success' ? 'effectué' : tran.payin_status == 'failed' ? 'échoué' : ''}`}</span>
                                         </td>
                                         <td className="">
-                                            <span className={`${tran.payout_status == 'pending' ? 'bg-yellow-500' : tran.payout_status == 'success' ? 'bg-green-500' : tran.payout_status == 'failed' ? 'bg-red-500' : ''} p-2 text-white rounded`}>{`${tran.payout_status == 'pending' ? 'en cours' : tran.payout_status == 'success' ? 'effectué' : tran.payout_status == 'failed' ? 'échoué' : ''}`}</span>
+                                            <span className={`${tran.payout_status == 'pending' ? 'bg-yellow-500' : tran.payout_status == 'success' ? 'bg-green-500' : tran.payout_status == 'failed' ? 'bg-red-500' : ''} px-2 py-0 text-white rounded`}>{`${tran.payout_status == 'pending' ? 'en cours' : tran.payout_status == 'success' ? 'effectué' : tran.payout_status == 'failed' ? 'échoué' : ''}`}</span>
                                         </td>
                                         <td>
                                             <div className="relative group">

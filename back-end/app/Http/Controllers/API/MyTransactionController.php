@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Models\Supplier;
 use App\Models\WProvider;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
@@ -244,21 +245,23 @@ class MyTransactionController extends BaseController
 
     public function paiementLocal(Request $request)
     {
+        $suplier = Supplier::where("name", "feexpay")->first();
+        $supplier_grid = json_decode($suplier->wallet_name, true);
         $user = $request->user();
 
-        // if (!$user->is_active || !$user->is_verified) {
-        //     return $this->handleError(
-        //         __('validation.valid_sender_account'),
-        //         ['error' => 'Votre compte n\'est pas vérifié.'],
-        //     );
-        // }
+        if (!$user->is_active || !$user->is_verified) {
+            return $this->handleError(
+                __('validation.valid_sender_account'),
+                ['error' => 'Votre compte n\'est pas vérifié.'],
+            );
+        }
 
         //variables initialisation
         $payloads = $this->handleValidate($request->post(), $this->process->getRules());
 
+        $provider = WProvider::find($request->payin_wprovider_id);
 
         $amount = $request->amount;
-        $operatorName = WProvider::find($request->payin_wprovider_id)->name;
         $fullname =  $user->first_name . ' ' . $user->last_name;
         $email =  $user->email;
         $phoneNumber = str_replace('+', '', $request->payin_phone_number);
@@ -267,7 +270,7 @@ class MyTransactionController extends BaseController
         $custom_id = "test_transactions";
 
       // initiate payment
-        $token_feexpay = $this->feexpay->initiateLocalPayment($amount, $phoneNumber, $operatorName, $fullname, $email, $callback_info, $custom_id, $otp);
+        $token_feexpay = $this->feexpay->initiateLocalPayment($amount, $phoneNumber, $supplier_grid[$provider->name], $fullname, $email, $callback_info, $custom_id, $otp);
 
         //get status
         $status = $this->feexpay->getPaymentStatus($token_feexpay);
@@ -327,8 +330,13 @@ class MyTransactionController extends BaseController
     }
 
     public function feexpayStatus($reference){
+        $suplier = Supplier::where("name", "feexpay")->first();
+        $supplier_grid = json_decode($suplier->wallet_name, true);
+
         $status = $this->feexpay->getPaymentStatus($reference);
         $transaction = Transaction::where('token', $reference)->first();
+        $provider = WProvider::find($transaction->payout_wprovider_id);
+
         if($transaction && $status['status'] == 'FAILED'){
             $transaction->update(['payin_status' => "failed",'payout_status' => "failed"]);
         }
@@ -338,15 +346,14 @@ class MyTransactionController extends BaseController
             $payout = $this->feexpay->initiatePayout(
                 $transaction->amountWithoutFees,
                 // '229' . $transaction->payout_phone_number,
-                str_replace('+', '', $request->payin_phone_number),
-                $transaction->payout_wprovider->name,
+                str_replace('+', '', $transaction->payout_phone_number),
+                $supplier_grid[$provider->name],
                 "payout"
-                // $amount, $phoneNumber, $operatorName, $motif
             );
             
-            // if($payout['reference']){
+            if (array_key_exists('reference', $payout)) {
                 $transaction->update(['disburse_token' => $payout['reference']]);
-            // }
+            }
             if (isset($payout['status']) && $payout['status'] == 'SUCCESSFUL') {
                 $transaction->update(['payout_status' => "success"]);
             }else{

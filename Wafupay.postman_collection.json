@@ -479,6 +479,12 @@
 				{
 					"name": "index providers",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "251|kk4PF01HUEheARa2gjHIAeA9COjhabM6JIrTWUaB33f3220e"
+							}
+						},
 						"method": "GET",
 						"header": [],
 						"url": "{{base_url}}wallet-providers"
@@ -762,6 +768,133 @@
 					"response": []
 				}
 			]
+		},
+		{
+			"name": "feexpay",
+			"item": [
+				{
+					"name": "payout benin",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "fp_MibmHQekhqmdMnQx4Bw2NAtI3s5no9YY3dvydensHNClw0llN7tSueydUP9IyklZ"
+							}
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"phoneNumber\": \"22996398680\",\n    \"amount\":\"100\",\n    \"shop\":\"649009982cfcabca7b06be9d\",\n    \"network\":\"MTN\",\n    \"motif\":\"test\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "https://api.feexpay.me/api/payouts/public/transfer/global"
+					},
+					"response": []
+				},
+				{
+					"name": "get status",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "fp_MibmHQekhqmdMnQx4Bw2NAtI3s5no9YY3dvydensHNClw0llN7tSueydUP9IyklZ"
+							}
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"phoneNumber\": \"22996398680\",\n    \"amount\":\"100\",\n    \"shop\":\"649009982cfcabca7b06be9d\",\n    \"network\":\"MTN\",\n    \"motif\":\"test\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "https://api.feexpay.me/api/payouts/public/transfer/global"
+					},
+					"response": []
+				},
+				{
+					"name": "test callback",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "pawapay",
+			"item": [
+				{
+					"name": "payin",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"depositId\": \"5f8fdd38-b9a6-4727-bb87-7d0985f432f1\",\n  \"amount\": \"15\",\n  \"currency\": \"XOF\",\n  \"country\": \"BEN\",\n  \"correspondent\": \"MTN_MOMO_BEN\",\n  \"payer\": {\n    \"type\": \"MSISDN\",\n    \"address\": {\n      \"value\": \"22951345029\"\n    }\n  },\n  \"customerTimestamp\": \"2024-02-21T17:32:28Z\",\n  \"statementDescription\": \"Note of 4 to 22 chars\",\n  \"preAuthorisationCode\": \"string\",\n  \"metadata\": [\n    {\n      \"fieldName\": \"orderId\",\n      \"fieldValue\": \"ORD-123456789\"\n    },\n    {\n      \"fieldName\": \"customerId\",\n      \"fieldValue\": \"customer@email.com\",\n      \"isPII\": true\n    }\n  ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "https://api.sandbox.pawapay.cloud/deposits"
+					},
+					"response": []
+				},
+				{
+					"name": "payin statut",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "https://api.sandbox.pawapay.cloud/deposits/{depositId}"
+					},
+					"response": []
+				}
+			],
+			"auth": {
+				"type": "bearer",
+				"bearer": {
+					"token": "eyJraWQiOiIxIiwiYWxnIjoiRVMyNTYifQ.eyJ0dCI6IkFBVCIsInN1YiI6IjIyNzYiLCJleHAiOjIwMzk3MDEzODcsImlhdCI6MTcyNDE2ODU4NywicG0iOiJEQUYsUEFGIiwianRpIjoiZmMwZmU3MGQtMmIwNi00MTE3LTlkOWItOTljOWRhODBhZDUwIn0.Lpggn6wZcR380cC9NRgBnrXrWB_nCyFInuv5yhi0fNvIlgu2j_0EbgonpuQFQ1dL-eohW-QcYFBMg_n2Cm3BwA"
+				}
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				}
+			]
 		}
 	],
 	"auth": {
@@ -795,7 +928,7 @@
 	"variable": [
 		{
 			"key": "base_url",
-			"value": "https://sruz5234.odns.fr/api/v1/",
+			"value": "https://api.wafupay.com/api/v1/",
 			"type": "string"
 		},
 		{

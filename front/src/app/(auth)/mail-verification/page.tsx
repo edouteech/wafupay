@@ -22,7 +22,7 @@ function MailVarification() {
     //################################## VARIABLES ##############################//
 
     const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
-    const [inputValues, setInputValues] = useState<string[]>(['', '', '', '', '', '', '']);
+    const [inputValues, setInputValues] = useState<string[]>(['', '', '', '', '', '']);
     // const email = pathname.split("=")[1]
     const [sendLoader, setSendLoader] = useState(false)
     const [resendLoader, setResendLoader] = useState(true)
@@ -68,8 +68,33 @@ function MailVarification() {
         }
     };
 
+    const handlePaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
+        const pasteData = e.clipboardData.getData('text');
+        
+        // Vérifie si le code collé a la bonne longueur
+        if (pasteData.length === inputRefs.current.length) {
+            const newInputValues = pasteData.split('');
+            setInputValues(newInputValues);
+    
+            // Remplir chaque champ d'entrée
+            newInputValues.forEach((value, index) => {
+                if (inputRefs.current[index]) {
+                    inputRefs.current[index]!.value = value;
+                }
+            });
+    
+            // Focus sur le dernier champ si tout est rempli
+            inputRefs.current[inputRefs.current.length - 1]?.focus();
+        }
+    };
+
     const setRef = (el: HTMLInputElement | null, index: number) => {
         inputRefs.current[index] = el;
+
+        // Ajoute l'événement `onPaste` uniquement au premier cham
+        if (index === 0 && el) {
+            el.addEventListener('paste', handlePaste);
+        }
     };
 
 

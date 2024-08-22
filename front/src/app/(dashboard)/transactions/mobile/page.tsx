@@ -116,13 +116,10 @@ function Mobile() {
 
 
   const handleSubmit = () => {
-    console.log(auth);
-
     axios.post(`${apiUrl}/transactions`, { "amount": trans.amount, "payin_phone_number": trans.from.phone, "payout_phone_number": trans.to.phone, "payin_wprovider_id": trans.from.method, "payout_wprovider_id": trans.to.method, "sender_support_fee": trans.sender_support_fee }, auth).then((response) => {
       if (response.data.data.status == 200) {
         router.push('/transactions/historique')
       }
-
     }).catch((err) => {
       console.log(err);
       if (err.response.status == 403) {
