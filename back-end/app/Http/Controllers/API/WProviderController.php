@@ -27,7 +27,7 @@ class WProviderController extends BaseController
      */
     public function index()
     {
-        $providers = WProvider::with('country')->orderByDesc('id')->get();
+        $providers = WProvider::with('country')->orderBy('name')->get();
         return $this->handleResponse( $providers,
             'wallet providers and their associated transaction fees retrieved successfully'
         );

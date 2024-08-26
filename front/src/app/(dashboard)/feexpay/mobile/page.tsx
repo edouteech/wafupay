@@ -129,7 +129,7 @@ function Mobile() {
   //################################## WATCHER #################################//
   const checkStatus = async (transactionId: string) => {
     console.log("execute checkStatus")
-    await axios.get(`${apiUrl}/feexpay/${transactionId}`, auth).then((response) => {
+    await axios.get(`${apiUrl}/payin-status/${transactionId}`, auth).then((response) => {
       console.log(response)
       if (response.status == 200) {
         setTransStatus(response.data.status)

@@ -1,13 +1,13 @@
 /* eslint-disable react/no-unescaped-entities */
 "use client"
-import Dashbord from "../../Components/Dashboard"
-import { useRouter } from "next/navigation"
-import { use, useEffect, useState } from "react";
-import { Eye, EyeOff, PenLine, Plus, Trash } from "lucide-react";
+import { Country } from "@/app/types/types";
 import axios from "axios";
-import { Country, WProvider } from "@/app/types/types";
+import { PenLine, Plus, Trash } from "lucide-react";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import Dashbord from "../Components/Dashboard";
 
 function AdminDashboard() {
     //################################## CONSTANTES #############################//
@@ -88,8 +88,8 @@ function AdminDashboard() {
                                         {prov.country_id.code}
                                         <Image src={require(`@/public/assets/images/${prov.country_id.country_code}.png`)} width={19} height="12" className="h-[14px]" alt="Country Flag" />
                                     </div>
-                                    <div className="">{prov.transaction_fees[0].payin_fee}</div>
-                                    <div className="">{prov.transaction_fees[0].payout_fee}</div>
+                                    <div className="">{prov.payin_fee}</div>
+                                    <div className="">{prov.payout_fee}</div>
                                     <div className="flex gap-2"><PenLine className="w-4 h-4"></PenLine><Trash className="w-4 h-4"></Trash></div>
                                 </div>
                             ))}

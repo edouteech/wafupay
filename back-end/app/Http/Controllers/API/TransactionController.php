@@ -11,6 +11,16 @@ use Illuminate\Http\Request;
 
 class TransactionController extends BaseController
 {
+    private array $rules = [
+        'payin_phone_number' => 'required|numeric',
+        'payin_wprovider_id' => ['required', 'exists:w_providers,id'],
+        'payout_phone_number' => 'required|numeric',
+        'payout_wprovider_id' => ['required', 'exists:w_providers,id'],
+        'amount' => 'required|numeric|min:10',
+        'sender_support_fee' => 'required',
+        'type' => 'in:school_help,family_help,rent,others',
+        'otp_code' => 'string|min:4',
+    ];
 
     public function __construct(
         private readonly PayDunyaService $payDunya,

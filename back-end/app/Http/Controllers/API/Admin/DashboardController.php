@@ -40,12 +40,12 @@ class DashboardController extends Controller
         //     ->orderBy('week')
         //     ->get();
         $weekly_transactions = Transaction::where('created_at', '>=', now()->subWeeks(8))
-    ->where(['payin_status' => 'success', 'payout_status' => 'success'])
-    ->groupBy(DB::raw('YEAR(created_at), WEEK(created_at)'))
-    ->selectRaw('YEAR(created_at) as year, WEEK(created_at) as week, SUM(amount) as amount, DATE(MIN(DATE_SUB(created_at, INTERVAL WEEKDAY(created_at) DAY))) as week_start_date')
-    ->orderBy('year')
-    ->orderBy('week')
-    ->get();
+            ->where(['payin_status' => 'success', 'payout_status' => 'success'])
+            ->groupBy(DB::raw('YEAR(created_at), WEEK(created_at)'))
+            ->selectRaw('YEAR(created_at) as year, WEEK(created_at) as week, SUM(amount) as amount, DATE(MIN(DATE_SUB(created_at, INTERVAL WEEKDAY(created_at) DAY))) as week_start_date')
+            ->orderBy('year')
+            ->orderBy('week')
+            ->get();
 
 
 

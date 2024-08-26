@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('suppliers', function (Blueprint $table) {
             $table->id();
-            $table->string("name");
+            $table->string("name")->unique()->comment("The name of the supplier");
             $table->json("wallet_name")->comment("The name to specify providers in transactions (MTN, MOOV TG, ...)");
             $table->json("payin_fees")->comment("The fees in payin for each provider");
             $table->json("payout_fees")->comment("The fees in payout for each provider");

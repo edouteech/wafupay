@@ -1,18 +1,19 @@
 <?php
 
-use App\Http\Controllers\API\Auth\AuthenticatedSessionController;
-use App\Http\Controllers\API\Auth\LoginController;
-use App\Http\Controllers\API\Auth\ForgotPasswordController;
-use App\Http\Controllers\API\Auth\RegistrationController;
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\API\UserController;
 use App\Http\Controllers\API\CountryController;
 use App\Http\Controllers\API\MyCountryController;
+use App\Http\Controllers\API\WProviderController;
+use App\Http\Controllers\API\Auth\LoginController;
 use App\Http\Controllers\API\TransactionController;
 use App\Http\Controllers\API\MyTransactionController;
-use App\Http\Controllers\API\TransactionFeesController;
-use App\Http\Controllers\API\UserController;
-use App\Http\Controllers\API\WProviderController;
 use App\Http\Controllers\API\Admin\DashboardController;
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\API\Admin\SuppliersController;
+use App\Http\Controllers\API\TransactionFeesController;
+use App\Http\Controllers\API\Auth\RegistrationController;
+use App\Http\Controllers\API\Auth\ForgotPasswordController;
+use App\Http\Controllers\API\Auth\AuthenticatedSessionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -69,10 +70,10 @@ Route::prefix('/v1')->group((function () {
         });
 
         // routes de transactions pour l'user
-        Route::get('check-status/{token}/{type}', [MyTransactionController::class, 'check_status']);
         Route::apiResource('transactions', MyTransactionController::class)->only('index', 'store', 'show',);
-        Route::get('refresh-transaction/{payin_token}', [MyTransactionController::class, 'refresh_transaction'])->name('transaction.refresh');
-        Route::post('calculate-transaction-fees', [MyTransactionController::class, 'calculate_fees'])->name('transaction.calculateFees');
+        Route::get('payin-status/{reference}', [MyTransactionController::class, 'payin_status']);
+        Route::get('refresh-transaction/{reference}', [MyTransactionController::class, 'refresh_transaction'])->name('transaction.refresh');
+        // Route::post('calculate-transaction-fees', [MyTransactionController::class, 'calculate_fees'])->name('transaction.calculateFees');
         Route::delete('delete-transaction/{transaction}', [MyTransactionController::class, 'destroyByUser'])->name('transaction.destroyYours');
 
         //route test de feexpay
@@ -89,6 +90,7 @@ Route::prefix('/v1')->group((function () {
             Route::apiResource('countries', CountryController::class)->except('index');
             Route::apiResource('wallet-providers', WProviderController::class);
             Route::apiResource('users', UserController::class);
+            Route::apiResource('suppliers', SuppliersController::class);
             Route::post('activate-account/{user}', [UserController::class, 'activate']);
             Route::get('check-transaction-status/{token}/{type}', [TransactionController::class, 'check_transaction_status']);
             Route::apiResource('transactions', TransactionController::class)->except('store', 'show', 'delete');

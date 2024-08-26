@@ -15,99 +15,60 @@ import { count } from "console"
 import { useSession } from "next-auth/react"
 
 function Mobile() {
+  //################################## CONSTANTES #############################//
+  const apiUrl = process.env.NEXT_PUBLIC_APIURL
+  const router = useRouter()
+  const [auth, setAuth] = useState({ headers: { Authorization: '' } })
 
-    //############################### CONSTANTES / STATES #############################//
-    const apiUrl = process.env.NEXT_PUBLIC_APIURL
-    const router = useRouter()
-    const [auth, setAuth] = useState({ headers: { Authorization: '' } })
-    const {data : session} = useSession()
-    
-  // //################################## CONSTANTES #############################//
-  // const apiUrl = process.env.NEXT_PUBLIC_APIURL
-  // const router = useRouter()
-  // const [auth, setAuth] = useState({ headers: { Authorization: '' } })
-
-  // //################################## VARIABLES ##############################//
+  //################################## VARIABLES ##############################//
   const [methods, setMethods] = useState<WProvider[]>([]);
   const [methodIn, setMethodIn] = useState<WProvider>()
   const [methodOut, setMethodOut] = useState<WProvider>()
   const [countries, setCountries] = useState<Country[]>([])
-  const [countryTo, setCountryTo] = useState<Country>()
-  const [countryFrom, setCountryFrom] = useState<Country>()
-  const [trans, setTrans] = useState<{ to: { "country": number | string, "phone": string | number, "method": number | string }, from: { "country": number | string, "phone": string | number, "method": number | string }, amount: number, sender_support_fee: number }>({ from: { "country": 1, "phone": '', method: 2 }, to: { "country": 1, "phone": '', method: 1 }, amount: 0, sender_support_fee: 0 })
+  const [country, setCountry] = useState<Country>()
+  const [trans, setTrans] = useState<{ to: { "country": number | string, "phone": string | number, "method": number | string, "provider" :{"name" : string}}, from: { "country": number | string, "phone": string | number, "method": number | string,"provider" :{"name" : string} }, amount: number, sender_support_fee: number }>({ from: { "country": 1, "phone": '', method: 2, "provider" : {name : ''} }, to: { "country": 1, "phone": '', method: 1, "provider" :{name : ''} }, amount: 0, sender_support_fee: 0 })
   const [showM, setShowM] = useState(false)
-
+  const [showStatus, setShowStatus] = useState(false)
+  const {data : session } = useSession()
+  const [payin , setPayin] = useState({name : "", country_code : "", id: "", fee: 0});
+  const [payin_phone_number , setPayin_phone_number] = useState('');
+  const [payout , setPayout] = useState({name : "", country_code : "", id: "", fee: 0});
+  const [payout_phone_number , setPayout_phone_number] = useState('');
+  const [amount , setAmount] = useState(0);
+  const [sender_support_fee , setSender_support_fee] = useState(false);
+  const [totalFee , setTotalFee] = useState(0);
+  const [motif , setMotif] = useState('1');
+  const [transRef , setTransRef] = useState('');
+  const [transStatus , setTransStatus] = useState('');
+  
+  
   //################################## MOUNTED ################################//
-
-//   useEffect(() => {
-//     if (!session) { return }
-//     setAuth({ headers: { Authorization: `Bearer ${session?.user.token}` } })
-//     axios.get(`${apiUrl}/transactions`, { headers: { Authorization: `Bearer ${session?.user.token}` } }).then((response) => {
-        
-//     })
-    
-// }, [session])
   useEffect(() => {
-    if (!session) { return }
-    setAuth({ headers: { Authorization: `Bearer ${session?.user.token}` } })
-    axios.get(`${apiUrl}/wallet-providers`, auth).then((response) => {
+    const token = session?.user.token ? session?.user.token : session?.user.google_token
+
+    if (token) {
+      auth.headers.Authorization = `Bearer ${token}`
+      setAuth({ headers: { Authorization: `Bearer ${token}` } })
+      axios.get(`${apiUrl}/wallet-providers`, { headers: { Authorization: `Bearer ${token}` } }).then((response) => {
+        console.log("methods : ", response.data.data);
         
-      setMethods(response.data.data)
-      let mI = findElementById(1, response.data.data)
-      let mO = findElementById(2, response.data.data)
-      setMethodIn(mI)
-      setMethodOut(mO)
-      axios.get(`${apiUrl}/countries`, auth).then((response) => {
-        setCountries(response.data.data)
-        setCountryTo(findElementById(parseInt(mI.country_id), response.data.data))
-        setCountryFrom(findElementById(parseInt(mO.country_id), response.data.data))
+        setMethods(response.data.data)
+        setMethodIn(findElementById(1, response.data.data))
+        setMethodOut(findElementById(2, response.data.data))
       })
-    })
-    
+      axios.get(`${apiUrl}/countries`).then((response) => {
+        setCountries(response.data.data)
+      })
+    }
   }, [session])
 
-  const handleChange = (e: { target: { value: string | number } }, field: string) => {
-    let fields = field.split(".")
-    let f1 = fields[0]
+  useEffect(() => {
+    let fees =  Math.ceil((payin.fee + payout.fee) / 100 * amount)
+    setTotalFee(fees)
+  }, [payin.fee, payout.fee, amount]);
 
-    let f2 = fields[1]
-    if (field == 'amount' && e.target.value != '') {
-      let t = Object.assign({}, trans)
-      t.amount = typeof (e.target.value) == 'string' ? parseInt(e.target.value) : e.target.value
-      setTrans(t)
-
-    } else if (e.target.value == '') {
-      let t = Object.assign({}, trans)
-      t.amount = 0
-      setTrans(t)
-    }
-    if (field == 'sender_support_fee' && e.target.value != '') {
-      let t = Object.assign({}, trans)
-      t.sender_support_fee = typeof (e.target.value) == 'string' ? parseInt(e.target.value) : e.target.value
-      setTrans(t)
-
-    }
-    if (f2 == "phone" || f2 == "country" || f2 == "method") {
-      if (f1 == 'to') {
-        let t = Object.assign({}, trans)
-        t.to[f2] = e.target.value
-        setTrans(t)
-        if (f2 == "method") {
-          let m = findElementById(typeof(e.target.value) == 'string' ? parseInt(e.target.value) : e.target.value, methods)
-          setCountryTo(findElementById(m ? parseInt(m.country_id) : 0, countries))
-        }
-      } else {
-        let t = Object.assign({}, trans)
-        console.log(trans);
-        t.from[f2] = e.target.value
-        setTrans(t)
-        if (f2 == "method") {
-          let m = findElementById(typeof(e.target.value) == 'string' ? parseInt(e.target.value) : e.target.value, methods)
-          setCountryFrom(findElementById(m ? parseInt(m.country_id) : 0, countries))
-        }
-      }
-    }
-
+  const handleChange = (info, setter) => {
+    setter(info)
   }
 
   const findElementById = (id: number, list: any[]) => {
@@ -115,11 +76,30 @@ function Mobile() {
   }
 
 
-  const handleSubmit = () => {
-    axios.post(`${apiUrl}/transactions`, { "amount": trans.amount, "payin_phone_number": trans.from.phone, "payout_phone_number": trans.to.phone, "payin_wprovider_id": trans.from.method, "payout_wprovider_id": trans.to.method, "sender_support_fee": trans.sender_support_fee }, auth).then((response) => {
-      if (response.data.data.status == 200) {
-        router.push('/transactions/historique')
+  const handleSubmit = async () => {
+    // if (payin.) {
+      
+    // }
+
+    await axios.post(`${apiUrl}/transactions`, {
+      "amount": amount, 
+      "payin_phone_number": payin.country_code + payin_phone_number,
+      "payin_wprovider_id": payin.id,
+      "payin_wprovider_name": payin.name,
+      "payout_wprovider_id": payout.id,
+      "payout_phone_number": payout.country_code + payout_phone_number,
+      "payout_wprovider_name": payout.name,
+      "sender_support_fee": sender_support_fee,
+      "motif": "1"
+  } ,
+     auth).then((response) => {
+      if (response.status == 200) {
+        setShowM(false)
+        setShowStatus(true)
+        setTransRef(response.data)
+        checkStatus(response.data);
       }
+
     }).catch((err) => {
       console.log(err);
       if (err.response.status == 403) {
@@ -147,7 +127,22 @@ function Mobile() {
   }
 
   //################################## WATCHER #################################//
-
+  const checkStatus = async (reference: string) => {
+    console.log("execute checkStatus")
+    await axios.get(`${apiUrl}/payin-status/${reference}`, auth).then((response) => {
+      console.log(response)
+      if (response.status == 200) {
+        setTransStatus(response.data.status)
+        if (response.data.status == "PENDING") {
+          setTimeout(() => {
+            checkStatus(reference);
+          }, 5000);
+        }else if (response.data.status == "SUCCESSFUL") {
+          setTransStatus(response.data.status);
+        }
+      }
+    })
+  }
 
 
   //################################## METHODS #################################//
@@ -155,10 +150,21 @@ function Mobile() {
   const [isReadyToSupport, setIsReadyToSupport] = useState(false);
 
   const handleRadioChange = (event: any) => {
-    console.log(event.target.value);
+    // console.log(event.target.value);
 
     setIsReadyToSupport(event.target.value);
   };
+
+  const handleChangePayin = (index: number | string) => {
+    let payin = methods[index]
+    console.log("payin_fee : ", payin.payin_fee, "payout_fee : ", payin.payout_fee)
+    setPayin({name : payin.name, country_code : payin.country.country_code, id: payin.id, fee: payin.payin_fee})
+  }
+  const handleChangePayout = (index: number | string) => {
+    let payout = methods[index]
+    console.log("payin_fee : ", payout.payin_fee, "payout_fee : ", payout.payout_fee)
+    setPayout({name : payout.name, country_code : payout.country.country_code, id: payout.id, fee: payout.payout_fee})
+  }
 
 
   //################################## HTML ####################################//
@@ -173,12 +179,13 @@ function Mobile() {
           <div className="mb-6">
             <label className="block font-semibold text-gray-700">De :</label>
             <div className=" text-sm m-auto text-gray-700">
-              <label className="block mt-2 text-sm text-gray-700">Montant</label>
+              <label className="block mt-2 text-sm text-gray-700">Montant {payin.fee}</label>
               <div className="flex items-center relative mt-2 text-sm">
                 <div className="relative w-1/4 z-[5]">
-                  <select className="w-full z-[5] rounded-xl block appearance-none bg-white border border-gray-300 text-gray-700 p-4 pr-7 rounded-2xl leading-tight focus:outline-none focus:border-blue-500" value={trans.from.method} onChange={(e) => { handleChange(e, 'from.method') }}>
-                    {methods.map((method) => (
-                      <option key={method.id} onClick={() => { console.log(method.id) }} value={method.id} className="hover:bg-red-500 bg-white text-gray-700">{method.name}</option>
+                  <select className="w-full z-[5] rounded-xl block appearance-none bg-white border border-gray-300 text-gray-700 p-4 pr-7 rounded-2xl leading-tight focus:outline-none focus:border-blue-500" onChange={(e) => { handleChangePayin(e.target.value) }}>
+                    <option value="" className="hover:bg-red-500 bg-white text-gray-700">Sélectionnez un fournisseur</option>
+                    {methods.map((method, index) => (
+                      <option key={index} onClick={() => { console.log(method.id) }} value={index} className="hover:bg-red-500 bg-white text-gray-700">{method.name}</option>
                     ))}
                   </select>
                   <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
@@ -187,20 +194,23 @@ function Mobile() {
                     </svg>
                   </div>
                 </div>
-                <input type="text" placeholder="Montant" className="border-r w-3/4 block appearance-none bg-white border border-gray-300 w-full text-gray-700 absolute pl-32 p-4 rounded-2xl leading-tight focus:outline-none focus:border-blue-500" value={trans.amount} onChange={(e) => { handleChange(e, 'amount') }} />
+                <input type="text" placeholder="Montant" className="border-r w-3/4 block appearance-none bg-white border border-gray-300 w-full text-gray-700 absolute pl-32 p-4 rounded-2xl leading-tight focus:outline-none focus:border-blue-500" value={amount} onChange={(e) => { setAmount(e.target.value) }} />
                 <span className="p-2 z-[5] absolute right-5 border-l-2">FCFA</span>
               </div>
-
-              <div className="w-3/4 mx-auto xs:w-full">
-                <label className="block mt-2">Numéro de téléphone</label>
+              <div className="w-3/4 mx-auto">
+                <label className="block mt-2">Numéro de téléphone </label>
+                <br />
+                <br />
                 <div className="flex items-center relative w-full mx-auto">
-                  {countryFrom && (
-                    <div className={" p-4 rounded-2xl leading-tight focus:outline-none focus:border-blue-500 text-base font-bold text-gray-700 w-28 z-[5] flex items-center gap-2 bg-white border border-gray-300 text-gray-700 pr-6 "}>
-                      <Image src={require(`@/public/assets/images/${countryFrom.country_code}.png`)} width={19} height="12" className="h-[14px]" alt="Country Flag" />
-                      <span>{countryFrom.country_code}</span>
-                    </div>
-                  )}
-                  <input type="text" placeholder="+96 96 96 96" className="border-r w-3/4 block appearance-none bg-white border border-gray-300 w-full text-gray-700 absolute pl-32 p-4 rounded-2xl leading-tight focus:outline-none focus:border-blue-500" value={trans.from.phone} onChange={(e) => { handleChange(e, 'from.phone') }} />
+                  <input type="text" placeholder="96 96 96 96" className="border-r w-3/4 block appearance-none bg-white border border-gray-300 w-full text-gray-700 absolute pl-32 p-4 rounded-2xl leading-tight focus:outline-none focus:border-blue-500" value={payin_phone_number} onChange={(e) => { setPayin_phone_number(e.target.value) }} />
+                  <div className="flex absolute left-3 items-center gap-1">
+                    {payin.country_code && ( 
+                      <>
+                        <Image src={require(`@/public/assets/images/${payin.country_code}.png`)} width={19} height="12" className="h-[14px]" alt="Country Flag" />
+                        <strong className="text-xl font-semibold">{payin.country_code}</strong>
+                      </>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
@@ -209,12 +219,14 @@ function Mobile() {
 
           <div className="mb-6">
             <label className="block font-semibold text-gray-700">Vers :</label>
-            <label className="block mt-2 text-sm text-gray-700">Montant</label>
+            <label className="block mt-2 text-sm text-gray-700">Montant {payout.fee}</label>
             <div className="flex items-center relative mt-2 text-sm">
               <div className="relative w-1/4 z-[5]">
-                <select className="w-full z-[5] rounded-xl block appearance-none bg-white border border-gray-300 text-gray-700 p-4 pr-7 rounded-2xl leading-tight focus:outline-none focus:border-blue-500" value={trans.to.method} onChange={(e) => { handleChange(e, 'to.method') }}>
-                  {methods.map((method) => (
-                    <option key={method.id} onClick={() => { console.log(method.id) }} value={method.id} className="hover:bg-red-500 bg-white text-gray-700">{method.name}</option>
+                <select className="w-full z-[5] rounded-xl block appearance-none bg-white border border-gray-300 text-gray-700 p-4 pr-7 rounded-2xl leading-tight focus:outline-none focus:border-blue-500" onChange={(e) => { handleChangePayout(e.target.value) }}>
+                  <option value="" className="hover:bg-red-500 bg-white text-gray-700">Sélectionnez un fournisseur</option>
+                  {methods.map((method, index) => (
+                    <option key={index} onClick={() => { console.log(method.id) }} value={index} className="hover:bg-red-500 bg-white text-gray-700">{method.name}</option>
+                    // <option key={method.id} onClick={() => { console.log(method.id) }} value={method.id} className="hover:bg-red-500 bg-white text-gray-700">{method.name}</option>
                   ))}
                 </select>
                 <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
@@ -224,33 +236,44 @@ function Mobile() {
                 </div>
               </div>
 
-              <input type="text" placeholder="Montant" className="border-r w-3/4 block appearance-none bg-white border border-gray-300 w-full text-gray-700 absolute pl-32 p-4 rounded-2xl leading-tight focus:outline-none focus:border-blue-500" value={trans.amount} readOnly />
+              <input type="text" placeholder="Montant" className="border-r w-3/4 block appearance-none bg-white border border-gray-300 w-full text-gray-700 absolute pl-32 p-4 rounded-2xl leading-tight focus:outline-none focus:border-blue-500" value={amount} disabled />
               <span className="p-2 z-[5] absolute right-5 border-l-2">FCFA</span>
             </div>
-            <div className=" text-sm m-auto text-gray-700 w-3/4 xs:w-full">
+            <div className=" text-sm m-auto text-gray-700 w-3/4">
               <label className="block mt-2">Numéro de téléphone</label>
               <div className="flex items-center relative">
-                {countryTo && (
-                  <div className={" p-4 rounded-2xl leading-tight focus:outline-none focus:border-blue-500 text-base font-bold text-gray-700 w-28 z-[5] flex items-center gap-2 bg-white border border-gray-300 text-gray-700 pr-6 "}>
-                    <Image src={require(`@/public/assets/images/${countryTo.country_code}.png`)} width={19} height="12" className="h-[14px]" alt="Country Flag" />
-                    <span>{countryTo.country_code}</span>
+                <input type="tel" placeholder="90 90 25 25" className="border-r w-3/4 block appearance-none bg-white border border-gray-300 w-full text-gray-700 absolute pl-32 p-4 rounded-2xl leading-tight focus:outline-none focus:border-blue-500" onChange={(e) => { setPayout_phone_number(e.target.value) }} />
+                  <div className="flex absolute left-3 items-center gap-1">
+                    {payout.country_code && ( 
+                      <>
+                        <Image src={require(`@/public/assets/images/${payout.country_code}.png`)} width={19} height="12" className="h-[14px]" alt="Country Flag" />
+                        <strong className="text-xl font-semibold">{payout.country_code}</strong>
+                      </>
+                    )}
                   </div>
-                )}
-                <input type="tel" placeholder="+90 90 25 25" className="border-r w-3/4 block appearance-none bg-white border border-gray-300 w-full text-gray-700 absolute pl-32 p-4 rounded-2xl leading-tight focus:outline-none focus:border-blue-500" value={trans.to.phone} onChange={(e) => { handleChange(e, 'to.phone') }} />
               </div>
             </div>
 
           </div>
 
+          {Number(amount) >= 100000 && (
+            <>
+            <div className="mb-6">
+            <label className="block font-semibold text-gray-700">Motif :</label>
+                <textarea name="" id="" className="border-r block appearance-none bg-white border border-gray-300 w-full text-gray-700 pl-5 p-4 rounded-2xl leading-tight focus:outline-none focus:border-blue-500"  onChange={(e)=>setMotif(e.target.value)}></textarea> 
+            </div>
+            </>
+          )}
+
           <div className="text-base text-gray-700">
             <p>Voulez vous supporter les frais ?</p>
             <div className="flex gap-4">
               <div className="flex items-center">
-                <input className="w-5 h-5" id="oui" type="radio" name="fee" value={1} onChange={(e) => { handleChange(e, 'sender_support_fee') }} checked={trans.sender_support_fee === 1} />
+                <input className="w-5 h-5" id="oui" type="radio" name="fee" value={1} onChange={(e) => { setSender_support_fee(1) }} checked={sender_support_fee === 1} />
                 <label htmlFor="oui" className="pl-2">Oui</label>
               </div>
               <div className="flex items-center">
-                <input className="w-5 h-5" id="non" type="radio" name="fee" value={0} onChange={(e) => { handleChange(e, 'sender_support_fee') }} checked={trans.sender_support_fee === 0} />
+                <input className="w-5 h-5" id="non" type="radio" name="fee" value={0} onChange={(e) => { setSender_support_fee(0) }} checked={sender_support_fee === 0} />
                 <label htmlFor="non" className="pl-2">Non</label>
               </div>
             </div>
@@ -259,12 +282,23 @@ function Mobile() {
 
           <div className="my-6 text-sm font-bold">
             <div className="flex justify-between">
-              <span>FRAIS A PRELEVER</span>
-              <span className="text-red-500">{Math.ceil(((parseFloat(methodIn?.transaction_fees[0].payin_fee ? methodIn?.transaction_fees[0].payin_fee : 'O') * trans.amount) + parseFloat(methodOut?.transaction_fees[0].payout_fee ? methodOut?.transaction_fees[0].payout_fee : 'O') * trans.amount) / 100)} FCFA</span>
+              <span>Total des Frais</span>
+              <span className="text-red-500">{totalFee} FCFA</span>
             </div>
             <div className="flex justify-between mt-2 bg-blue-200 p-2">
-              <span className="text-gray-700">MONTANT TOTAL</span>
-              <span className="text-blue-500 font-bold">{trans.amount - Math.ceil(((parseFloat(methodIn?.transaction_fees[0].payin_fee ? methodIn?.transaction_fees[0].payin_fee : 'O') * trans.amount) + parseFloat(methodOut?.transaction_fees[0].payout_fee ? methodOut?.transaction_fees[0].payout_fee : 'O') * trans.amount) / 100)} FCFA</span>
+              <span className="text-gray-700">MONTANT A PRELEVER</span>
+              <span className="text-blue-500 font-bold">
+              {sender_support_fee ? (
+                <span className="text-red-500">
+                  {Number(amount) + Number(totalFee)}
+                </span>
+              ) : (
+                <span className="text-red-500">
+                  {amount }
+                </span>
+              )}
+                FCFA
+                </span>
             </div>
           </div>
 
@@ -275,18 +309,65 @@ function Mobile() {
 
         <div className="text-base w-1/2 mx-auto rounded-2xl overflow-hidden mt-8">
           {showM && (
-
             <div className="fixed inset-0 flex items-center justify-center backdrop-blur-sm z-50">
               <div className="bg-white rounded-lg p-6 max-w-sm w-full shadow-lg">
                 <div className="text-center">
-                  <p className="text-lg">Vous voulez envoyez <strong>{trans.amount} FCFA</strong> de <strong>{trans.from.phone}
-                  </strong> vers <strong>{trans.to.phone}</strong>
+                  <p className="text-lg">Vous voulez envoyez <strong>{amount} FCFA</strong> de <strong>{payin.country_code + payin_phone_number}
+                  </strong> vers <strong>{payout.country_code + payout_phone_number}</strong>
                     approuvez vous la transaction?</p>
 
                 </div>
                 <div className="flex justify-center">
                   <button className="px-4 py-2 mt-4 bg-primary text-white rounded-md text-base" onClick={() => { handleSubmit() }} > Approuver </button>
                   <button className="px-4 py-2 mt-4 bg-red-500 text-white rounded-md text-base ml-4" onClick={() => { setShowM(false) }}> Rejeter </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {(transStatus == 'PENDING' && showStatus ) && (
+            <div className="fixed inset-0 flex items-center justify-center backdrop-blur-sm z-50">
+              <div className="bg-white rounded-lg p-6 max-w-sm w-full shadow-lg">
+                <div className="text-center">
+                  <p className="text-lg">
+                    Transaction en cours de traitement
+                  </p>
+
+                </div>
+                <div className="flex justify-center">
+                  <button className="px-4 py-2 mt-4 bg-red-500 text-white rounded-md text-base ml-4" onClick={() => {   setShowStatus(false) }}> Fermer </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {(transStatus == 'FAILED' && showStatus ) && (
+            <div className="fixed inset-0 flex items-center justify-center backdrop-blur-sm z-50">
+              <div className="bg-white rounded-lg p-6 max-w-sm w-full shadow-lg">
+                <div className="text-center">
+                  <p className="text-lg">
+                    Transaction a échoué
+                  </p>
+
+                </div>
+                <div className="flex justify-center">
+                  <button className="px-4 py-2 mt-4 bg-red-500 text-white rounded-md text-base ml-4" onClick={() => { setShowStatus(false) }}> Fermer </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {(transStatus == 'SUCCESSFUL' && showStatus ) && (
+            <div className="fixed inset-0 flex items-center justify-center backdrop-blur-sm z-50">
+              <div className="bg-white rounded-lg p-6 max-w-sm w-full shadow-lg">
+                <div className="text-center">
+                  <p className="text-lg">
+                    Transaction a été traitée avec succès
+                  </p>
+
+                </div>
+                <div className="flex justify-center">
+                  <button className="px-4 py-2 mt-4 bg-red-500 text-white rounded-md text-base ml-4" onClick={() => { setShowStatus(false) }}> Fermer </button>
                 </div>
               </div>
             </div>

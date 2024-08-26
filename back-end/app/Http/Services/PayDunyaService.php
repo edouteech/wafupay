@@ -185,7 +185,7 @@ class PayDunyaService
         ];
     }
 
-    public static function receive(float $amount, mixed $payinProvider, array $user)
+    public static function initPayin(float $amount, mixed $payinProvider, array $user)
     {
 
         if ($token = self::getToken($amount, self::TRANSFER)['token']) {
@@ -221,7 +221,7 @@ class PayDunyaService
         throw new ValidationException(json_encode($responseData));
     }
 
-    public static function send(string $withdraw_mode, string $phone_num, float $amount): array
+    public static function initPayout(string $withdraw_mode, string $phone_num, float $amount): array
     {
         if ($token = self::disburse_token($withdraw_mode, $phone_num, $amount)['disburse_token']) {
             $data = [

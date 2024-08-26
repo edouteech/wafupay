@@ -34,7 +34,7 @@ class FeexPayService
         );
     }
 
-    public function initiateLocalPayment(string $amount, int $phoneNumber, string $operatorName, string $fullname, string $email, string $callback_info, string $custom_id, string $otp="" )
+    public function initPayin(string $amount, int $phoneNumber, string $operatorName, string $fullname, string $email, string $callback_info, string $custom_id, string $otp="" )
     {
 
         return $this->skeleton->paiementLocal(
@@ -49,12 +49,12 @@ class FeexPayService
         );
     }
 
-    public function getPaymentStatus($transactionId)
+    public function payinStatus($reference)
     {
-        return $this->skeleton->getPaiementStatus($transactionId);
+        return $this->skeleton->getPaiementStatus($reference);
     }
 
-    public function initiatePayout( string $amount, string $phoneNumber,string $network, string $motif){
+    public function initPayout( string $amount, string $phoneNumber,string $network, string $motif){
        $shop = env('FEEXPAY_SHOP_ID');
         try {
             $data = [
@@ -73,5 +73,8 @@ class FeexPayService
             return response()->json(['error' => 'Exception lors de la requête: ' . $th->getMessage()], 500);
         }
     }
-
+    public function payoutStatus($transactionId)
+    {
+        return $this->skeleton->getPaiementStatus($transactionId);
+    }
 }

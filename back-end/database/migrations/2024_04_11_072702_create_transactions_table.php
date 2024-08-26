@@ -20,12 +20,13 @@ return new class extends Migration
             $table->string('payout_phone_number');
             $table->foreignId('payout_wprovider_id')->constrained('w_providers', 'id');
             $table->enum('payout_status', ['pending', 'success', 'failed'])->default('pending');
-            $table->float('amount');
+            $table->float('amount', 8, 2);
             $table->float('amountWithoutFees');
             $table->enum('type', ['school_help', 'family_help', 'rent', 'others'])->default('others');
             $table->string('token')->nullable();
             $table->string('disburse_token')->nullable();
             $table->string('otp_code')->nullable();
+            $table->json('datas');
             $table->softDeletes();
             $table->timestamps();
         });

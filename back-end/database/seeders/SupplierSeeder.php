@@ -69,3 +69,16 @@ class SupplierSeeder extends Seeder
 
     }
 }
+
+################################################################################
+#############################  paytech  #######################################
+################################################################################
+// senegal
+// Cartes bancaires : 1.70% HT
+// Mobile Money : 2.0% 
+// cote d'ivoire
+// Cartes bancaires : 2.50% HT
+// Mobile Money : 2.0% 
+// mali
+// Cartes bancaires : 2.50% HT
+// Mobile Money : 2.0% 

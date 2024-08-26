@@ -1,6 +1,6 @@
 /* eslint-disable react/no-unescaped-entities */
 "use client"
-import Dashbord from "../../Components/Dashboard"
+import Dashbord from "../Components/Dashboard"
 import { useRouter } from "next/navigation"
 import { use, useEffect, useState } from "react";
 import { Eye, EyeOff, Plus } from "lucide-react";
