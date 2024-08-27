@@ -36,7 +36,7 @@ class FeexPayService
 
     public function initPayin(string $amount, int $phoneNumber, string $operatorName, string $fullname, string $email, string $callback_info, string $custom_id, string $otp="" )
     {
-
+        
         return $this->skeleton->paiementLocal(
             $amount,
             $phoneNumber,

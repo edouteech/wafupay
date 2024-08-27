@@ -52,10 +52,10 @@ class MyTransactionController extends BaseController
 
      public function store(Request $request)
      {
-         $suplier = Supplier::where("name", "feexpay")->first();
-         $supplier_grid = json_decode($suplier->wallet_name, true);
          $payin_provider = WProvider::find($request->payin_wprovider_id);
          $payout_provider = WProvider::find($request->payout_wprovider_id);
+         $suplier = Supplier::where("name", "feexpay")->first();
+         $supplier_grid = json_decode($suplier->wallet_name, true);
          $user = $request->user();
  
          if (!$user->is_active || !$user->is_verified) {
@@ -101,7 +101,7 @@ class MyTransactionController extends BaseController
              'payin_wprovider_id' => $request->payin_wprovider_id,
              'payout_wprovider_id' => $request->payout_wprovider_id,
              'type' => $request->type ?? 'others',
-             'token' => $reference,
+             'payin_reference' => $reference,
              'user_id' => $user->id,
              'amount' => $amount,
              'amountWithoutFees' => $amountWithoutFees,
@@ -151,7 +151,7 @@ class MyTransactionController extends BaseController
     //             'payin_status' => Transaction::PENDING_STATUS,
     //             'payout_status' => Transaction::PENDING_STATUS,
     //             'type' => $request->type ?? 'others',
-    //             'token' => $receiveStatus['token'],
+    //             'payin_reference' => $receiveStatus['token'],
     //             'user_id' => $user->id,
     //             'amount' => $additionalData['amountWithFees'],
     //             'amountWithoutFees' => $additionalData['amountWithoutFees'],
@@ -198,12 +198,25 @@ class MyTransactionController extends BaseController
     //     return $this->handleResponse($this->payDunya->payoutStatus($token));
     // }
 
-    public function payinStatus(string $reference)
+    public function payin_status(string $reference)
     {
-        return response()->json($this->feexpay->payinStatus($reference));
-        // return $this->handleResponse($this->payDunya->payinStatus($token));
+        $transaction = Transaction::where('payin_reference', $reference)->first();
+        $provider = WProvider::find($transaction->payout_wprovider_id);
+        
+        $suplier = Supplier::where("name", "feexpay")->first();
+        $supplier_grid = json_decode($suplier->wallet_name, true);
 
-        // return $this->handleResponse($this->payDunya->payoutStatus($token));
+
+        $status = $this->feexpay->payinStatus($reference);
+        if($transaction && $status['status'] == 'FAILED'){
+            $transaction->update(['payin_status' => "failed",'payout_status' => "failed"]);
+        }
+        if($transaction && $status['status'] == 'SUCCESSFUL'){
+            $transaction->update(['payin_status' => "success"]);
+            $this->initPayout($reference);
+        }
+        
+        return response()->json($status);
     }
 
     // public function payinStatus($reference){
@@ -228,7 +241,7 @@ class MyTransactionController extends BaseController
     //         );
             
     //         if (array_key_exists('reference', $payout)) {
-    //             $transaction->update(['disburse_token' => $payout['reference']]);
+    //             $transaction->update(['payout_reference' => $payout['reference']]);
     //         }
     //         if (isset($payout['status']) && $payout['status'] == 'SUCCESSFUL') {
     //             $transaction->update(['payout_status' => "success"]);
@@ -241,6 +254,40 @@ class MyTransactionController extends BaseController
     //     return response()->json($status);
     // }
 
+    public function initPayout($reference){
+        $transaction = Transaction::where('payin_reference', $reference)->first();
+        $provider = WProvider::find($transaction->payout_wprovider_id);
+        
+        $suplier = Supplier::where("name", "feexpay")->first();
+        $supplier_grid = json_decode($suplier->wallet_name, true);
+        
+        if ($suplier->name == "feexpay") {
+            $payout = $this->feexpay->initPayout(
+                $transaction->amountWithoutFees,
+                str_replace('+', '', $transaction->payout_phone_number),
+                $supplier_grid[$provider->name],
+                "payout"
+            );
+            
+            if (array_key_exists('reference', $payout)) {
+                $transaction->update(['payout_reference' => $payout['reference']]);
+            }
+            if (isset($payout['status']) && $payout['status'] == 'SUCCESSFUL') {
+                $transaction->update(['payout_status' => "success"]);
+            }else{
+                $transaction->update(['payout_status' => "failed"]);
+            }
+        }else if ($suplier->name == "paytech") {
+            
+        }
+        return response()->json($payout);
+    }
+
+    public function payoutStatus($reference){
+        $suplier = Supplier::where("name", "feexpay")->first();
+        $supplier_grid = json_decode($suplier->wallet_name, true);
+
+    }
     public function update_payin_status(Request $request)
     {
         $calculate_hash = hash('sha512', env('$this->payDunya_MASTER_KEY'));
@@ -251,7 +298,7 @@ class MyTransactionController extends BaseController
             return;
         }
 
-        $transaction = Transaction::where('token', $data['invoice']['token'])->firstOrFail();
+        $transaction = Transaction::where('payin_reference', $data['invoice']['token'])->firstOrFail();
         $serverStatus = $data['status'];
 
         $status = $serverStatus === 'completed' ? 'success' : ($serverStatus == 'canceled' ? 'failed' : ($serverStatus == 'failed' ? 'failed' : 'failed'));
@@ -264,7 +311,7 @@ class MyTransactionController extends BaseController
                 $transaction->amountWithoutFees,
             );
             if ($sendStatus['status'] == $this->payDunya::STATUS_OK) {
-                $transaction->update(['disburse_token' => $sendStatus['token']]);
+                $transaction->update(['payout_reference' => $sendStatus['token']]);
             }
             return $sendStatus;
         }
@@ -277,7 +324,7 @@ class MyTransactionController extends BaseController
 
         if (isset($data['status'])) {
             if ($data['status'] == Transaction::APPROVED_STATUS) {
-                $transaction = Transaction::where('disburse_token', $data['token'])->first();
+                $transaction = Transaction::where('payout_reference', $data['token'])->first();
 
                 $transaction->update(['payout_status' => $data['status']]);
 
@@ -290,7 +337,7 @@ class MyTransactionController extends BaseController
     {
         $user = $request->user();
 
-        $transaction = Transaction::where('token', $payin_token)->firstOrFail();
+        $transaction = Transaction::where('payin_reference', $payin_token)->firstOrFail();
 
         if ($user->id != $transaction->user_id) {
             return $this->handleError(
@@ -333,7 +380,7 @@ class MyTransactionController extends BaseController
 
             if ($sendStatus['status'] == $this->payDunya::STATUS_OK) {
 
-                $transaction->update(['disburse_token' => $sendStatus['token']]);
+                $transaction->update(['payout_reference' => $sendStatus['token']]);
             }
 
             return $sendStatus;
@@ -382,7 +429,7 @@ class MyTransactionController extends BaseController
 
         $transactionId = $request->transactionId;
 
-        $findTransaction = Transaction::where('token' == $transactionId);
+        $findTransaction = Transaction::where('payin_reference' == $transactionId);
 
         if ($FindTransaction) {
             $phoneNumber = $request->payin_phone_number;
@@ -393,23 +440,4 @@ class MyTransactionController extends BaseController
 
     }
 
-    public function initPayout(Request $request){
-        $suplier = Supplier::where("name", "feexpay")->first();
-        $supplier_grid = json_decode($suplier->wallet_name, true);
-        $provider = WProvider::find($request->payin_wprovider_id);
-        $user = $request->user();
-
-        if (!$user->is_active || !$user->is_verified) {
-            return $this->handleError(
-                __('validation.valid_sender_account'),
-                ['error' => 'Votre compte n\'est pas vérifié.'],
-            );
-        }
-    }
-
-    public function payoutStatus($reference){
-        $suplier = Supplier::where("name", "feexpay")->first();
-        $supplier_grid = json_decode($suplier->wallet_name, true);
-
-    }
 }

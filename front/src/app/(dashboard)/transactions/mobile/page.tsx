@@ -139,6 +139,7 @@ function Mobile() {
           }, 5000);
         }else if (response.data.status == "SUCCESSFUL") {
           setTransStatus(response.data.status);
+          
         }
       }
     })

@@ -46,4 +46,8 @@ class WProvider extends Model
                 'message' => "Le solde que vous essayez d'envoyer est trop inferieur ou trop grande, nous supportons de 500 à 500 000 FCFA pour ce gestionnaire de portefeuil"
             ]));
     }
+    public function suppliers()
+    {
+        return $this->belongsToMany(Supplier::class, 'provider_supplier');
+    }
 }

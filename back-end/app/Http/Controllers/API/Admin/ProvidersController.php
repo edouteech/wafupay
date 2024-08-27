@@ -12,7 +12,7 @@ class ProvidersController extends Controller
      */
     public function index()
     {
-        //
+        
     }
 
     /**

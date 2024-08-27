@@ -21,8 +21,8 @@ class Transaction extends Model
         'payout_status',
         'amount',
         'amountWithoutFees',
-        'token',
-        'disburse_token',
+        'payin_reference',
+        'payout_reference',
         'type'
     ];
 
