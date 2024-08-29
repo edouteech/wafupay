@@ -36,17 +36,19 @@ class FeexPayService
 
     public function initPayin(string $amount, int $phoneNumber, string $operatorName, string $fullname, string $email, string $callback_info, string $custom_id, string $otp="" )
     {
-        
-        return $this->skeleton->paiementLocal(
-            $amount,
-            $phoneNumber,
-            $operatorName,
-            $fullname,
-            $email,
-            $callback_info,
-            $custom_id,
-            $otp
-        );
+        $local_payment = ['MTN', 'MOOV', 'MOOV TG', 'TOGOCOM TG', 'ORANGE SN', 'MTN CI'];
+        $web_request = ['FREE SN', 'ORANGE CI', 'MOOV CI', 'WAVE CI', 'MOOV BF', 'ORANGE BF'];
+        if(in_array($operatorName, $local_payment)){
+            return $this->skeleton->paiementLocal(
+                $amount, $phoneNumber, $operatorName, $fullname,
+                $email, $callback_info, $custom_id, $otp
+            );
+        }else if(in_array($operatorName, $web_request)){
+            return $this->skeleton->requestToPayWeb(
+                $amount, $phoneNumber, $operatorName, $fullname,
+                $email, $callback_info, "retrun url"
+            );
+        }
     }
 
     public function payinStatus($reference)
@@ -64,9 +66,7 @@ class FeexPayService
                 "shop" => $shop,
                 "motif" => $motif
             ];
-
             $response = Http::withHeaders(self::getHeaders())->post("https://api.feexpay.me/api/payouts/public/transfer/global", $data);
-
             return $response->json();
 
         } catch (\Throwable $th) {

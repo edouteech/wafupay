@@ -77,10 +77,6 @@ function Mobile() {
 
 
   const handleSubmit = async () => {
-    // if (payin.) {
-      
-    // }
-
     await axios.post(`${apiUrl}/transactions`, {
       "amount": amount, 
       "payin_phone_number": payin.country_code + payin_phone_number,
@@ -99,7 +95,6 @@ function Mobile() {
         setTransRef(response.data)
         checkStatus(response.data);
       }
-
     }).catch((err) => {
       console.log(err);
       if (err.response.status == 403) {
@@ -130,16 +125,15 @@ function Mobile() {
   const checkStatus = async (reference: string) => {
     console.log("execute checkStatus")
     await axios.get(`${apiUrl}/payin-status/${reference}`, auth).then((response) => {
-      console.log(response)
+      console.log("response : ", response)
       if (response.status == 200) {
-        setTransStatus(response.data.status)
-        if (response.data.status == "PENDING") {
+        setTransStatus(response.data)
+        if (response.data == "pending") {
           setTimeout(() => {
             checkStatus(reference);
           }, 5000);
-        }else if (response.data.status == "SUCCESSFUL") {
-          setTransStatus(response.data.status);
-          
+        }else if (response.data == "success") {
+          setTransStatus(response.data);
         }
       }
     })
@@ -326,7 +320,7 @@ function Mobile() {
             </div>
           )}
 
-          {(transStatus == 'PENDING' && showStatus ) && (
+          {(transStatus == 'pending' && showStatus ) && (
             <div className="fixed inset-0 flex items-center justify-center backdrop-blur-sm z-50">
               <div className="bg-white rounded-lg p-6 max-w-sm w-full shadow-lg">
                 <div className="text-center">
@@ -342,7 +336,7 @@ function Mobile() {
             </div>
           )}
 
-          {(transStatus == 'FAILED' && showStatus ) && (
+          {(transStatus == 'failed' && showStatus ) && (
             <div className="fixed inset-0 flex items-center justify-center backdrop-blur-sm z-50">
               <div className="bg-white rounded-lg p-6 max-w-sm w-full shadow-lg">
                 <div className="text-center">
@@ -358,7 +352,7 @@ function Mobile() {
             </div>
           )}
 
-          {(transStatus == 'SUCCESSFUL' && showStatus ) && (
+          {(transStatus == 'success' && showStatus ) && (
             <div className="fixed inset-0 flex items-center justify-center backdrop-blur-sm z-50">
               <div className="bg-white rounded-lg p-6 max-w-sm w-full shadow-lg">
                 <div className="text-center">

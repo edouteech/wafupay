@@ -19,6 +19,8 @@ class Supplier extends Model
     
     public function providers()
     {
-        return $this->belongsToMany(WProvider::class, 'provider_supplier');
+        return $this->belongsToMany(WProvider::class, 
+        'provider_supplier', 'supplier_id', 'provider_id')
+        ->withPivot('type', 'priority');
     }
 }

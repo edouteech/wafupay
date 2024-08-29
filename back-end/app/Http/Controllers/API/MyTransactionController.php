@@ -52,63 +52,86 @@ class MyTransactionController extends BaseController
 
      public function store(Request $request)
      {
-         $payin_provider = WProvider::find($request->payin_wprovider_id);
-         $payout_provider = WProvider::find($request->payout_wprovider_id);
-         $suplier = Supplier::where("name", "feexpay")->first();
-         $supplier_grid = json_decode($suplier->wallet_name, true);
-         $user = $request->user();
- 
-         if (!$user->is_active || !$user->is_verified) {
-             return $this->handleError(
-                 __('validation.valid_sender_account'),
-                 ['error' => 'Votre compte n\'est pas vérifié.'],
-             );
-         }
- 
-         //variables initialisation
-         $payloads = $this->handleValidate($request->post(), $this->rules);
- 
-         $amount = $request->amount;
-         // calculate fees
-         $fees_rate = $payin_provider->payin_fee + $payout_provider->payout_fee;
-         $fees = $amount * $fees_rate / 100;
-         if ($request->input('sender_support_fee') == true) {
+        $user = $request->user();
+        if (!$user->is_active || !$user->is_verified) {
+            return $this->handleError(
+                __('validation.valid_sender_account'),
+                ['error' => 'Votre compte n\'est pas vérifié.'],
+            );
+        }
+        //variables initialisation
+        $payloads = $this->handleValidate($request->post(), $this->rules);
+        
+        $payin_provider = WProvider::find($request->payin_wprovider_id);
+        $payout_provider = WProvider::find($request->payout_wprovider_id);
+        // dd($payin_provider->suppliers);
+        $suplier = $payin_provider->suppliers()->where('type', 'payin')->first();
+        $supplier_grid = json_decode($suplier->wallet_name, true);
+
+
+
+        $amount = $request->amount;
+        // calculate fees
+        $fees_rate = $payin_provider->payin_fee + $payout_provider->payout_fee;
+        $fees = $amount * $fees_rate / 100;
+        if ($request->input('sender_support_fee') == true) {
             $amountWithoutFees = $amount;
             $amount = ceil($amount + $fees);
-         } else {
+        } else {
             $amountWithoutFees = ceil($amount - $fees);
-         }
+        }
         //  dd($request->input('sender_support_fee') == true, $amount, $amountWithoutFees);
-         $fullname =  $user->first_name . ' ' . $user->last_name;
-         $email =  $user->email;
-         $phoneNumber = str_replace('+', '', $request->payin_phone_number);
-         $otp = "";
-         $callback_info = "Redirection";
-         $custom_id = "test_transactions";
- 
-       // initiate payment
-         $reference = $this->feexpay->initPayin($amount, $phoneNumber, $supplier_grid[$payin_provider->name], $fullname, $email, $callback_info, $custom_id, $otp);
- 
-         //get status
-         // $status = $this->feexpay->payinStatus($payin_params);
- 
-         Transaction::create([
-             ...$payloads,
-             'payin_status' => Transaction::PENDING_STATUS,
-             'payout_status' => Transaction::PENDING_STATUS,
-             'payin_phone_number' => $request->payin_phone_number,
-             'payout_phone_number' => $request->payout_phone_number,
-             'payin_wprovider_id' => $request->payin_wprovider_id,
-             'payout_wprovider_id' => $request->payout_wprovider_id,
-             'type' => $request->type ?? 'others',
-             'payin_reference' => $reference,
-             'user_id' => $user->id,
-             'amount' => $amount,
-             'amountWithoutFees' => $amountWithoutFees,
-             'otp_code' => $request->input('otp_code', 1),
-         ]);
- 
-         return response()->json($reference);
+        $fullname =  $user->first_name . ' ' . $user->last_name;
+        $email =  $user->email;
+        $phoneNumber = str_replace('+', '', $request->payin_phone_number);
+        $otp = "";
+        $callback_info = "Redirection";
+        $custom_id = "test_transactions";
+
+        // initiate payment
+        switch ($suplier->name) {
+            case 'feexpay':
+                $reference = $this->feexpay->initPayin($amount, $phoneNumber, $supplier_grid[$payin_provider->name], $fullname, $email, $callback_info, $custom_id, $otp);
+                break;
+            case 'paytech':
+                $reference = 'paytech';
+                break;
+            // case 'pawapay'
+            //     $reference = 'pawapay';
+            //     break;
+            default:
+                return $this->handleError(
+                    "Supplier not found",
+                    ['error' => 'Le fournisseur n\'est pas trouvé'],
+                );
+                break;
+        }
+        if($suplier->name == ""){
+            
+        }else if($suplier->name == "paytech"){
+            $reference = "paytech";
+        }
+
+        //get status
+        // $status = $this->feexpay->payinStatus($payin_params);
+
+        Transaction::create([
+            ...$payloads,
+            'payin_status' => Transaction::PENDING_STATUS,
+            'payout_status' => Transaction::PENDING_STATUS,
+            'payin_phone_number' => $request->payin_phone_number,
+            'payout_phone_number' => $request->payout_phone_number,
+            'payin_wprovider_id' => $request->payin_wprovider_id,
+            'payout_wprovider_id' => $request->payout_wprovider_id,
+            'type' => $request->type ?? 'others',
+            'payin_reference' => $reference,
+            'user_id' => $user->id,
+            'amount' => $amount,
+            'amountWithoutFees' => $amountWithoutFees,
+            'otp_code' => $request->input('otp_code', 1),
+        ]);
+
+        return response()->json($reference);
      }
     // public function store(Request $request)
     // {
@@ -203,21 +226,34 @@ class MyTransactionController extends BaseController
         $transaction = Transaction::where('payin_reference', $reference)->first();
         $provider = WProvider::find($transaction->payout_wprovider_id);
         
-        $suplier = Supplier::where("name", "feexpay")->first();
+        $suplier = $provider->suppliers()->where("type", "payin")->first();
         $supplier_grid = json_decode($suplier->wallet_name, true);
 
-
-        $status = $this->feexpay->payinStatus($reference);
-        if($transaction && $status['status'] == 'FAILED'){
-            $transaction->update(['payin_status' => "failed",'payout_status' => "failed"]);
+        switch ($suplier->name) {
+            case 'feexpay':
+                $infos = $this->feexpay->payinStatus($reference);
+                $status_table = ['FAILED' => 'failed', 'SUCCESSFUL' => 'success', 'PENDING' => 'pending'];
+                $status = $status_table[$infos['status']];
+                if($transaction && $status == 'failed'){
+                    $transaction->update(['payin_status' => $status,'payout_status' => $status]);
+                }
+                if($transaction && $status == 'success'){
+                    $transaction->update(['payin_status' => $status]);
+                    $this->initPayout($reference);
+                }
+                break;
+            case 'paytech':
+                $status = 'paytech';
+                break;
+            // case 'pawapay'
+            //     $status = 'pawapay';
+            //     break;
+            default:
+                $status = 'failed';
+                break;
+            
         }
-        if($transaction && $status['status'] == 'SUCCESSFUL'){
-            $transaction->update(['payin_status' => "success"]);
-            $this->initPayout($reference);
-        }
-        
         return response()->json($status);
-    }
 
     // public function payinStatus($reference){
     //     $suplier = Supplier::where("name", "feexpay")->first();
@@ -252,39 +288,52 @@ class MyTransactionController extends BaseController
     //     }
         
     //     return response()->json($status);
-    // }
+    }
 
     public function initPayout($reference){
         $transaction = Transaction::where('payin_reference', $reference)->first();
         $provider = WProvider::find($transaction->payout_wprovider_id);
         
-        $suplier = Supplier::where("name", "feexpay")->first();
+        $suplier = $provider->suppliers()->where("type", "payout")->first();
         $supplier_grid = json_decode($suplier->wallet_name, true);
         
-        if ($suplier->name == "feexpay") {
-            $payout = $this->feexpay->initPayout(
-                $transaction->amountWithoutFees,
-                str_replace('+', '', $transaction->payout_phone_number),
-                $supplier_grid[$provider->name],
-                "payout"
-            );
-            
-            if (array_key_exists('reference', $payout)) {
-                $transaction->update(['payout_reference' => $payout['reference']]);
-            }
-            if (isset($payout['status']) && $payout['status'] == 'SUCCESSFUL') {
-                $transaction->update(['payout_status' => "success"]);
-            }else{
-                $transaction->update(['payout_status' => "failed"]);
-            }
-        }else if ($suplier->name == "paytech") {
-            
+        switch ($suplier->name) {
+            case 'feexpay':
+                $payout = $this->feexpay->initPayout(
+                    $transaction->amountWithoutFees,
+                    str_replace('+', '', $transaction->payout_phone_number),
+                    $supplier_grid[$provider->name],
+                    "payout"
+                );
+                
+                if (array_key_exists('reference', $payout)) {
+                    $transaction->update(['payout_reference' => $payout['reference']]);
+                }
+                if (isset($payout['status']) && $payout['status'] == 'SUCCESSFUL') {
+                    $transaction->update(['payout_status' => "success"]);
+                }else{
+                    $transaction->update(['payout_status' => "failed"]);
+                }
+                break;
+            case 'paytech':
+                $payout = 'paytech';
+                break;
+            case 'pawapay':
+                $payout = 'pawapay';
+                break;
+            default:
+                $payout = 'failed';
+                break;
         }
+
         return response()->json($payout);
     }
 
     public function payoutStatus($reference){
-        $suplier = Supplier::where("name", "feexpay")->first();
+        $transaction = Transaction::where('payin_reference', $reference)->first();
+        $provider = WProvider::find($transaction->payout_wprovider_id);
+        
+        $suplier = $provider->suppliers()->where("type", "payout")->first();
         $supplier_grid = json_decode($suplier->wallet_name, true);
 
     }
@@ -439,5 +488,34 @@ class MyTransactionController extends BaseController
         }
 
     }
+    public function paytechPayment(Request $request)
+    {
+        $apiUrl = 'https://paytech.sn/api/payment/request-payment';
+        $params = [
+            'item_name' => "mom produit",
+            'item_price' => 100,
+            'currency' => 'XOF',
+            'ref_command' => uniqid(),
+            'command_name' => 'Paiement via PayTech',
+            'env' => 'test',
+            'ipn_url' => url('/my-ipn'), // URL pour IPN
+            'success_url' => url('/success'),
+            'cancel_url' => url('/cancel'),
+            'custom_field' => json_encode(['custom_field1' => 'value1']),
+        ];
 
+        $response = Http::withHeaders([
+            'API_KEY' => env('PAYTECH_API_KEY'),
+            'API_SECRET' => env('PAYTECH_API_SECRET'),
+            'Content-Type' => 'application/json',
+        ])->post($apiUrl, $params);
+
+        $responseBody = $response->json();
+
+        if ($responseBody['success'] === 1) {
+            return redirect($responseBody['redirect_url']);
+        }
+
+        return back()->withErrors(['message' => 'Erreur lors de la demande de paiement.']);
+    }
 }

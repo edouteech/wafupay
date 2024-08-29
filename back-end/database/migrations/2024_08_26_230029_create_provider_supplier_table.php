@@ -15,6 +15,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('provider_id')->constrained('w_providers')->onDelete('cascade');
             $table->foreignId('supplier_id')->constrained('suppliers')->onDelete('cascade');
+            $table->enum('type', ['payin', 'payout'])->default('payin');
+            $table->boolean('priority')->default(false);
             $table->timestamps();
         });
     }

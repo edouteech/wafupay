@@ -2,9 +2,10 @@
 
 namespace Database\Seeders;
 
+use App\Models\Supplier;
 use App\Models\WProvider;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
 class WProviderSeeder extends Seeder
 {
@@ -13,6 +14,8 @@ class WProviderSeeder extends Seeder
      */
     public function run(): void
     {
+        $default_supplier = Supplier::where("name", "feexpay")->first();
+
         $wproviders = [
             [
                 "name" => "MOOV BENIN",
@@ -150,8 +153,16 @@ class WProviderSeeder extends Seeder
         ];
 
         foreach ($wproviders as $wProviderData) {
-            $wProvider = WProvider::create($wProviderData);
-
+            $provider = WProvider::create($wProviderData);
+            // $wProvider->suppliers()->attach($default_supplier);
+            $default_supplier->providers()->attach(
+                $provider,
+                ['type' => 'payin', 'priority' => true]
+            );
+            $default_supplier->providers()->attach(
+                $provider,
+                ['type' => 'payout', 'priority' => true]
+            );
         }
     }
 }
