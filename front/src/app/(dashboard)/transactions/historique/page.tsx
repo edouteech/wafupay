@@ -1,13 +1,12 @@
 /* eslint-disable react/no-unescaped-entities */
 "use client"
-import { Suspense, useEffect, useState } from "react"
-import Dashbord from "../../Components/Dashbord"
-import { useRouter } from "next/navigation"
-import axios from "axios"
 import { Transaction } from "@/app/types/types"
-import { ChevronLeft, ChevronRight, Redo, RefreshCcw, Eye, Edit, Trash } from "lucide-react"
-import Link from "next/link"
+import axios from "axios"
+import { Edit, Eye, Trash, X } from "lucide-react"
 import { useSession } from "next-auth/react"
+import { useRouter } from "next/navigation"
+import { useEffect, useState } from "react"
+import Dashbord from "../../Components/Dashbord"
 
 function Historique() {
     //############################### CONSTANTES / STATES #############################//
@@ -24,6 +23,7 @@ function Historique() {
     const [next, setNext] = useState('')
     const [response, setResponse] = useState<Transaction[]>([])
     const [requestDone, setRequestDone] = useState(false)
+    const [viewTransaction, setViewTransaction] = useState({})
 
     //################################## VARIABLES ##############################//
 
@@ -99,7 +99,7 @@ function Historique() {
             <Dashbord>
                 <div className="p-16 mb-8">
                     <h1 className="font-bold text-gray-700 mb-4">
-                        Historique des transactions
+                        Historique des transactions 
                     </h1>
                     {requestDone ? (
                     <div className=" mt-8 text-base w-full">
@@ -118,38 +118,38 @@ function Historique() {
                                 </tr>
                             </thead>
                             <tbody>
-                                {response.data.map((tran, i) => (
+                                {response.data.map((transaction, i) => (
                                     <tr key={i}>
-                                        <td className="p-2">{formatDate(tran.created_at)}</td>
+                                        <td className="p-2">{formatDate(transaction.created_at)}</td>
                                         <td className="p-2">
-                                            {/* <span className="block text-xs">{tran.payin_wprovider?.name}</span> */}
-                                            <strong className="block text-sm font-bold">{tran.payin_phone_number}</strong>
+                                            {/* <span className="block text-xs">{transaction.payin_wprovider?.name}</span> */}
+                                            <strong className="block text-sm font-bold">{transaction.payin_phone_number}</strong>
                                         </td>
                                         <td className="p-2">
-                                            {/* <span className="block text-xs">{tran.payout_wprovider?.name}</span> */}
-                                            <strong className="block text-sm font-bold">{tran.payout_phone_number}</strong>
+                                            {/* <span className="block text-xs">{transaction.payout_wprovider?.name}</span> */}
+                                            <strong className="block text-sm font-bold">{transaction.payout_phone_number}</strong>
                                         </td>
-                                        {/* <td className="p-2">{parseInt(tran.amount) - parseInt(tran.amountWithoutFees)}</td> */}
+                                        {/* <td className="p-2">{parseInt(transaction.amount) - parseInt(transaction.amountWithoutFees)}</td> */}
                                         <td className="p-2 ">
-                                            <strong className="text-primary font-bold">{tran.amount} F</strong>
-                                            <span className="font-light text-xs text-red-500"> / ({parseInt(tran.amount) - parseInt(tran.amountWithoutFees)} F)</span>
+                                            <strong className="text-primary font-bold">{transaction.amount} F</strong>
+                                            <span className="font-light text-xs text-red-500"> / ({parseInt(transaction.amount) - parseInt(transaction.amountWithoutFees)} F)</span>
                                         </td>
                                         <td className="">
-                                            <span className={`${tran.payin_status == 'pending' ? 'bg-yellow-500' : tran.payin_status == 'success' ? 'bg-green-500' : tran.payin_status == 'failed' ? 'bg-red-500' : ''} px-2 py-0 text-white rounded-full`}>{`${tran.payin_status == 'pending' ? 'en cours' : tran.payin_status == 'success' ? 'effectué' : tran.payin_status == 'failed' ? 'échoué' : ''}`}</span>
+                                            <span className={`${transaction.payin_status == 'pending' ? 'bg-yellow-500' : transaction.payin_status == 'success' ? 'bg-green-500' : transaction.payin_status == 'failed' ? 'bg-red-500' : ''} px-2 py-0 text-white rounded-full`}>{`${transaction.payin_status == 'pending' ? 'en cours' : transaction.payin_status == 'success' ? 'effectué' : transaction.payin_status == 'failed' ? 'échoué' : ''}`}</span>
                                         </td>
                                         <td className="">
-                                            <span className={`${tran.payout_status == 'pending' ? 'bg-yellow-500' : tran.payout_status == 'success' ? 'bg-green-500' : tran.payout_status == 'failed' ? 'bg-red-500' : ''} px-2 py-0 text-white rounded-full`}>{`${tran.payout_status == 'pending' ? 'en cours' : tran.payout_status == 'success' ? 'effectué' : tran.payout_status == 'failed' ? 'échoué' : ''}`}</span>
+                                            <span className={`${transaction.payout_status == 'pending' ? 'bg-yellow-500' : transaction.payout_status == 'success' ? 'bg-green-500' : transaction.payout_status == 'failed' ? 'bg-red-500' : ''} px-2 py-0 text-white rounded-full`}>{`${transaction.payout_status == 'pending' ? 'en cours' : transaction.payout_status == 'success' ? 'effectué' : transaction.payout_status == 'failed' ? 'échoué' : ''}`}</span>
                                         </td>
                                         <td>
                                             <div className="relative group flex gap-2">
-                                                {/* <button onClick={() => { getState(tran, i) }} className="flex items-center justify-center rounded-full shadow-md duration-300">
+                                                {/* <button onClick={() => { getState(transaction, i) }} className="flex items-center justify-center rounded-full shadow-md duration-300">
                                                     <RefreshCcw className="w-6 h-6" />
                                                 </button>
-                                                <div className="absolute top-full -left-1/2 mt-2 mb-2 transform opacity-0 group-hover:opacity-100 bg-black bg-opacity-50 text-white text-xs rounded py-1 px-2 transition-opacity duration-300">
+                                                <div className="absolute top-full -left-1/2 mt-2 mb-2 transactionsform opacity-0 group-hover:opacity-100 bg-black bg-opacity-50 text-white text-xs rounded py-1 px-2 transactionsition-opacity duration-300">
                                                     Actualiser l'état
                                                 </div> */}
                                                 <button 
-                                                    onClick={() => { getState(tran, i) }}
+                                                    onClick={() => { setViewTransaction(transaction) }}
                                                     className="p-2 text-sm font-medium text-white bg-green-500 rounded-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
                                                     >
                                                     <Eye className="w-4 h-4" />
@@ -200,6 +200,65 @@ function Historique() {
                      ) : (
                         <div>Loading...</div> // Show loading while request is not done
                     )}
+
+
+                    {(viewTransaction.id != undefined) ? (
+                        <div className="fixed inset-0 flex items-center justify-center backdrop-blur-sm z-50">
+                            <div className="bg-white rounded-lg p-6 max-w-xl w-full shadow-lg">
+                                <div className="flex justify-between">
+                                    <h3 className="text-xl font-bold uppercase text-center text-primary mb-3">Informations de la transaction</h3>
+                                    <X className="w-6 h-6 text-red-500 border border-red-500 border-rounded" onClick={() => { setViewTransaction({}) }} />
+                                </div>
+                                <div className="text-left">
+                                    <table>
+                                        <tr>
+                                            <th className="p-2 ">Date</th>
+                                            <th className="p-2 font-light"> {viewTransaction.created_at} </th>
+                                        </tr>
+                                        <tr>
+                                            <th className="p-2 ">Num envoyeur</th>
+                                            <th className="p-2 font-light"> {viewTransaction.payin_phone_number} </th>
+                                        </tr>
+                                        <tr>
+                                            <th className="p-2 ">Moyen d'envoi</th>
+                                            <th className="p-2 font-light"> {viewTransaction.payin_wprovider?.name} </th>
+                                        </tr>
+                                        <tr>
+                                            <th className="p-2 ">Num receveur</th>
+                                            <th className="p-2 font-light"> {viewTransaction.payout_phone_number} </th>
+                                        </tr>
+                                        <tr>
+                                            <th className="p-2 ">Moyen de réception</th>
+                                            <th className="p-2 font-light"> {viewTransaction.payout_wprovider?.name} </th>
+                                        </tr>
+                                        <tr>
+                                            <th className="p-2 ">Montant</th>
+                                            <th className="p-2 font-light"> {viewTransaction.amount} FCFA </th>
+                                        </tr>
+                                        <tr>
+                                            <th className="p-2 ">Statut d'envoi</th>
+                                            <th className="p-2 font-light"> {viewTransaction.payin_status} </th>
+                                        </tr>
+                                        <tr>
+                                            <th className="p-2 ">Statut de réception</th>
+                                            <th className="p-2 font-light"> {viewTransaction.payout_status} </th>
+                                        </tr>
+                                        <tr>
+                                            <th className="p-2 ">Reference de la transaction</th>
+                                            <th className="p-2 font-light"> {viewTransaction.payin_reference} </th>
+                                        </tr>
+                                    </table>
+                                        {/* <div>{JSON.stringify(viewTransaction)}</div> */}
+                                </div>    
+                                    {(viewTransaction.payin_status == 'success' && viewTransaction.payout_status != 'success') ? (
+                                    <div className="flex justify-between">
+                                        <button className="px-4 py-2 mt-4 bg-green-500 text-white rounded-md text-base ml-4" onClick={() => { setViewTransaction({}) }}> Modifier et continuer </button>
+                                        <button className="px-4 py-2 mt-4 bg-red-500 text-white rounded-md text-base ml-4" onClick={() => { setViewTransaction({}) }}> Annuler la transaction </button>
+                                    </div>
+                                    ) : ('')}
+                            </div>
+                        </div>
+                    ) : ('')}
                 </div>
             </Dashbord>
 
