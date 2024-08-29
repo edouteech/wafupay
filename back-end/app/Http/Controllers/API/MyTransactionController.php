@@ -44,6 +44,7 @@ class MyTransactionController extends BaseController
         $per_page = request()->query('per_page', 10);
         $transactions = Transaction::with("payin_wprovider:id,name", "payout_wprovider:id,name")->where('user_id', $request->user()->id)->orderBy('created_at', 'desc')->paginate($per_page);
         return $this->handleResponse($transactions);
+        // return response()->json($transactions);
     }
 
     /**
