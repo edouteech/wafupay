@@ -24,7 +24,7 @@ const AdminSuppliers = () => {
     const [walletName, setWalletName] = useState<any>({});
     const [payinFees, setPayinFees] = useState<any>({});
     const [payoutFees, setPayoutFees] = useState<any>({});
-    const [activeTab, setActiveTab] = useState<string>(1);
+    const [activeTab, setActiveTab] = useState<number>(1);
 
 
     //################################## MOUNTED ################################//
