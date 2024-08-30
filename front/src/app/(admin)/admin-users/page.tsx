@@ -122,7 +122,7 @@ function AdminDashboard() {
                             <tbody className="text-base text-black">
                                 {admins.map((ad, i) => (
                                     <tr className="text-left text-sm" key={i}>
-                                        <td className="p-1 pl-6">{ad.created_at.substring(0, 10).split("-").reverse().join("-")}</td>
+                                        {/* <td className="p-1 pl-6">{ad.created_at.substring(0, 10).split("-").reverse().join("-")}</td> */}
                                         <td className="p-1 pl-4">{ad.first_name} {ad.last_name}</td>
                                         <td className="p-1 ">Admin</td>
                                         <td className="flex gap-2 p-1">
@@ -152,7 +152,7 @@ function AdminDashboard() {
                             <tbody className="text-base text-black">
                                 {users.map((user, i) => (
                                     <tr className="text-left text-sm" key={i}>
-                                        <td className="p-2">{user.created_at.substring(0, 10).split("-").reverse().join("-")}</td>
+                                        <td className="p-2">{user.created_at}</td>
                                         <td className="p-2">{user.first_name} {user.last_name}</td>
                                         <td className="p-2flex items-center gap-2">
                                             {user.phone_num && (
