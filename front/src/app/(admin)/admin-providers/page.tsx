@@ -21,6 +21,7 @@ function AdminDashboard() {
     const [countries, setCountries] = useState<Country[]>([])
 
     const [responses, setResponses] = useState([])
+    const [responseData, setResponseData] = useState([])
     const [suppliers , setSuppliers] = useState([])
     const [requestDone, setRequestDone] = useState(false)
     const [viewItem, setViewItem] = useState({})
@@ -34,6 +35,7 @@ function AdminDashboard() {
                 let infos = response.data.data;
 
                 setResponses(infos)
+                setResponseData(infos.data)
                 // setProviders(response.data.data)
                 // p = response.data.data.slice(0, response.data.length)
                 // axios.get(`${apiUrl}/countries`).then((response) => {
@@ -88,7 +90,7 @@ function AdminDashboard() {
                         <button className="flex justify-between items-center gap-4 bg-primary text-white hover:scale-95 duration-300 rounded-xl p-3" onClick={() => { setShow(!show) }}><Plus></Plus><span className="xs:hidden">Ajouter un fournisseur</span></button>
                     </div>
                     {/* {JSON.stringify(responses)} */}
-                    {Array.isArray(responses.data) && responses.data.length > 0 ? (
+                    {responseData.length > 0 ? (
                     <div className="table text-base w-full mt-8">
                         <div className="text-[#8280FF] font-semibold thead bg-white rounded-2xl overflow-hidden text-left grid grid-cols-6 p-3 pl-4 text-textGray pr-4">
                             <div className="th col-span-2">Nom</div>
