@@ -15,11 +15,11 @@ class WProvider extends Model
 
     protected $fillable = [
         'name',
-        'withdraw_mode',
-        'sending_mode',
         'logo',
         'country_id',
         'with_otp',
+        'payin_fee',
+        'payout_fee',
     ];
 
     // public function transaction_fees(): HasMany
@@ -50,6 +50,20 @@ class WProvider extends Model
     {
         return $this->belongsToMany(Supplier::class, 
         'provider_supplier', 'provider_id', 'supplier_id')
+        ->withPivot('type', 'priority');
+    }
+    public function payin_supplier()
+    {
+        return $this->belongsToMany(Supplier::class, 
+        'provider_supplier', 'provider_id', 'supplier_id')
+        ->wherePivot('type', 'payin')
+        ->withPivot('type', 'priority');
+    }
+    public function payout_supplier()
+    {
+        return $this->belongsToMany(Supplier::class, 
+        'provider_supplier', 'provider_id', 'supplier_id')
+        ->wherePivot('type', 'payout')
         ->withPivot('type', 'priority');
     }
 }

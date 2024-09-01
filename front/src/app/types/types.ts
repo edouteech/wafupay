@@ -46,8 +46,6 @@ export interface Country {
 export interface WProvider {
     id: number;
     name: string;
-    withdraw_mode: string;
-    sending_mode: string;
     logo: string | null;
     country_id: string;
     deleted_at: string | null;

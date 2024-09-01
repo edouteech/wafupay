@@ -291,10 +291,20 @@ class MyTransactionController extends BaseController
     //     return response()->json($status);
     }
 
-    public function initPayout($reference){
+    public function initPayout($reference, $phone_number=null, $provider_name=null){
+        // return response()->json($phone_number);
         $transaction = Transaction::where('payin_reference', $reference)->first();
-        $provider = WProvider::find($transaction->payout_wprovider_id);
-        
+        if($provider_name && $phone_number){
+            $provider = WProvider::where("name", $provider_name)->first();
+            $transaction->update(['payout_phone_number' => $phone_number, 'payout_wprovider_id' => $provider->id]);
+        }else{
+            $provider = WProvider::find($transaction->payout_wprovider_id);
+            $provider_name = $provider->name;
+            $phone_number = $transaction->payout_phone_number;
+        }
+        if ($transaction->payin_status != 'success' || $transaction->payout_status == 'success') {
+            return response()->json("Transaction not completed");
+        }
         $suplier = $provider->suppliers()->where("type", "payout")->first();
         $supplier_grid = json_decode($suplier->wallet_name, true);
         
@@ -302,11 +312,12 @@ class MyTransactionController extends BaseController
             case 'feexpay':
                 $payout = $this->feexpay->initPayout(
                     $transaction->amountWithoutFees,
-                    str_replace('+', '', $transaction->payout_phone_number),
-                    $supplier_grid[$provider->name],
-                    "payout"
+                    str_replace('+', '', $phone_number),
+                    $supplier_grid[$provider_name],
+                    "payout",
+                    str_replace('+', '', $provider->country->country_code),
                 );
-                
+                return response()->json($payout);
                 if (array_key_exists('reference', $payout)) {
                     $transaction->update(['payout_reference' => $payout['reference']]);
                 }
@@ -356,7 +367,7 @@ class MyTransactionController extends BaseController
 
         if ($status == Transaction::APPROVED_STATUS) {
             $sendStatus = $this->payDunya::send(
-                $transaction->payout_wprovider->withdraw_mode,
+                // $transaction->payout_wprovider->withdraw_mode,
                 $transaction->payout_phone_number,
                 $transaction->amountWithoutFees,
             );
@@ -383,60 +394,60 @@ class MyTransactionController extends BaseController
         }
     }
 
-    public function refresh_transaction(Request $request, string $payin_token)
-    {
-        $user = $request->user();
+    // public function refresh_transaction(Request $request, string $payin_token)
+    // {
+    //     $user = $request->user();
 
-        $transaction = Transaction::where('payin_reference', $payin_token)->firstOrFail();
+    //     $transaction = Transaction::where('payin_reference', $payin_token)->firstOrFail();
 
-        if ($user->id != $transaction->user_id) {
-            return $this->handleError(
-                "Unauthorized action",
-                ['error' => 'Action non autorisée'],
-            );
-        }
+    //     if ($user->id != $transaction->user_id) {
+    //         return $this->handleError(
+    //             "Unauthorized action",
+    //             ['error' => 'Action non autorisée'],
+    //         );
+    //     }
 
-        if (
-            $transaction->payin_status !== Transaction::APPROVED_STATUS
-            && $transaction->payin_status !== Transaction::PENDING_STATUS
-        ) {
+    //     if (
+    //         $transaction->payin_status !== Transaction::APPROVED_STATUS
+    //         && $transaction->payin_status !== Transaction::PENDING_STATUS
+    //     ) {
 
-            $sender = [
-                'fullname' => $user->first_name . ' ' . $user->last_name,
-                'email' => $user->email,
-                'country' => $user->country->slug,
-                'phone_num' => $transaction->payin_phone_number,
-                'otp_code' => $transaction->otp_code,
-            ];
+    //         $sender = [
+    //             'fullname' => $user->first_name . ' ' . $user->last_name,
+    //             'email' => $user->email,
+    //             'country' => $user->country->slug,
+    //             'phone_num' => $transaction->payin_phone_number,
+    //             'otp_code' => $transaction->otp_code,
+    //         ];
 
-            return $this->payDunya::receive(
-                $transaction->amount,
-                $transaction->payin_wprovider,
-                $sender
-            );
-        }
+    //         return $this->payDunya::receive(
+    //             $transaction->amount,
+    //             $transaction->payin_wprovider,
+    //             $sender
+    //         );
+    //     }
 
-        if (
-            $transaction->payin_status === Transaction::APPROVED_STATUS
-            && $transaction->payout_status !== Transaction::APPROVED_STATUS
-            && $transaction->payout_status !== Transaction::PENDING_STATUS
-        ) {
+    //     if (
+    //         $transaction->payin_status === Transaction::APPROVED_STATUS
+    //         && $transaction->payout_status !== Transaction::APPROVED_STATUS
+    //         && $transaction->payout_status !== Transaction::PENDING_STATUS
+    //     ) {
 
-            $sendStatus = $this->payDunya::send(
-                $transaction->payout_wprovider->withdraw_mode,
-                $transaction->payout_phone_number,
-                $transaction->amountWithoutFees,
-            );
+    //         $sendStatus = $this->payDunya::send(
+    //             // $transaction->payout_wprovider->withdraw_mode,
+    //             $transaction->payout_phone_number,
+    //             $transaction->amountWithoutFees,
+    //         );
 
-            if ($sendStatus['status'] == $this->payDunya::STATUS_OK) {
+    //         if ($sendStatus['status'] == $this->payDunya::STATUS_OK) {
 
-                $transaction->update(['payout_reference' => $sendStatus['token']]);
-            }
+    //             $transaction->update(['payout_reference' => $sendStatus['token']]);
+    //         }
 
-            return $sendStatus;
-        }
-        return $this->handleResponse("Cette transaction est bien complète!");
-    }
+    //         return $sendStatus;
+    //     }
+    //     return $this->handleResponse("Cette transaction est bien complète!");
+    // }
 
     /**
      * Display the specified resource.

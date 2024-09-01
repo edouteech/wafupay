@@ -80,7 +80,7 @@ class PayDunyaService
     ): array {
 
         $castProviderName = $providerName->sending_mode;
-        $_providerName = $providerName->withdraw_mode;
+        // $_providerName = $providerName->withdraw_mode;
 
         $data = [
             $castProviderName . "_customer_fullname" => $user['fullname'],

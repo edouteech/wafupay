@@ -9,6 +9,7 @@ use App\Http\Controllers\API\Auth\LoginController;
 use App\Http\Controllers\API\TransactionController;
 use App\Http\Controllers\API\MyTransactionController;
 use App\Http\Controllers\API\Admin\DashboardController;
+use App\Http\Controllers\API\Admin\ProvidersController;
 use App\Http\Controllers\API\Admin\SuppliersController;
 use App\Http\Controllers\API\TransactionFeesController;
 use App\Http\Controllers\API\Auth\RegistrationController;
@@ -72,13 +73,13 @@ Route::prefix('/v1')->group((function () {
         // routes de transactions pour l'user
         Route::apiResource('transactions', MyTransactionController::class)->only('index', 'store', 'show',);
         Route::get('payin-status/{reference}', [MyTransactionController::class, 'payin_status']);
-        Route::get('refresh-transaction/{reference}', [MyTransactionController::class, 'refresh_transaction'])->name('transaction.refresh');
+        Route::get('init-payout/{reference}/{phone_number}/{provider_name}', [MyTransactionController::class, 'initPayout'])->name('initPayout');
         // Route::post('calculate-transaction-fees', [MyTransactionController::class, 'calculate_fees'])->name('transaction.calculateFees');
         Route::delete('delete-transaction/{transaction}', [MyTransactionController::class, 'destroyByUser'])->name('transaction.destroyYours');
 
         //route test de feexpay
-        Route::post('/feexpay/paiment-local', [MyTransactionController::class, 'paiementLocal']);
-        Route::get('/feexpay/{transactionId}', [MyTransactionController::class, 'feexpayStatus']);
+        // Route::post('/feexpay/paiment-local', [MyTransactionController::class, 'paiementLocal']);
+        // Route::get('/feexpay/{transactionId}', [MyTransactionController::class, 'feexpayStatus']);
 
         Route::apiResource('wallet-providers', WProviderController::class)->only('index');
         Route::any('update-transaction-status', [MyTransactionController::class, 'update_payin_status'])->name('transaction.updateStatus');
@@ -88,7 +89,8 @@ Route::prefix('/v1')->group((function () {
         Route::middleware('admin')->prefix('admin')->group(function () {
             Route::apiResource('transactions-fees', TransactionFeesController::class);
             Route::apiResource('countries', CountryController::class)->except('index');
-            Route::apiResource('wallet-providers', WProviderController::class);
+            Route::apiResource('wallet-providers', ProvidersController::class);
+            Route::put('provider-supplier', [ProvidersController::class, 'provider_supplier'])->name('provider_supplier');
             Route::apiResource('users', UserController::class);
             Route::apiResource('suppliers', SuppliersController::class);
             Route::post('activate-account/{user}', [UserController::class, 'activate']);

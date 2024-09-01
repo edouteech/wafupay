@@ -116,7 +116,7 @@
                             <span><span class="bold">Méthode de paiement:</span>
                                 {{ $transaction->payin_wprovider->name }} </span>
                             <Image class="mx-2"
-                                src="{{ asset('storage/wproviders/' . $transaction->payin_wprovider->withdraw_mode . '.png') }}"
+                                {{-- src="{{ asset('storage/wproviders/' . $transaction->payin_wprovider->withdraw_mode . '.png') }}" --}}
                                 alt="{{ $transaction->payin_wprovider->name }} Logo" style="max-width: 35px;">
                         </span>
                     </td>
@@ -130,7 +130,7 @@
                             <span><span class="bold">Méthode de paiement:</span>
                                 {{ $transaction->payout_wprovider->name }} </span>
                             <Image class="mx-2"
-                                src="{{ asset('storage/wproviders/' . $transaction->payout_wprovider->withdraw_mode . '.png') }}"
+                                {{-- src="{{ asset('storage/wproviders/' . $transaction->payout_wprovider->withdraw_mode . '.png') }}" --}}
                                 alt="{{ $transaction->payout_wprovider->name }} Logo" style="max-width: 35px;">
                         </span>
                     </td>

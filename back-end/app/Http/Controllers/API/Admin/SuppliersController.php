@@ -31,7 +31,6 @@ class SuppliersController extends BaseController
      */
     public function store(Request $request)
     {
-        // return response()->json($request->all());
         try {
             // Decode JSON objects to arrays
             $request->merge([

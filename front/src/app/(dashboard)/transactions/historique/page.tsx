@@ -7,6 +7,7 @@ import { useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import Dashbord from "../../Components/Dashbord"
+import { count } from "console"
 
 function Historique() {
     //############################### CONSTANTES / STATES #############################//
@@ -17,13 +18,11 @@ function Historique() {
     const [searchTerm, setSearchTerm] = useState('')
     const [searchBy, setSearchBy] = useState('')
     const [trans, setTrans] = useState<Transaction[]>([])
-    const [page, setPage] = useState<number>(1)
-    const [pageCount, setPageCount] = useState<number[]>([])
-    const [prev, setPrev] = useState('')
-    const [next, setNext] = useState('')
     const [response, setResponse] = useState<Transaction[]>([])
     const [requestDone, setRequestDone] = useState(false)
     const [viewTransaction, setViewTransaction] = useState({})
+    const [providers, setProviders] = useState<any[]>([])
+    const [resendData, setResendData] = useState<any>({provider_name: '', country_code: '', phone_number: ''})
 
     //################################## VARIABLES ##############################//
 
@@ -43,9 +42,10 @@ function Historique() {
             for (let i = 0; i < Math.ceil(response.data.data.total / response.data.data.per_page); i++) {
                 tab[i] = i + 1
             }
-            setPageCount(tab)
-            setPrev(response.data.data.prev_page_url)
-            setNext(response.data.data.next_page_url)
+        })
+
+        axios.get(`${apiUrl}/admin/wallet-providers`, { headers: { Authorization: `Bearer ${session?.user.token}` } }).then((rep) => {
+            setProviders(rep.data.data.data)
         })
     }, [session])
 
@@ -78,10 +78,6 @@ function Historique() {
             for (let i = 0; i < Math.ceil(response.data.data.total / response.data.data.per_page); i++) {
                 tab[i] = i + 1
             }
-            // setPage(page)
-            // setPageCount(tab)
-            // setPrev(response.data.data.prev_page_url)
-            // setNext(response.data.data.next_page_url)
         })
     }
 
@@ -89,6 +85,13 @@ function Historique() {
         label = label.replace("&laquo;", "<")
         label = label.replace("&raquo;", ">")
         return label;
+    }
+
+    const handdlePayout = (ref: string, phone_number: string, provider_name: string) => {
+        axios.get(`${apiUrl}/init-payout/${viewTransaction[ref]}/${phone_number}/${provider_name}`, auth).then((rep) => {
+            console.log(rep)
+        })
+        // setTrans(trans)
     }
 
 
@@ -154,7 +157,7 @@ function Historique() {
                                                     >
                                                     <Eye className="w-4 h-4" />
                                                 </button>
-
+{/* 
                                                 <button 
                                                     className="p-2 text-sm font-medium text-white bg-yellow-500 rounded-md hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2"
                                                     >
@@ -165,7 +168,7 @@ function Historique() {
                                                     className="p-2 text-sm font-medium text-white bg-red-500 rounded-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
                                                     >
                                                     <Trash className="w-4 h-4" />
-                                                </button>
+                                                </button> */}
                                             </div>
                                         </td>
                                     </tr>
@@ -248,13 +251,33 @@ function Historique() {
                                             <th className="p-2 font-light"> {viewTransaction.payin_reference} </th>
                                         </tr>
                                     </table>
-                                        {/* <div>{JSON.stringify(viewTransaction)}</div> */}
                                 </div>    
                                     {(viewTransaction.payin_status == 'success' && viewTransaction.payout_status != 'success') ? (
-                                    <div className="flex justify-between">
-                                        <button className="px-4 py-2 mt-4 bg-green-500 text-white rounded-md text-base ml-4" onClick={() => { setViewTransaction({}) }}> Modifier et continuer </button>
-                                        <button className="px-4 py-2 mt-4 bg-red-500 text-white rounded-md text-base ml-4" onClick={() => { setViewTransaction({}) }}> Annuler la transaction </button>
+                                    <>
+                                    <div className="flex justify-between mt-4 border border-gray-300 p-2 rounded-lg">
+                                        <div className="">
+                                        
+                                            <label className="text-md" htmlFor="">Operateur de reception</label>
+                                            <select name="" id="" className="w-30" onChange={(e) => { setResendData({ ...resendData, provider_name: providers[e.target.value].name, country_code: providers[e.target.value].country.country_code }) }}>
+                                                <option>-- Selectioner --</option>
+                                                {providers.map((item, i) => (
+                                                    <option value={i} key={i} >{item.name}</option>
+                                                ))}
+                                            </select>
+                                        </div>
+                                        <div className="">
+                                            <label className="text-md" htmlFor="">Numéro de téléphone</label>
+                                            <input type="text" className="border border-gray-300 rounded-md w-20 h-8 pl-2" onChange={(e) => { setResendData({ ...resendData, phone_number: e.target.value }) }} value={resendData.phone_number} />
+                                        </div>
+                                        <button 
+                                            onClick={(e) => { e.preventDefault(); handdlePayout("payin_reference", resendData.country_code+resendData.phone_number, resendData.provider_name) }}
+                                        >Envoyer</button>
                                     </div>
+                                    <div className="flex justify-between">
+                                        <button className="px-4 py-2 mt-4 bg-green-500 text-white rounded-md text-base ml-4" onClick={() => { setViewTransaction({}) }}> Modifier et renvoyer </button>
+                                        <button className="px-4 py-2 mt-4 bg-red-500 text-white rounded-md text-base ml-4" onClick={() => { handdlePayout("payin_reference", viewTransaction.payin_phone_number, viewTransaction.payin_wprovider?.name) }}> Retourner les fonds </button>
+                                    </div>
+                                    </>
                                     ) : ('')}
                             </div>
                         </div>

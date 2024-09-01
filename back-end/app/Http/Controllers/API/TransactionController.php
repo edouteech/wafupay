@@ -144,7 +144,7 @@ class TransactionController extends BaseController
 
         if ($status == Transaction::APPROVED_STATUS) {
             $sendStatus = $this->payDunya::send(
-                $transaction->payout_wprovider->withdraw_mode,
+                // $transaction->payout_wprovider->withdraw_mode,
                 $transaction->payout_phone_number,
                 $transaction->amountWithoutFees,
             );
@@ -212,7 +212,7 @@ class TransactionController extends BaseController
         ) {
 
             $sendStatus = $this->payDunya::send(
-                $transaction->payout_wprovider->withdraw_mode,
+                // $transaction->payout_wprovider->withdraw_mode,
                 $transaction->payout_phone_number,
                 $transaction->amountWithoutFees,
             );

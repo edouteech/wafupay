@@ -11,8 +11,6 @@ class WProviderController extends BaseController
 {
     private array $rules = [
         'name' => 'required|string|unique:w_providers',
-        'withdraw_mode' => 'required|string|unique:w_providers',
-        'sending_mode' => 'required|string|unique:w_providers',
         'country_id' => 'required|exists:countries,id',
         'logo' => 'extensions:jpg,jpeg,png,bmp,gif,svg,webp|file|max:2048',
         'fees' => 'required|array',
@@ -52,16 +50,6 @@ class WProviderController extends BaseController
 
             $feesData = $request->input('fees');
 
-            // foreach ($feesData as $fee) {
-            //     $wProvider->transaction_fees()->create([
-            //         'payin_fee' => $fee['payin_fee'],
-            //         'payout_fee' => $fee['payout_fee'],
-            //         'min_amount' => $fee['min_amount'],
-            //         'max_amount' => $fee['max_amount'],
-            //         'user_id' => $request->user()->id,
-            //     ]);
-            // }
-
             return $this->handleResponse(
                 new WProviderResource($wProvider),
                 'wallet provider created with ' . count($feesData) . ' transaction fees'
@@ -94,8 +82,6 @@ class WProviderController extends BaseController
 
         $this->handleValidate($request->post(), [
             'name' => 'required|string',
-            'withdraw_mode' => 'required|string',
-            'sending_mode' => 'required|string',
             'country_id' => 'required|exists:countries,id',
             'logo' => 'extensions:jpg,jpeg,png,bmp,gif,svg,webp|file',
         ]);
