@@ -30,12 +30,12 @@ function Mobile() {
   const [showM, setShowM] = useState(false)
   const [showStatus, setShowStatus] = useState(false)
   const {data : session } = useSession()
-  const [payin , setPayin] = useState({name : "", country_code : "", id: "", fee: 0});
+  const [payin , setPayin] = useState({name : "", country_code : "", id: 0, fee: 0});
   const [payin_phone_number , setPayin_phone_number] = useState('');
-  const [payout , setPayout] = useState({name : "", country_code : "", id: "", fee: 0});
+  const [payout , setPayout] = useState({name : "", country_code : "", id: 0, fee: 0});
   const [payout_phone_number , setPayout_phone_number] = useState('');
   const [amount , setAmount] = useState(0);
-  const [sender_support_fee , setSender_support_fee] = useState(false);
+  const [sender_support_fee , setSender_support_fee] = useState(0);
   const [totalFee , setTotalFee] = useState(0);
   const [motif , setMotif] = useState('1');
   const [transRef , setTransRef] = useState('');
@@ -67,9 +67,9 @@ function Mobile() {
     setTotalFee(fees)
   }, [payin.fee, payout.fee, amount]);
 
-  const handleChange = (info, setter) => {
-    setter(info)
-  }
+  // const handleChange = (info, setter) => {
+  //   setter(info)
+  // }
 
   const findElementById = (id: number, list: any[]) => {
     return list.find(item => item.id === id);
@@ -150,12 +150,12 @@ function Mobile() {
     setIsReadyToSupport(event.target.value);
   };
 
-  const handleChangePayin = (index: number | string) => {
+  const handleChangePayin = (index: number) => {
     let payin = methods[index]
     console.log("payin_fee : ", payin.payin_fee, "payout_fee : ", payin.payout_fee)
     setPayin({name : payin.name, country_code : payin.country.country_code, id: payin.id, fee: payin.payin_fee})
   }
-  const handleChangePayout = (index: number | string) => {
+  const handleChangePayout = (index: number) => {
     let payout = methods[index]
     console.log("payin_fee : ", payout.payin_fee, "payout_fee : ", payout.payout_fee)
     setPayout({name : payout.name, country_code : payout.country.country_code, id: payout.id, fee: payout.payout_fee})
@@ -177,7 +177,7 @@ function Mobile() {
               <label className="block mt-2 text-sm text-gray-700">Montant {payin.fee}</label>
               <div className="flex items-center relative mt-2 text-sm">
                 <div className="relative w-1/4 z-[5]">
-                  <select className="w-full z-[5] rounded-xl block appearance-none bg-white border border-gray-300 text-gray-700 p-4 pr-7 rounded-2xl leading-tight focus:outline-none focus:border-blue-500" onChange={(e) => { handleChangePayin(e.target.value) }}>
+                  <select className="w-full z-[5] rounded-xl block appearance-none bg-white border border-gray-300 text-gray-700 p-4 pr-7 rounded-2xl leading-tight focus:outline-none focus:border-blue-500" onChange={(e) => { handleChangePayin(Number(e.target.value)) }}>
                     <option value="" className="hover:bg-red-500 bg-white text-gray-700">Sélectionnez un fournisseur</option>
                     {methods.map((method, index) => (
                       <option key={index} onClick={() => { console.log(method.id) }} value={index} className="hover:bg-red-500 bg-white text-gray-700">{method.name}</option>
@@ -189,7 +189,7 @@ function Mobile() {
                     </svg>
                   </div>
                 </div>
-                <input type="text" placeholder="Montant" className="border-r w-3/4 block appearance-none bg-white border border-gray-300 w-full text-gray-700 absolute pl-32 p-4 rounded-2xl leading-tight focus:outline-none focus:border-blue-500" value={amount} onChange={(e) => { setAmount(e.target.value) }} />
+                <input type="text" placeholder="Montant" className="border-r w-3/4 block appearance-none bg-white border border-gray-300 w-full text-gray-700 absolute pl-32 p-4 rounded-2xl leading-tight focus:outline-none focus:border-blue-500" value={amount} onChange={(e) => { setAmount(Number(e.target.value)) }} />
                 <span className="p-2 z-[5] absolute right-5 border-l-2">FCFA</span>
               </div>
               <div className="w-3/4 mx-auto">
@@ -217,7 +217,7 @@ function Mobile() {
             <label className="block mt-2 text-sm text-gray-700">Montant {payout.fee}</label>
             <div className="flex items-center relative mt-2 text-sm">
               <div className="relative w-1/4 z-[5]">
-                <select className="w-full z-[5] rounded-xl block appearance-none bg-white border border-gray-300 text-gray-700 p-4 pr-7 rounded-2xl leading-tight focus:outline-none focus:border-blue-500" onChange={(e) => { handleChangePayout(e.target.value) }}>
+                <select className="w-full z-[5] rounded-xl block appearance-none bg-white border border-gray-300 text-gray-700 p-4 pr-7 rounded-2xl leading-tight focus:outline-none focus:border-blue-500" onChange={(e) => { handleChangePayout(Number(e.target.value)) }}>
                   <option value="" className="hover:bg-red-500 bg-white text-gray-700">Sélectionnez un fournisseur</option>
                   {methods.map((method, index) => (
                     <option key={index} onClick={() => { console.log(method.id) }} value={index} className="hover:bg-red-500 bg-white text-gray-700">{method.name}</option>
@@ -264,11 +264,11 @@ function Mobile() {
             <p>Voulez vous supporter les frais ?</p>
             <div className="flex gap-4">
               <div className="flex items-center">
-                <input className="w-5 h-5" id="oui" type="radio" name="fee" value={1} onChange={(e) => { setSender_support_fee(1) }} checked={sender_support_fee === 1} />
+                <input className="w-5 h-5" id="oui" type="radio" name="fee" value={1} onChange={(e) => { setSender_support_fee(1) }} checked={sender_support_fee == 1} />
                 <label htmlFor="oui" className="pl-2">Oui</label>
               </div>
               <div className="flex items-center">
-                <input className="w-5 h-5" id="non" type="radio" name="fee" value={0} onChange={(e) => { setSender_support_fee(0) }} checked={sender_support_fee === 0} />
+                <input className="w-5 h-5" id="non" type="radio" name="fee" value={0} onChange={(e) => { setSender_support_fee(0) }} checked={sender_support_fee == 0} />
                 <label htmlFor="non" className="pl-2">Non</label>
               </div>
             </div>

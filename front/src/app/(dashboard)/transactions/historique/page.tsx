@@ -10,6 +10,15 @@ import Dashbord from "../../Components/Dashbord"
 import { count } from "console"
 
 function Historique() {
+
+    interface TransactionView {
+        [key: string]: any;
+    }
+    interface Response {
+        [key: string]: any;
+    }
+
+
     //############################### CONSTANTES / STATES #############################//
     const apiUrl = process.env.NEXT_PUBLIC_APIURL
     const router = useRouter()
@@ -17,10 +26,10 @@ function Historique() {
     const {data : session} = useSession()
     const [searchTerm, setSearchTerm] = useState('')
     const [searchBy, setSearchBy] = useState('')
-    const [trans, setTrans] = useState<Transaction[]>([])
-    const [response, setResponse] = useState<Transaction[]>([])
+    const [responses, setResponses] = useState<Response>({})
+    const [responseData, setResponseData] = useState<Transaction[]>([])
     const [requestDone, setRequestDone] = useState(false)
-    const [viewTransaction, setViewTransaction] = useState({})
+    const [viewTransaction, setViewTransaction] = useState<TransactionView>({})
     const [providers, setProviders] = useState<any[]>([])
     const [resendData, setResendData] = useState<any>({provider_name: '', country_code: '', phone_number: ''})
 
@@ -36,12 +45,12 @@ function Historique() {
         setAuth({ headers: { Authorization: `Bearer ${session?.user.token}` } })
         axios.get(`${apiUrl}/transactions`, { headers: { Authorization: `Bearer ${session?.user.token}` } }).then((response) => {
             setRequestDone(true)
-            setResponse(response.data.data)
-            setTrans(response.data.data.data)
-            let tab = []
-            for (let i = 0; i < Math.ceil(response.data.data.total / response.data.data.per_page); i++) {
-                tab[i] = i + 1
-            }
+            setResponses(response.data.data)
+            setResponseData(response.data.data.data)
+            // let tab = []
+            // for (let i = 0; i < Math.ceil(response.data.data.total / response.data.data.per_page); i++) {
+            //     tab[i] = i + 1
+            // }
         })
 
         axios.get(`${apiUrl}/admin/wallet-providers`, { headers: { Authorization: `Bearer ${session?.user.token}` } }).then((rep) => {
@@ -59,25 +68,14 @@ function Historique() {
         return new Date(dateString).toLocaleDateString('fr-FR', {year: 'numeric', month: 'long', day: 'numeric' });
     }
 
-    const getState = (tran: Transaction, i: number) => {
-
-        axios.get(`${apiUrl}/check-status/${tran.token}/payin`, auth).then((response) => {
-            let tab = trans.slice()
-            tab[i].payin_status = response.data.data.status
-            tab[i].payout_status = response.data.data.status
-            setTrans(tab)
-        })
-        setTrans(trans)
-    }
-
     const changePage = (link:string) =>{
         axios.get(link, auth).then((response) => {
-            setResponse(response.data.data)
-            setTrans(response.data.data.data)
-            let tab = []
-            for (let i = 0; i < Math.ceil(response.data.data.total / response.data.data.per_page); i++) {
-                tab[i] = i + 1
-            }
+            setResponses(response.data.data)
+            setResponseData(response.data.data.data)
+            // let tab = []
+            // for (let i = 0; i < Math.ceil(response.data.data.total / response.data.data.per_page); i++) {
+            //     tab[i] = i + 1
+            // }
         })
     }
 
@@ -91,7 +89,6 @@ function Historique() {
         axios.get(`${apiUrl}/init-payout/${viewTransaction[ref]}/${phone_number}/${provider_name}`, auth).then((rep) => {
             console.log(rep)
         })
-        // setTrans(trans)
     }
 
 
@@ -106,7 +103,7 @@ function Historique() {
                     </h1>
                     {requestDone ? (
                     <div className=" mt-8 text-base w-full">
-                        {Array.isArray(response.data) && response.data.length > 0 ? (
+                        {Array.isArray(responseData) && responseData.length > 0 ? (
                         <table className="rounded-3xl bg-white overflow-hidden text-center w-full">
                             <thead className="text-secBlue border-b border-gray-300">
                                 <tr>
@@ -121,7 +118,7 @@ function Historique() {
                                 </tr>
                             </thead>
                             <tbody>
-                                {response.data.map((transaction, i) => (
+                                {responseData.map((transaction, i) => (
                                     <tr key={i}>
                                         <td className="p-2">{formatDate(transaction.created_at)}</td>
                                         <td className="p-2">
@@ -145,12 +142,7 @@ function Historique() {
                                         </td>
                                         <td>
                                             <div className="relative group flex gap-2">
-                                                {/* <button onClick={() => { getState(transaction, i) }} className="flex items-center justify-center rounded-full shadow-md duration-300">
-                                                    <RefreshCcw className="w-6 h-6" />
-                                                </button>
-                                                <div className="absolute top-full -left-1/2 mt-2 mb-2 transactionsform opacity-0 group-hover:opacity-100 bg-black bg-opacity-50 text-white text-xs rounded py-1 px-2 transactionsition-opacity duration-300">
-                                                    Actualiser l'état
-                                                </div> */}
+                                               
                                                 <button 
                                                     onClick={() => { setViewTransaction(transaction) }}
                                                     className="p-2 text-sm font-medium text-white bg-green-500 rounded-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
@@ -180,9 +172,9 @@ function Historique() {
                         )}
                         
                         <div className="flex float-end mt-8 gap-3 items-center">
-                            {Array.isArray(response.links)&& response.data.length && response.links.length > 0 ? (
+                            {Array.isArray(responses.links)&& responseData.length && responses.links.length > 0 ? (
                                 <ul className="flex gap-2">
-                                {response.links.map((link, index) => (
+                                {responses.links.map((link, index) => (
                                     <li key={index}>
                                         <a href={link.url} 
                                             onClick={(e) => {e.preventDefault(); changePage(link.url)}}
@@ -258,7 +250,11 @@ function Historique() {
                                         <div className="">
                                         
                                             <label className="text-md" htmlFor="">Operateur de reception</label>
-                                            <select name="" id="" className="w-30" onChange={(e) => { setResendData({ ...resendData, provider_name: providers[e.target.value].name, country_code: providers[e.target.value].country.country_code }) }}>
+                                            <select name="" id="" className="w-30" onChange={(e) => {
+                                                let index = Number(e.target.value)
+                                                let prov = providers[index];  
+                                                setResendData({ ...resendData, provider_name: prov.name, country_code: prov.country.country_code }) 
+                                            }}>
                                                 <option>-- Selectioner --</option>
                                                 {providers.map((item, i) => (
                                                     <option value={i} key={i} >{item.name}</option>

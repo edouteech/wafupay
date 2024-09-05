@@ -48,12 +48,14 @@ export interface WProvider {
     name: string;
     logo: string | null;
     country_id: string;
+    with_otp: string;
+    country: Country;
+    payin_fee: number;
+    payout_fee: number;
     deleted_at: string | null;
     created_at: string;
     updated_at: string;
-    with_otp: string;
-    transaction_fees: Fee[];
-    country: Country;
+    suppliers: Supplier[];
 }
 
 export interface Transaction {
@@ -77,4 +79,21 @@ export interface Transaction {
     updated_at: string;
     user_id: string;
   }
-  
+
+export interface Supplier {
+    id: number;
+    name: string;
+    phone_number: string;
+    deleted_at: string | null;
+    created_at: string;
+    updated_at: string;
+    pivot: Pivot;
+}
+
+export interface Pivot {
+    id: number;
+    type: string;
+    deleted_at: string | null;
+    created_at: string;
+    updated_at: string;
+}

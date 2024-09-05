@@ -68,8 +68,11 @@ function MailVarification() {
         }
     };
 
-    const handlePaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
-        const pasteData = e.clipboardData.getData('text');
+    const handlePaste = (e: ClipboardEvent) => {
+        const target = e.target as HTMLInputElement;
+        const pasteData = e.clipboardData?.getData('text') || '';
+    // const handlePaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
+        // const pasteData = e.clipboardData.getData('text');
         
         // Vérifie si le code collé a la bonne longueur
         if (pasteData.length === inputRefs.current.length) {

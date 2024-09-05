@@ -1,6 +1,6 @@
 /* eslint-disable react/no-unescaped-entities */
 "use client"
-import { Country, WProvider } from "@/app/types/types";
+import { Country, Supplier, WProvider } from "@/app/types/types";
 import axios from "axios";
 import { PenLine, Plus, Trash, Eye, Edit, X } from "lucide-react";
 import { useSession } from "next-auth/react";
@@ -21,10 +21,10 @@ function AdminDashboard() {
     const [countries, setCountries] = useState<Country[]>([])
 
     const [responses, setResponses] = useState([])
-    const [responseData, setResponseData] = useState([])
-    const [suppliers , setSuppliers] = useState([])
+    const [responseData, setResponseData] = useState<any[]>([])
+    const [suppliers , setSuppliers] = useState<Supplier[]>([])
     const [requestDone, setRequestDone] = useState(false)
-    const [viewItem, setViewItem] = useState({})
+    const [viewItem, setViewItem] = useState<WProvider | null>(null)
 
     //################################## MOUNTED ################################//
     useEffect(() => {
@@ -85,31 +85,52 @@ function AdminDashboard() {
         <>
             <Dashbord>
                 <div className="w-3/4 mx-auto xs:w-full xs:px-4">
-                    <div className="flex justify-between items-center mt-8">
-                        <h2 className="font-bold text-black">Gestion des fournisseurs</h2>
-                        <button className="flex justify-between items-center gap-4 bg-primary text-white hover:scale-95 duration-300 rounded-xl p-3" onClick={() => { setShow(!show) }}><Plus></Plus><span className="xs:hidden">Ajouter un fournisseur</span></button>
+                    <div className="flex justify-between">
+                        <h3 className="text-center text-primary text-3xl font-semibold mb-8">Liste des Opérateurs</h3>
+                        <div>
+                            {/* <button 
+                                className="bg-primary text-white p-2 rounded-lg"
+                                onClick={(e) => {e.preventDefault(); initData(); setShowForm(1);}}
+                                >
+                                Ajouter un Fournisseur
+                            </button> */}
+                        </div>
                     </div>
-                    {/* {JSON.stringify(responses)} */}
                     {responseData.length > 0 ? (
                     <div className="table text-base w-full mt-8">
                         <div className="text-[#8280FF] font-semibold thead bg-white rounded-2xl overflow-hidden text-left grid grid-cols-6 p-3 pl-4 text-textGray pr-4">
                             <div className="th col-span-2">Nom</div>
-                            <div className="th">ISO</div>
                             <div className="th">Frais payin</div>
                             <div className="th">Frais Payout</div>
+                            <div className="th">Chiffre d'affaire</div>
                             <div className="th">Actions</div>
                         </div>
                         <span className="block mt-12"></span>
                         <div className="tbody bg-white p-3 rounded-2xl overflow-hidden w-full">
-                            {responses.data.map((item, i) => (
+                            {responseData.map((item, i) => (
                                 <div className=" grid grid-cols-6 items-center p-3 pl-4 text-textGray font-normal pr-4" key={i}>
                                     <div className="font-semibold col-span-2">{item.name}</div>
-                                    <div className="flex items-center gap-4 justify-center px-4 font-bold">
-                                        {item.country_id.code}
-                                        {/* <Image src={require(`@/public/assets/images/${item.country_id.country_code}.png`)} width={19} height="12" className="h-[14px]" alt="Country Flag" /> */}
+                                    <div className="">
+                                        {item.payin_fee} % (
+                                        {(item.suppliers.map((supplier, i) => (
+                                            <>
+                                            {(supplier.pivot?.type == "payin") ? (
+                                            <> {supplier.name}</>
+                                            ) : ('')}
+                                            </>
+                                        )))}) 
                                     </div>
-                                    <div className="">{item.payin_fee}</div>
-                                    <div className="">{item.payout_fee}</div>
+                                    <div className="">
+                                        {item.payout_fee} % (
+                                        {(item.suppliers.map((supplier, i) => (
+                                            <>
+                                            {(supplier.pivot?.type == "payout") ? (
+                                            <> {supplier.name}</>
+                                            ) : ('')}
+                                            </>
+                                        )))}) 
+                                    </div>
+                                    <div className="">------</div>
                                     <div className="flex gap-2">
                                         <button 
                                             onClick={() => { setViewItem(item) }}
@@ -118,16 +139,10 @@ function AdminDashboard() {
                                             <Eye className="w-4 h-4" />
                                         </button>
 
-                                        <button 
+                                        {/* <button 
                                             className="p-2 text-sm font-medium text-white bg-yellow-500 rounded-md hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2"
                                             >
                                             <Edit className="w-4 h-4" />
-                                        </button>
-{/* 
-                                        <button 
-                                            className="p-2 text-sm font-medium text-white bg-red-500 rounded-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
-                                            >
-                                            <Trash className="w-4 h-4" />
                                         </button> */}
                                     </div>
                                 </div>
@@ -137,12 +152,12 @@ function AdminDashboard() {
                     ) : ("")}
 
                     
-                    {(viewItem.id != undefined) ? (
+                    {viewItem ? (
                         <div className="fixed inset-0 flex items-center justify-center backdrop-blur-sm z-50">
                             <div className="bg-white rounded-lg p-6 max-w-xl w-full shadow-lg">
                                 <div className="flex justify-between">
                                     <h3 className="text-xl font-bold uppercase text-center text-primary mb-3">Informations de la transaction</h3>
-                                    <X className="w-6 h-6 text-red-500 border border-red-500 border-rounded" onClick={() => { setViewItem({}) }} />
+                                    <X className="w-6 h-6 text-red-500 border border-red-500 border-rounded" onClick={() => { setViewItem(null) }} />
                                 </div>
                                 <div className="text-left">
                                     <table>

@@ -37,7 +37,7 @@ const AdminSuppliers = () => {
             })
 
 
-            axios.get(`${apiUrl}/admin/wallet-providers`, { headers: { Authorization: `Bearer ${session?.user.token}` } }).then((resp) => {
+            axios.get(`${apiUrl}/wallet-providers`, { headers: { Authorization: `Bearer ${session?.user.token}` } }).then((resp) => {
                 setProviders(resp.data.data)
             })
         }
@@ -104,6 +104,7 @@ const AdminSuppliers = () => {
                     </div>
                     {/* <h3 className="text-center text-[#8280FF] font-semibold mb-8">{page === 1 ? 'Liste des Fournisseurs' : 'Page ' + page + ' de ' + pageCount}</h3> */}
                     <div className="grid grid-cols-2 gap-4 mt-8">
+            
                     {suppliers.map((supplier, i) => (
                         <div className="flex flex-col rounded-2xl bg-[#ffffff] shadow-xl" key={i}>
                             <div className="flex flex-col p-4">
@@ -117,7 +118,8 @@ const AdminSuppliers = () => {
                                         </tr>
                                     </thead>
                                     <tbody className="bg-white text-gray-500 bg-[#FFFFFF] text-[#6b7280] bg-white text-gray-500 bg-[#FFFFFF] text-[#6b7280]">
-                                        {Object.entries(JSON.parse(supplier.wallet_name)).map(([wallet, name]) => (
+                                        {/* {Object.entries(JSON.parse(supplier.wallet_name)).map(([wallet, name]) => ( */}
+                                        {Object.entries(JSON.parse(supplier.wallet_name) as Record<string, string>).map(([wallet, name]) => (
                                             <tr key={wallet} className="py-5">
                                                 <td className="py-1 border text-center">{name}</td>
                                                 <td className="py-1 border text-center">
@@ -159,7 +161,7 @@ const AdminSuppliers = () => {
                                         </div>
                                     </div>
                                         {(providers.length > 0 && activeTab == 1) ? (
-                                        <div className="grid grid-cols-2 gap-2">
+                                            <div className="grid grid-cols-2 gap-2">
                                             {providers.map((provider, i) => (
                                                 <div className="mb-2 flex justify-between" key={i}>
                                                     <label className="text-md" htmlFor="">{provider.name}</label>
