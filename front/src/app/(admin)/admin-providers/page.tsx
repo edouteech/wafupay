@@ -112,22 +112,22 @@ function AdminDashboard() {
                                     <div className="font-semibold col-span-2">{item.name}</div>
                                     <div className="">
                                         {item.payin_fee} % (
-                                        {(item.suppliers.map((supplier, i) => (
-                                            <>
+                                        {(item.suppliers.map((supplier: Supplier, i: number) => (
+                                            <span key={i}>
                                             {(supplier.pivot?.type == "payin") ? (
                                             <> {supplier.name}</>
                                             ) : ('')}
-                                            </>
+                                            </span>
                                         )))}) 
                                     </div>
                                     <div className="">
                                         {item.payout_fee} % (
-                                        {(item.suppliers.map((supplier, i) => (
-                                            <>
+                                        {(item.suppliers.map((supplier: Supplier, i: number) => (
+                                            <span key={i}>
                                             {(supplier.pivot?.type == "payout") ? (
                                             <> {supplier.name}</>
                                             ) : ('')}
-                                            </>
+                                            </span>
                                         )))}) 
                                     </div>
                                     <div className="">------</div>
