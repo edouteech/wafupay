@@ -39,13 +39,32 @@ function Dashbord({ children }: Props) {
     //     }
     // },[session])
 
-    const logout = () => {
-        axios.post(`${apiUrl}/token/revoke`, { headers: { Authorization: `Bearer ${session?.user.token}` } }).then((resp) => {
-            if (resp.status == 200) {
-                signOut()
-            }
-        })
-    }
+    // const logout = () => {
+    //     axios.post(`${apiUrl}/token/revoke`, { headers: { Authorization: `Bearer ${session?.user.token}` } }).then((resp) => {
+    //         if (resp.status == 200) {
+    //             signOut()
+    //         }
+    //     })
+    // }
+    const logout = async () => {
+        if (!session || !session.user || !session.user.token) {
+            console.error("Session or user token is not defined");
+            return;
+        }
+
+        axios.post(`${apiUrl}/token/revoke`, { 'user': session.user.token }, { headers: { Authorization: `Bearer ${session.user.token}` } })
+            .then((resp) => {
+                if (resp.status === 200) {
+                    signOut();
+                } else {
+                    console.error("Failed to revoke token: ", resp);
+                }
+            })
+            .catch((error) => {
+                console.error("An error occurred while revoking the token: ", error);
+            });
+    };
+    
 
     return (
         <>
