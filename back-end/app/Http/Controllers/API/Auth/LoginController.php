@@ -53,7 +53,7 @@ class LoginController extends BaseController
 
             if (!$user->is_active) return $this->handleError(
                 "Unauthorized action",
-                ['error' => 'Votre compte a été suspendu, veuillez contacter le support technique'],
+                ['error' => 'Votre compte est inactif, veuillez confirmer votre adresse email ou contacter le support']
             );
 
             if ($request->two_factor) {

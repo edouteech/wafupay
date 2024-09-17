@@ -1,10 +1,19 @@
 import axios from "axios";
-import { log } from "console";
-import { NextAuthOptions, SessionStrategy, User } from "next-auth";
+import { SessionStrategy } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
-import router from "next/router";
 import Swal from "sweetalert2";
+
+class UserNotConfirmedError extends Error {
+  name: string;
+  statusCode: number;
+
+  constructor(message: string) {
+    super(message);
+    this.name = "UserNotConfirmedError";
+    this.statusCode = 403; // Forbidden
+  }
+}
 
 const apiUrl = process.env.NEXT_PUBLIC_APIURL;
 // Définir l'interface User
@@ -85,17 +94,14 @@ export const options = {
             return user;
           }
         } catch (err: any) {
-          console.error("Error registering user:", err);
-          // return {"email" : err};
-          Swal.fire({
-            icon: "error",
-            title: "Mauvaise entrées",
-            text: err.response.data.phone_num
-              ? err.response.data.phone_num
-              : err.response.data.email
-                ? err.response.data.email
-                : "Aucun compte trouvé avec ces informations veuillez vérifier et rééssayer",
-          });
+          let status = err.response?.status
+          let data = err.response?.data
+          throw new UserNotConfirmedError(data.data.error);
+          // Swal.fire({
+          //   icon: "error",
+          //   title: data.message,
+          //   text: data.data.error,
+          // });
         }
         return null;
       },

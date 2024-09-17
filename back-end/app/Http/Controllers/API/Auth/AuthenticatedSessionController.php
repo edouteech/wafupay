@@ -21,10 +21,21 @@ class AuthenticatedSessionController extends BaseController
      * @param Request $request The incoming request.
      * @return JsonResponse A JSON response containing the user's data and a token.
      */
+
+     public function verify(Request $request): JsonResponse
+     {
+         if ($user = Auth::user()) {
+             $user['token'] = $request->bearerToken();
+             return $this->handleResponse($user, 'Welcome' . $user->first_name);
+         }
+         return $this->handleError('Unauthorised.', ['error' => 'Unauthorised'], 202);
+     }
+     
     public function profile(Request $request): JsonResponse
     {
         return $this->handleResponse(new UserResource($request->user()));
     }
+
 
     public function submit_legal_document(Request $request)
     {

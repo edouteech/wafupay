@@ -43,7 +43,14 @@ class RegistrationController extends BaseController
             'phone_num' => ['required', 'unique:users', new ValidPhoneNumber],
         ]);
 
-        $user = User::create($payloads);
+        $user = new User($payloads);
+        // remove the + at start of phone_num if exists
+        if (substr($user->phone_num, 0, 1) == '+') {
+            $user->phone_num = substr($user->phone_num, 1);
+        }
+        $user->is_active = false;
+        $user->is_verified = false;
+        $user->save();
         return $this->twoFactorService->sendEmailVerificationToken($user);
     }
 

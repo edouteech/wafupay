@@ -40,7 +40,7 @@ class WProviderSeeder extends Seeder
                 "payout_fee" => "1",
             ],
             [
-                "name" => "MTN MONEY COTE D'IVOIRE",,
+                "name" => "MTN MONEY COTE D'IVOIRE",
                 "country_id" => "3",
                 "payin_fee" => "3.5",
                 "payout_fee" => "1",

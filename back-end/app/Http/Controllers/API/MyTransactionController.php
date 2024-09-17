@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Log;
 use App\Http\Services\LoggerService;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Services\FeexPayService;
+use App\Http\Services\PaytechService;
 use App\Http\Services\PayDunyaService;
 use App\Http\Services\TransactionService;
 use App\Http\Resources\TransactionResource;
@@ -31,8 +32,9 @@ class MyTransactionController extends BaseController
     public function __construct(
         private readonly PayDunyaService $payDunya,
         private readonly FeexPayService $feexpay,
+        private readonly PaytechService $paytech,
         private readonly LoggerService $logger,
-        private readonly TransactionService $process,
+        // private readonly TransactionService $process,
     ) {
     }
 
@@ -95,11 +97,11 @@ class MyTransactionController extends BaseController
                 $reference = $this->feexpay->initPayin($amount, $phoneNumber, $supplier_grid[$payin_provider->name], $fullname, $email, $callback_info, $custom_id, $otp);
                 break;
             case 'paytech':
-                $reference = 'paytech';
+                $reference = $this->paytech->initPayin($amount, $phoneNumber, $supplier_grid[$payin_provider->name], $fullname, $email, $callback_info, $custom_id, $otp);
                 break;
-            // case 'pawapay'
-            //     $reference = 'pawapay';
-            //     break;
+            case 'pawapay':
+                $reference = 'pawapay';
+                break;
             default:
                 return $this->handleError(
                     "Supplier not found",
@@ -107,30 +109,24 @@ class MyTransactionController extends BaseController
                 );
                 break;
         }
-        if($suplier->name == ""){
-            
-        }else if($suplier->name == "paytech"){
-            $reference = "paytech";
+        // check if reference is string
+        if (is_string($reference)) {
+            Transaction::create([
+                ...$payloads,
+                'payin_status' => Transaction::PENDING_STATUS,
+                'payout_status' => Transaction::PENDING_STATUS,
+                'payin_phone_number' => $request->payin_phone_number,
+                'payout_phone_number' => $request->payout_phone_number,
+                'payin_wprovider_id' => $request->payin_wprovider_id,
+                'payout_wprovider_id' => $request->payout_wprovider_id,
+                'type' => $request->type ?? 'others',
+                'payin_reference' => $reference,
+                'user_id' => $user->id,
+                'amount' => $amount,
+                'amountWithoutFees' => $amountWithoutFees,
+                'otp_code' => $request->input('otp_code', 1),
+            ]);
         }
-
-        //get status
-        // $status = $this->feexpay->payinStatus($payin_params);
-
-        Transaction::create([
-            ...$payloads,
-            'payin_status' => Transaction::PENDING_STATUS,
-            'payout_status' => Transaction::PENDING_STATUS,
-            'payin_phone_number' => $request->payin_phone_number,
-            'payout_phone_number' => $request->payout_phone_number,
-            'payin_wprovider_id' => $request->payin_wprovider_id,
-            'payout_wprovider_id' => $request->payout_wprovider_id,
-            'type' => $request->type ?? 'others',
-            'payin_reference' => $reference,
-            'user_id' => $user->id,
-            'amount' => $amount,
-            'amountWithoutFees' => $amountWithoutFees,
-            'otp_code' => $request->input('otp_code', 1),
-        ]);
 
         return response()->json($reference);
      }
@@ -340,7 +336,6 @@ class MyTransactionController extends BaseController
 
         return response()->json($payout);
     }
-
     public function payoutStatus($reference){
         $transaction = Transaction::where('payin_reference', $reference)->first();
         $provider = WProvider::find($transaction->payout_wprovider_id);
@@ -529,5 +524,73 @@ class MyTransactionController extends BaseController
         }
 
         return back()->withErrors(['message' => 'Erreur lors de la demande de paiement.']);
+    }
+
+
+    public function paytechStatus(Request $request): JsonResponse
+    {
+        $type_event        = $request->type_event;
+        $client_phone      = $request->client_phone;
+        $payment_method    = $request->payment_method;
+        $env               = $request->env;
+        $custom_field      = json_decode($request->custom_field);
+        $token             = $request->token;
+        $api_key_sha256    = $request->api_key_sha256;
+        $api_secret_sha256 = $request->api_secret_sha256;
+
+        // payment origin check
+        if (hash('sha256', "your public key from paytech.sn") === $api_key_sha256 && hash('sha256', "your private key from paytech.sn") === $api_secret_sha256)
+        {
+            if ($type_event == "sale_complete") {
+
+                Commandes::where("id", $custom_field->command_id)->update([
+                    "status" => "success"
+                ]);
+
+                Transactions::create([
+                    "commande_id"    => $custom_field->command_id,
+                    "type_event"     => $type_event,
+                    "client_phone"   => $client_phone,
+                    "payment_method" => $payment_method,
+                    "token"          => $token,
+                    "env"            => $env
+                ]);
+
+                Helper::sendMail(
+                    "support@monsite.net",
+                    type: 3,
+                    options: [
+                        "customer_email" => $custom_field->customer_email
+                    ]
+                );
+
+            } else {
+                Commandes::where("id", $custom_field->command_id)->update([
+                    "status" => "canceled"
+                ]);
+            }
+            //from PayTech
+            return response()->json(
+                [
+                    'success'  => true,
+                    'data'    => [
+                        'success' => true,
+                        'command_id' => $custom_field->command_id
+                    ],
+                    'message' => "Paiement réussi!"
+                ],
+                200
+            );
+        } else {
+            //not from PayTech
+            return response()->json(
+                [
+                    'success'  => false,
+                    'data'    => [],
+                    'message' => "Ce paiement ne vient pas de paytech"
+                ],
+                200
+            );
+        }
     }
 }
