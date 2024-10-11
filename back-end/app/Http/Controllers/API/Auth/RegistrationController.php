@@ -48,8 +48,8 @@ class RegistrationController extends BaseController
         if (substr($user->phone_num, 0, 1) == '+') {
             $user->phone_num = substr($user->phone_num, 1);
         }
-        $user->is_active = false;
-        $user->is_verified = false;
+        $user->is_active = 0;
+        $user->is_verified = 0;
         $user->save();
         return $this->twoFactorService->sendEmailVerificationToken($user);
     }
@@ -89,7 +89,7 @@ class RegistrationController extends BaseController
         if (!$checkedStatus instanceof JsonResponse) {
             $this->twoFactorService->markVerified($user, OtpCode::EmailVerificationTYPE);
             $this->logger->saveLog($request, $this->logger::LOGIN, $user);
-            $user->update(['email_verified_at' => new \DateTime()]);
+            $user->update(['email_verified_at' => new \DateTime(), 'is_active' => 1]);
 
             $user = new ResourcesUser($user);
             $user['token'] = $user->createToken($request->email)->plainTextToken;

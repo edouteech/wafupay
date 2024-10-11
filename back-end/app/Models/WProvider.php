@@ -21,6 +21,7 @@ class WProvider extends Model
         'payin_fee',
         'payout_fee',
     ];
+    protected $appends = ['country_code'];
 
     // public function transaction_fees(): HasMany
     // {
@@ -30,6 +31,11 @@ class WProvider extends Model
     public function country(): BelongsTo
     {
         return $this->belongsTo(Country::class);
+    }
+    public function getCountryCodeAttribute()
+    {
+        // return $this->country->code;
+        return "kk";
     }
 
     public function getFee(float | string $amount)

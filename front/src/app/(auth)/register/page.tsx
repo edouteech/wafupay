@@ -63,8 +63,9 @@ function Register() {
         axios.post(`${apiUrl}/token/register`, { "first_name": user.first_name, "last_name": user.last_name, "email": user.email, "password": user.password, "confirm_password": user.password2, "phone_num": country?.country_code + "" + user.phone_num, "country_id": user.country_id })
             .then((resp) => {
                 if (resp.status == 200) {
-                    console.log("response : ", resp.data.data)
-                    router.push(`/mail-verification?email=${resp.data.data[0].email}`)
+                    let infos = resp.data.data
+                    console.log("response : ", infos)
+                    router.push(`/mail-verification?email=${infos.email}`)
                 }
             })
             .catch((err) => {

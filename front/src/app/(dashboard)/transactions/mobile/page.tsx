@@ -92,8 +92,8 @@ function Mobile() {
       if (response.status == 200) {
         setShowM(false)
         setShowStatus(true)
-        setTransRef(response.data)
-        checkStatus(response.data);
+        setTransRef(response.data.reference)
+        checkStatus(response.data.reference);
       }
     }).catch((err) => {
       console.log(err);
@@ -127,8 +127,8 @@ function Mobile() {
     await axios.get(`${apiUrl}/payin-status/${reference}`, auth).then((response) => {
       console.log("response : ", response)
       if (response.status == 200) {
-        setTransStatus(response.data)
-        if (response.data == "pending") {
+        setTransStatus(response.data.status)
+        if (response.data.status == "pending") {
           setTimeout(() => {
             checkStatus(reference);
           }, 5000);
@@ -152,12 +152,10 @@ function Mobile() {
 
   const handleChangePayin = (index: number) => {
     let payin = methods[index]
-    console.log("payin_fee : ", payin.payin_fee, "payout_fee : ", payin.payout_fee)
     setPayin({name : payin.name, country_code : payin.country.country_code, id: payin.id, fee: payin.payin_fee})
   }
   const handleChangePayout = (index: number) => {
     let payout = methods[index]
-    console.log("payin_fee : ", payout.payin_fee, "payout_fee : ", payout.payout_fee)
     setPayout({name : payout.name, country_code : payout.country.country_code, id: payout.id, fee: payout.payout_fee})
   }
 
@@ -174,7 +172,7 @@ function Mobile() {
           <div className="mb-6">
             <label className="block font-semibold text-gray-700">De :</label>
             <div className=" text-sm m-auto text-gray-700">
-              <label className="block mt-2 text-sm text-gray-700">Montant {payin.fee}</label>
+              <label className="block mt-2 text-sm text-gray-700">Montant</label>
               <div className="flex items-center relative mt-2 text-sm">
                 <div className="relative w-1/4 z-[5]">
                   <select className="w-full z-[5] rounded-xl block appearance-none bg-white border border-gray-300 text-gray-700 p-4 pr-7 rounded-2xl leading-tight focus:outline-none focus:border-blue-500" onChange={(e) => { handleChangePayin(Number(e.target.value)) }}>
@@ -214,7 +212,7 @@ function Mobile() {
 
           <div className="mb-6">
             <label className="block font-semibold text-gray-700">Vers :</label>
-            <label className="block mt-2 text-sm text-gray-700">Montant {payout.fee}</label>
+            <label className="block mt-2 text-sm text-gray-700">Montant </label>
             <div className="flex items-center relative mt-2 text-sm">
               <div className="relative w-1/4 z-[5]">
                 <select className="w-full z-[5] rounded-xl block appearance-none bg-white border border-gray-300 text-gray-700 p-4 pr-7 rounded-2xl leading-tight focus:outline-none focus:border-blue-500" onChange={(e) => { handleChangePayout(Number(e.target.value)) }}>

@@ -128,7 +128,7 @@ class MyTransactionController extends BaseController
             ]);
         }
 
-        return response()->json($reference);
+        return response()->json(['reference' => $reference]);
      }
     // public function store(Request $request)
     // {
@@ -236,7 +236,8 @@ class MyTransactionController extends BaseController
                 }
                 if($transaction && $status == 'success'){
                     $transaction->update(['payin_status' => $status]);
-                    $this->initPayout($reference);
+                    $payout_reference = $this->initPayout($reference);
+                    return response()->json(['status' => $status, 'payout' => $payout_reference]);
                 }
                 break;
             case 'paytech':
@@ -250,7 +251,7 @@ class MyTransactionController extends BaseController
                 break;
             
         }
-        return response()->json($status);
+        return response()->json(['status' => $status]);
 
     // public function payinStatus($reference){
     //     $suplier = Supplier::where("name", "feexpay")->first();
@@ -306,19 +307,21 @@ class MyTransactionController extends BaseController
         
         switch ($suplier->name) {
             case 'feexpay':
-                $payout = $this->feexpay->initPayout(
+                $payout = ['status' => 'pending'];
+                $skeleton = $this->feexpay->initPayout(
                     $transaction->amountWithoutFees,
                     str_replace('+', '', $phone_number),
                     $supplier_grid[$provider_name],
                     "payout",
                     str_replace('+', '', $provider->country->country_code),
                 );
-                return response()->json($payout);
-                if (array_key_exists('reference', $payout)) {
-                    $transaction->update(['payout_reference' => $payout['reference']]);
+                // return response()->json($skeleton);
+                if (array_key_exists('reference', $skeleton)) {
+                    $transaction->update(['payout_reference' => $skeleton['reference']]);
                 }
-                if (isset($payout['status']) && $payout['status'] == 'SUCCESSFUL') {
+                if (isset($skeleton['status']) && $skeleton['status'] == 'SUCCESSFUL') {
                     $transaction->update(['payout_status' => "success"]);
+                    $payout = ['status' => 'success', 'reference' => $skeleton['reference']];
                 }else{
                     $transaction->update(['payout_status' => "failed"]);
                 }
@@ -333,8 +336,7 @@ class MyTransactionController extends BaseController
                 $payout = 'failed';
                 break;
         }
-
-        return response()->json($payout);
+        return $payout;
     }
     public function payoutStatus($reference){
         $transaction = Transaction::where('payin_reference', $reference)->first();
