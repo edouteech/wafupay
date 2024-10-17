@@ -73,8 +73,8 @@ Route::prefix('/v1')->group((function () {
         // routes de transactions pour l'user
         Route::apiResource('transactions', MyTransactionController::class)->only('index', 'store', 'show',);
         Route::get('payin-status/{reference}', [MyTransactionController::class, 'payin_status']);
-        Route::get('init-payout/{reference}/{phone_number}/{provider_name}', [MyTransactionController::class, 'initPayout'])->name('initPayout');
-        // Route::post('calculate-transaction-fees', [MyTransactionController::class, 'calculate_fees'])->name('transaction.calculateFees');
+        // Route::get('init-payout/{reference}/{phone_number}/{provider_name}', [MyTransactionController::class, 'initPayout'])->name('initPayout');
+        Route::put('payout-retry/{transaction}/{phone_number}', [MyTransactionController::class, 'retry_payout'])->name('transaction.retryPayout');
         Route::delete('delete-transaction/{transaction}', [MyTransactionController::class, 'destroyByUser'])->name('transaction.destroyYours');
 
         //route test de feexpay

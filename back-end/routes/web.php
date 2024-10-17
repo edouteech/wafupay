@@ -14,4 +14,8 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
+Route::get('/create-symlink', function () {
+    symlink(storage_path('app/public'), public_path('storage'));
+    return "Symlink Created.";
+});
 

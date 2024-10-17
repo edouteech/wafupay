@@ -73,7 +73,7 @@ class FeexPayService
     //         return response()->json(['error' => 'Exception lors de la requête: ' . $th->getMessage()], 500);
     //     }
     // }
-    public function initPayout(string $amount, string $phoneNumber, string $network, string $motif, string $country) {
+    public function initPayout(int $amount, string $phoneNumber, string $network, string $motif, string $country) {
         // Define the shop ID from environment variables
         $shop = env('FEEXPAY_SHOP_ID');
     

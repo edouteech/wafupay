@@ -14,6 +14,7 @@ use App\Http\Services\PaytechService;
 use App\Http\Services\PayDunyaService;
 use App\Http\Services\TransactionService;
 use App\Http\Resources\TransactionResource;
+use Illuminate\Support\Facades\Http;
 
 class MyTransactionController extends BaseController
 {
@@ -70,8 +71,6 @@ class MyTransactionController extends BaseController
         // dd($payin_provider->suppliers);
         $suplier = $payin_provider->suppliers()->where('type', 'payin')->first();
         $supplier_grid = json_decode($suplier->wallet_name, true);
-
-
 
         $amount = $request->amount;
         // calculate fees
@@ -252,55 +251,24 @@ class MyTransactionController extends BaseController
             
         }
         return response()->json(['status' => $status]);
-
-    // public function payinStatus($reference){
-    //     $suplier = Supplier::where("name", "feexpay")->first();
-    //     $supplier_grid = json_decode($suplier->wallet_name, true);
-
-    //     $status = $this->feexpay->getPaymentStatus($reference);
-    //     $transaction = Transaction::where('token', $reference)->first();
-    //     $provider = WProvider::find($transaction->payout_wprovider_id);
-
-    //     if($transaction && $status['status'] == 'FAILED'){
-    //         $transaction->update(['payin_status' => "failed",'payout_status' => "failed"]);
-    //     }
-    //     if($transaction && $status['status'] == 'SUCCESSFUL'){
-    //         $transaction->update(['payin_status' => "success"]);
-            
-    //         $payout = $this->feexpay->initPayout(
-    //             $transaction->amountWithoutFees,
-    //             str_replace('+', '', $transaction->payout_phone_number),
-    //             $supplier_grid[$provider->name],
-    //             "payout"
-    //         );
-            
-    //         if (array_key_exists('reference', $payout)) {
-    //             $transaction->update(['payout_reference' => $payout['reference']]);
-    //         }
-    //         if (isset($payout['status']) && $payout['status'] == 'SUCCESSFUL') {
-    //             $transaction->update(['payout_status' => "success"]);
-    //         }else{
-    //             $transaction->update(['payout_status' => "failed"]);
-    //         }
-    //         return response()->json($payout);
-    //     }
-        
-    //     return response()->json($status);
     }
 
     public function initPayout($reference, $phone_number=null, $provider_name=null){
         // return response()->json($phone_number);
         $transaction = Transaction::where('payin_reference', $reference)->first();
-        if($provider_name && $phone_number){
+        if($provider_name){
             $provider = WProvider::where("name", $provider_name)->first();
-            $transaction->update(['payout_phone_number' => $phone_number, 'payout_wprovider_id' => $provider->id]);
         }else{
             $provider = WProvider::find($transaction->payout_wprovider_id);
             $provider_name = $provider->name;
+        }
+        if($phone_number){
+            $transaction->update(['payout_phone_number' => $phone_number, 'payout_wprovider_id' => $provider->id]);
+        }else{
             $phone_number = $transaction->payout_phone_number;
         }
         if ($transaction->payin_status != 'success' || $transaction->payout_status == 'success') {
-            return response()->json("Transaction not completed");
+            return response()->json("Impossible d'effectuer cette transaction");
         }
         $suplier = $provider->suppliers()->where("type", "payout")->first();
         $supplier_grid = json_decode($suplier->wallet_name, true);
@@ -324,6 +292,10 @@ class MyTransactionController extends BaseController
                     $payout = ['status' => 'success', 'reference' => $skeleton['reference']];
                 }else{
                     $transaction->update(['payout_status' => "failed"]);
+                    $message = $skeleton['amount']['msg'] ?? "Le destinataire n'a pas reçu les fonds";
+                    $message .= "\n";
+                    $message .= $skeleton['phoneNumber']['msg'] ?? "";
+                    $payout = ['status' => 'failed', 'message' => $message, 'datas' => $skeleton];
                 }
                 break;
             case 'paytech':
@@ -346,6 +318,23 @@ class MyTransactionController extends BaseController
         $supplier_grid = json_decode($suplier->wallet_name, true);
 
     }
+    function retry_payout(Transaction $transaction, string $phone_number){
+        // check if transaction exist and return error if not
+        if(!$transaction){
+            return response()->json(['message' => 'Transaction not found']);
+        }else{
+            // check if transaction is not completed
+            // return response()->json(['in' => $transaction->payin_status == "success", 'out' => $transaction->payout_status != "success"]);
+            if($transaction->payin_status == "success" && $transaction->payout_status != "success"){
+                $infos = $this->initPayout($transaction->payin_reference, $phone_number);
+                return response()->json($infos, ($infos['status'] == 'success' ? 200 : 400));
+            }else{
+                return response()->json(['message' => 'Transaction already completed']);
+            }
+        }
+    }
+
+
     public function update_payin_status(Request $request)
     {
         $calculate_hash = hash('sha512', env('$this->payDunya_MASTER_KEY'));
